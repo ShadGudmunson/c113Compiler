@@ -16,6 +16,11 @@ void yyerror (char const *s) {
 	fprintf (stderr, "%s\n", s);
 }
 
+void invalidToken(){
+	printf("This feature is not suppored in c113c.");
+	exit(1);
+}
+
 char * convertString(char* str){
     int i, j = 0;
     str = strtok(str, "\"");
@@ -249,154 +254,49 @@ void tokenInit(){
 	return DOUBLE;
 }
 "static" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = STATIC;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return STATIC;
+	invalidToken();
 }
 "volatile" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = VOLATILE;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return VOLATILE;
+	invalidToken();
 }
 "goto" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = GOTO;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return GOTO;
+	invalidToken();
 }
 "continue" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = CONTINUE;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return CONTINUE;
+	invalidToken();
 }
 "signed" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = SIGNED;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return SIGNED;
+	invalidToken();
 }
 "const" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = CONST;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return CONST;
+	invalidToken();
 }
 "auto" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = AUTO;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return AUTO;
+	invalidToken();
 }
 "do" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = DO;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return DO;
+	invalidToken();
 }
 "enum" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = ENUM;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return ENUM;
+	invalidToken();
 }
 "register" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = REGISTER;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return REGISTER;
+	invalidToken();
 }
 "typedef" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = TYPEDEF;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return TYPEDEF;
+	invalidToken();
 }
 "extern" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = EXTERN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return EXTERN;
+	invalidToken();
 }
 "union" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = UNION;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return UNION;
+	invalidToken();
 }
 "short" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = SHORT;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return SHORT;
+	invalidToken();
 }
 "unsigned" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = UNSIGNED;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return UNSIGNED;
+	invalidToken();
 }
 "="	 {
 	yytoken = malloc(sizeof(struct token));
@@ -459,24 +359,10 @@ void tokenInit(){
 	return MOD;
 }
 "|" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = OR;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return OR;
+	invalidToken();
 }
 "^" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = ER;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return ER;
+	invalidToken();
 }
 "~" {
 	yytoken = malloc(sizeof(struct token));
@@ -639,14 +525,7 @@ void tokenInit(){
 	return RC;
 }
 ":"	 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = COLON;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return COLON;
+	invalidToken();
 }
 "."	 {
 	yytoken = malloc(sizeof(struct token));
@@ -699,34 +578,13 @@ void tokenInit(){
 	return SM;
 }
 "?"	 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = QUEST;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return QUEST;
+	invalidToken();
 }
 "->" {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = FOLLOW;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return FOLLOW;
+	invalidToken();
 }
 "..." {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = ELIPSIS;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return ELIPSIS;
+	invalidToken();
 }
 \"[^"\n]*\"	{
 	yytoken = malloc(sizeof(struct token));
@@ -795,127 +653,43 @@ void tokenInit(){
     return IDENTIFIER;
 }
 "<<"  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = SHL;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return SHL;
+	invalidToken();
 }
 ">>"  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = SHR;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return SHR;
+	invalidToken();
 }
 "*="  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = MUASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return MUASN;
+	invalidToken();
 }
 "/="  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = DIASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return DIASN;
+	invalidToken();
 }
 "%="  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = MOASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return MOASN;
+	invalidToken();
 }
 "+="  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = PLASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return PLASN;
+	invalidToken();
 }
 "-="  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = MIASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return MIASN;
+	invalidToken();
 }
 "<<="  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = SLASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return SLASN;
+	invalidToken();
 }
 ">>="  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = SRASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return SRASN;
+	invalidToken();
 }
 "&="  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = ANASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return ANASN;
+	invalidToken();
 }
 "^="  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = ERASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return ERASN;
+	invalidToken();
 }
 "|="  {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = ORASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return ORASN;
+	invalidToken();
 }
 [^ \t]  {/*do nothing*/}
-[//].* {/*do nothing*/}
+[//].* {rows++;}
 #.*	 {rows++;}
 .	 {chars++;}
 

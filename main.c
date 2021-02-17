@@ -69,12 +69,13 @@ void reverse(struct tokenlist** head_ref) {
 void deleteList(){
     while(head->next != NULL){
         struct tokenlist *tmp = head->next;
-        free(head->t->text);
+        //free(head->t->text);
 
         if(strcmp(head->t->sval,"")){
             free(head->t->sval);
         }
         free(head->t);
+        free(head);
         head = tmp;
     }
 }
@@ -123,6 +124,7 @@ int main(int argc, char **argv)
         fclose(yyin);
         if(new_str != NULL){
             free(new_str);
+            new_str = NULL;
         }
     }
     deleteList();
