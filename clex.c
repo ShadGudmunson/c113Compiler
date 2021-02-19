@@ -366,30 +366,30 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[217] =
     {   0,
-        0,    0,   89,   84,   87,   70,   84,   84,   84,   38,
-       50,   84,   53,   54,   36,   34,   59,   35,   58,   37,
-       67,   67,   57,   62,   60,   33,   61,   63,   71,   51,
-       52,   40,   71,   71,   71,   71,   71,   71,   71,   71,
-       71,   71,   71,   71,   71,   71,   71,   55,   39,   56,
-       41,   47,    0,   66,   86,   76,   48,   81,    0,   74,
-       43,   77,   42,   78,   64,    0,   68,   85,   75,   68,
-       67,    0,    0,   72,   44,   46,   45,   73,   71,   82,
-       71,   71,   71,   71,   71,   71,   25,   71,   71,   71,
-       71,   71,   71,   13,   71,   71,   71,   71,   71,   71,
+        0,    0,   89,   84,   87,   82,   84,   84,   84,   23,
+       33,   84,   36,   37,   21,   19,   41,   20,   40,   22,
+       79,   79,   75,   44,   42,   18,   43,   57,   83,   34,
+       35,   77,   83,   83,   83,   83,   83,   83,   83,   83,
+       83,   83,   83,   83,   83,   83,   83,   38,   76,   39,
+       24,   30,    0,   78,   86,   49,   31,   54,    0,   47,
+       26,   50,   25,   51,   58,    0,   80,   85,   48,   80,
+       79,    0,    0,   45,   27,   29,   28,   46,   83,   55,
+       83,   83,   83,   83,   83,   83,   67,   83,   83,   83,
+       83,   83,   83,   13,   83,   83,   83,   83,   83,   83,
 
-       71,   71,   71,   71,   71,   83,   49,   69,   65,   68,
-       67,   67,   79,   80,   71,   71,   71,   71,   71,   71,
-       71,   71,   71,   71,   71,    9,   71,   15,   71,   71,
-       71,   71,   71,   71,   71,   71,   71,   71,   71,   71,
-       71,   71,   71,   24,   71,    5,    7,   71,   71,   71,
-       71,    1,   26,   71,   71,   20,    2,   71,   71,   71,
-       71,   71,   71,   71,   71,   71,   71,   71,   10,   71,
-       71,    4,   23,   71,   71,   71,   71,    8,   71,   71,
-       31,   71,   71,   71,   71,   71,   71,   30,   71,   71,
-       14,   71,   71,   17,   29,   71,    6,   22,   11,   18,
+       83,   83,   83,   83,   83,   56,   32,   81,   59,   80,
+       79,   79,   52,   53,   83,   83,   83,   83,   83,   83,
+       83,   83,   83,   83,   83,    9,   83,   15,   83,   83,
+       83,   83,   83,   83,   83,   83,   83,   83,   83,   83,
+       83,   83,   83,   66,   83,    5,    7,   83,   83,   83,
+       83,    1,   68,   83,   83,   62,    2,   83,   83,   83,
+       83,   83,   83,   83,   83,   83,   83,   83,   10,   83,
+       83,    4,   65,   83,   83,   83,   83,    8,   83,   83,
+       73,   83,   83,   83,   83,   83,   83,   72,   83,   83,
+       14,   83,   83,   17,   71,   83,    6,   64,   11,   60,
 
-       16,    3,   71,   71,   71,   71,   12,   71,   28,   71,
-       71,   21,   27,   32,   19,    0
+       16,    3,   83,   83,   83,   83,   12,   83,   70,   83,
+       83,   63,   69,   74,   61,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -587,7 +587,14 @@ char *yytext;
 #line 1 "clex.l"
 #define YY_NO_INPUT 1
 #line 6 "clex.l"
+/*
+* Todo: move code into its own function instead of the mess that it is
+* param: The category of the token
+* return: The category of the token
+* int alctoken(int tokenval)
+*/
 #include "ytab.h"
+#include "tree.h"
 #include "cgram.tab.h"
 
 struct token *yytoken = NULL;
@@ -596,7 +603,7 @@ extern void insert_head(struct token *tok);
 
 int rows = 0, words = 0, chars = 0;
 
-void yyerror (char const *s) {
+void yyerror (char const *s){
 	fprintf (stderr, "%s\n", s);
 }
 
@@ -606,66 +613,77 @@ void invalidToken(){
 }
 
 char * convertString(char* str){
-    int i, j = 0;
-    str = strtok(str, "\"");
-    char *new_str = malloc(strlen(str) + 1);
-    for(i = 0; i < strlen(str); i++, j++){
-        if(str[i] == 92){
-            switch(str[i+1]){
-                case 'n':
-                    new_str[j] = 10;
-                    i++;
+	int i, j = 0;
+	str = strtok(str, "\"");
+	char *new_str = malloc(strlen(str) + 1);
+	for(i = 0; i < strlen(str); i++, j++){
+		if(str[i] == 92){
+			switch(str[i+1]){
+				case 'n':
+					new_str[j] = 10;
+					i++;
 					break;
-                case 't':
-                    new_str[j] = 9;
-                    i++;
+				case 't':
+					new_str[j] = 9;
+					i++;
 					break;
-                case '0':
-                    new_str[j] = 0;
-                    i++;
+				case '0':
+					new_str[j] = 0;
+					i++;
 					break;
-                case 'a':
-                    new_str[j] = 7;
-                    i++;
+				case 'a':
+					new_str[j] = 7;
+					i++;
 					break;
-                case 'b':
-                    new_str[j] = 8;
-                    i++;
+				case 'b':
+					new_str[j] = 8;
+					i++;
 					break;
-                case 'v':
-                    new_str[j] = 11;
-                    i++;
+				case 'v':
+					new_str[j] = 11;
+					i++;
 					break;
-                case 'f':
-                    new_str[j] = 12;                
-                    i++;
+				case 'f':
+					new_str[j] = 12;
+					i++;
 					break;
-                case 'r':
-                    new_str[j] = 13;
-                    i++;
+				case 'r':
+					new_str[j] = 13;
+					i++;
 					break;
-                                    
-            }
-        } else {
-            new_str[j] = str[i];
-        }
-    }
-    return new_str;
+
+			}
+		} else{
+			new_str[j] = str[i];
+		}
+	}
+	return new_str;
 }
 
 void tokenInit(){
-    yytoken->category = 0;   
-    yytoken->text = "";     
-    yytoken->lineno = 0;     
-    yytoken->filename = ""; 
-    yytoken->ival = 0;       
-    yytoken->dval = 0;	   
-    yytoken->sval = "";     
+	yytoken->category = 0;
+	yytoken->text = "";
+	yytoken->lineno = 0;
+	yytoken->filename = "";
+	yytoken->ival = 0;
+	yytoken->dval = 0;
+	yytoken->sval = "";
 }
 
+int alctoken(int category){
+	yytoken = malloc(sizeof(struct token));
+	tokenInit();
+	yytoken->category = category;
+	yytoken->text = strdup(yytext);
+	yytoken->lineno = rows;
+	yytoken->filename = filename;
+	insert_head(yytoken);
+	return category;
 
-#line 667 "clex.c"
-#line 668 "clex.c"
+}
+
+#line 685 "clex.c"
+#line 686 "clex.c"
 
 #define INITIAL 0
 
@@ -880,10 +898,10 @@ YY_DECL
 		}
 
 	{
-#line 84 "clex.l"
+#line 102 "clex.l"
 
 
-#line 886 "clex.c"
+#line 904 "clex.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -942,972 +960,628 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 86 "clex.l"
+#line 104 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = ELSE;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return ELSE;
+    return alctoken(ELSE);
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 96 "clex.l"
+#line 107 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = LONG;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return LONG;
-    }
+    return alctoken(LONG);
+}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 106 "clex.l"
+#line 110 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = SWITCH;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return SWITCH;
-    }
+    return alctoken(SWITCH);
+}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 116 "clex.l"
+#line 113 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = BREAK;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return BREAK;
-    }
+    return alctoken(BREAK);
+}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 126 "clex.l"
+#line 116 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = CASE;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return CASE;
+    return alctoken(CASE);
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 136 "clex.l"
+#line 119 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = RETURN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return RETURN;
+    return alctoken(RETURN);
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 146 "clex.l"
+#line 122 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = CHAR;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return CHAR;
+    return alctoken(CHAR);
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 156 "clex.l"
+#line 125 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = FLOAT;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return FLOAT;
+    return alctoken(FLOAT);
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 166 "clex.l"
+#line 128 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = FOR;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return FOR;
+    return alctoken(FOR);
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 176 "clex.l"
+#line 131 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = VOID;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return VOID;
+    return alctoken(VOID);
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 186 "clex.l"
+#line 134 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = SIZEOF;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return SIZEOF;
+    return alctoken(SIZEOF);
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 196 "clex.l"
+#line 137 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = DEFAULT;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return DEFAULT;
+    return alctoken(DEFAULT);
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 206 "clex.l"
+#line 140 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = IF;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return IF;
+    return alctoken(IF);
 }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 216 "clex.l"
+#line 143 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = WHILE;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return WHILE;
+    return alctoken(WHILE);
 }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 226 "clex.l"
+#line 146 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = INT;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return INT;
+    return alctoken(INT);
 }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 236 "clex.l"
+#line 149 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = STRUCT;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return STRUCT;
+    return alctoken(STRUCT);
 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 246 "clex.l"
+#line 152 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = DOUBLE;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return DOUBLE;
+    return alctoken(DOUBLE);
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 256 "clex.l"
+#line 155 "clex.l"
 {
-	invalidToken();
+    return alctoken(ASN);
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 259 "clex.l"
+#line 158 "clex.l"
 {
-	invalidToken();
+    return alctoken(PLUS);
 }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 262 "clex.l"
+#line 161 "clex.l"
 {
-	invalidToken();
+    return alctoken(MINUS);
 }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 265 "clex.l"
+#line 164 "clex.l"
 {
-	invalidToken();
+    return alctoken(MUL);
 }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 268 "clex.l"
+#line 167 "clex.l"
 {
-	invalidToken();
+    return alctoken(DIV);
 }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 271 "clex.l"
+#line 170 "clex.l"
 {
-	invalidToken();
+    return alctoken(MOD);
 }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 274 "clex.l"
+#line 173 "clex.l"
 {
-	invalidToken();
+    return alctoken(NOT);
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 277 "clex.l"
+#line 176 "clex.l"
 {
-	invalidToken();
+    return alctoken(DECOP);
 }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 280 "clex.l"
+#line 179 "clex.l"
 {
-	invalidToken();
+    return alctoken(INCOP);
 }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 283 "clex.l"
+#line 182 "clex.l"
 {
-	invalidToken();
+    return alctoken(LE);
 }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 286 "clex.l"
+#line 185 "clex.l"
 {
-	invalidToken();
+    return alctoken(GE);
 }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 289 "clex.l"
+#line 188 "clex.l"
 {
-	invalidToken();
+    return alctoken(EQ);
 }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 292 "clex.l"
+#line 191 "clex.l"
 {
-	invalidToken();
+    return alctoken(NE);
 }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 295 "clex.l"
+#line 194 "clex.l"
 {
-	invalidToken();
+    return alctoken(ANDAND);
 }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 298 "clex.l"
+#line 197 "clex.l"
 {
-	invalidToken();
+    return alctoken(OROR);
 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 301 "clex.l"
+#line 200 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = ASN;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return ASN;
+    return alctoken(AND);
 }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 311 "clex.l"
+#line 203 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = PLUS;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return PLUS;
+    return alctoken(LB);
 }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 321 "clex.l"
+#line 206 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = MINUS;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return MINUS;
+    return alctoken(RB);
 }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 331 "clex.l"
+#line 209 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = MUL;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return MUL;
+    return alctoken(LP);
 }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 341 "clex.l"
+#line 212 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = DIV;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return DIV;
+    return alctoken(RP);
 }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 351 "clex.l"
+#line 215 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = MOD;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return MOD;
+    return alctoken(LC);
 }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 361 "clex.l"
+#line 218 "clex.l"
 {
-	invalidToken();
+    return alctoken(RC);
 }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 364 "clex.l"
+#line 221 "clex.l"
 {
-	invalidToken();
+    return alctoken(DOT);
 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 367 "clex.l"
+#line 224 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = NOT;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return NOT;
+    return alctoken(CM);
 }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 377 "clex.l"
+#line 227 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = DECOP;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return DECOP;
+    return alctoken(LT);
 }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 387 "clex.l"
+#line 230 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = INCOP;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return INCOP;
+    return alctoken(GT);
 }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 397 "clex.l"
+#line 233 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = LE;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return LE;
+    return alctoken(SM);
 }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 407 "clex.l"
+#line 236 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = GE;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return GE;
+	invalidToken();
 }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 417 "clex.l"
+#line 239 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = EQ;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return EQ;
+	invalidToken();
 }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 427 "clex.l"
+#line 242 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = NE;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return NE;
+	invalidToken();
 }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 437 "clex.l"
+#line 245 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = ANDAND;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return ANDAND;
+	invalidToken();
 }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 447 "clex.l"
+#line 248 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = OROR;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return OROR;	
+	invalidToken();
 }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 457 "clex.l"
+#line 251 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = AND;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return AND;
+	invalidToken();
 }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 467 "clex.l"
+#line 254 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = LB;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return LB;
+	invalidToken();
 }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 477 "clex.l"
+#line 257 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = RB;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return RB;
+	invalidToken();
 }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 487 "clex.l"
+#line 260 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = LP;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return LP;
+	invalidToken();
 }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 497 "clex.l"
+#line 263 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = RP;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return RP;
+	invalidToken();
 }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 507 "clex.l"
+#line 266 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = LC;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return LC;
+	invalidToken();
 }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 517 "clex.l"
+#line 269 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = RC;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return RC;
+	invalidToken();
 }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 527 "clex.l"
+#line 272 "clex.l"
 {
 	invalidToken();
 }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 530 "clex.l"
+#line 275 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = DOT;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return DOT;
+	invalidToken();
 }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 540 "clex.l"
+#line 278 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = CM;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return CM;
+	invalidToken();
 }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 550 "clex.l"
+#line 281 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = LT;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return LT;
+	invalidToken();
 }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 560 "clex.l"
+#line 284 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = GT;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return GT;
+	invalidToken();
 }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 570 "clex.l"
+#line 287 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = SM;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return SM;
+	invalidToken();
 }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 580 "clex.l"
+#line 290 "clex.l"
 {
 	invalidToken();
 }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 583 "clex.l"
+#line 293 "clex.l"
 {
 	invalidToken();
 }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 586 "clex.l"
+#line 296 "clex.l"
 {
 	invalidToken();
 }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 589 "clex.l"
+#line 299 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = STRING;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-    yytoken->sval = convertString(yytext);
-	insert_head(yytoken);
-	return STRING;
+	invalidToken();
 }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 600 "clex.l"
+#line 302 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = ICON;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-    yytoken->ival = atoi(yytoken->text);    
-	insert_head(yytoken);
-	return ICON;
+	invalidToken();
 }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 611 "clex.l"
+#line 305 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = FLOAT;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-    yytoken->dval = atof(yytoken->text);     
-	insert_head(yytoken);
-	return FCON;
+	invalidToken();
 }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 622 "clex.l"
+#line 308 "clex.l"
 {
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = CCON;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-    yytoken->sval = convertString(yytext);
-	insert_head(yytoken);
-	return CCON;
-}
-	YY_BREAK
-case YY_STATE_EOF(INITIAL):
-#line 633 "clex.l"
-{
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-    yytoken->category = EOF;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return EOF;
+	invalidToken();
 }
 	YY_BREAK
 case 70:
-/* rule 70 can match eol */
 YY_RULE_SETUP
-#line 643 "clex.l"
-{rows++;}
+#line 311 "clex.l"
+{
+	invalidToken();
+}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 644 "clex.l"
+#line 314 "clex.l"
 {
-    words++; 
-    yytoken = malloc(sizeof(struct token));
-    chars += strlen(yytext);
-    yytoken->category = STRING;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-    yytoken->sval = convertString(yytext); 
-    return IDENTIFIER;
+	invalidToken();
 }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 655 "clex.l"
+#line 317 "clex.l"
 {
 	invalidToken();
 }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 658 "clex.l"
+#line 320 "clex.l"
 {
 	invalidToken();
 }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 661 "clex.l"
+#line 323 "clex.l"
 {
 	invalidToken();
 }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 664 "clex.l"
+#line 326 "clex.l"
 {
 	invalidToken();
 }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 667 "clex.l"
+#line 329 "clex.l"
 {
 	invalidToken();
 }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 670 "clex.l"
+#line 332 "clex.l"
 {
 	invalidToken();
 }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 673 "clex.l"
+#line 335 "clex.l"
 {
-	invalidToken();
+	alctoken(STRING);
+	yytoken->sval = convertString(yytext);
+	return STRING;
 }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 676 "clex.l"
+#line 340 "clex.l"
 {
-	invalidToken();
+	alctoken(ICON);
+	yytoken->ival = atoi(yytoken->text);
+	return ICON;
 }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 679 "clex.l"
+#line 345 "clex.l"
 {
-	invalidToken();
+	alctoken(FCON);
+	yytoken->dval = atof(yytoken->text);
+	return FCON;
 }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 682 "clex.l"
+#line 350 "clex.l"
 {
-	invalidToken();
+	alctoken(CCON);
+	yytoken->sval = convertString(yytext);
+	return CCON;
+}
+	YY_BREAK
+case YY_STATE_EOF(INITIAL):
+#line 355 "clex.l"
+{
+	return alctoken(EOF);
 }
 	YY_BREAK
 case 82:
+/* rule 82 can match eol */
 YY_RULE_SETUP
-#line 685 "clex.l"
-{
-	invalidToken();
-}
+#line 358 "clex.l"
+{rows++;}
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 688 "clex.l"
+#line 359 "clex.l"
 {
-	invalidToken();
+	words++;
+	alctoken(IDENTIFIER);
+	yytoken->sval = convertString(yytext);
+	return IDENTIFIER;
 }
 	YY_BREAK
 case 84:
 /* rule 84 can match eol */
 YY_RULE_SETUP
-#line 691 "clex.l"
+#line 365 "clex.l"
 {/*do nothing*/}
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 692 "clex.l"
+#line 366 "clex.l"
 {rows++;}
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 693 "clex.l"
+#line 367 "clex.l"
 {rows++;}
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 694 "clex.l"
+#line 368 "clex.l"
 {chars++;}
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 696 "clex.l"
+#line 370 "clex.l"
 ECHO;
 	YY_BREAK
-#line 1910 "clex.c"
+#line 1584 "clex.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2873,7 +2547,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 696 "clex.l"
+#line 370 "clex.l"
 
 
 

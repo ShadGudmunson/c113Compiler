@@ -1,8 +1,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
-
-/* include lots of your include files here */
+#include "tree.h"
 
 # define YYDEBUG 1
 /* #define DEBUG */
@@ -14,22 +13,26 @@ extern int yylex(void);
 
 %}
 
-%token BAD_TOKEN
-%token ICON CCON FCON 
-%token ENUMERATION_CONSTANT IDENTIFIER STRING
-%token SIZEOF
-%token INCOP DECOP SHL SHR LE GE EQ NE
-%token ANDAND OROR MUASN DIASN MOASN PLASN ASN
-%token MIASN SLASN SRASN ANASN
-%token ERASN ORASN TYPEDEF_NAME
-%token CM SM LT GT PLUS MINUS MUL DIV MOD LP RP LB RB LC RC COLON
-%token QUEST AND OR ER NOT FOLLOW BANG DOT
+%union {
+  struct tree *treeptr;
+}
 
-%token TYPEDEF EXTERN STATIC AUTO REGISTER 
-%token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
-%token STRUCT UNION ENUM ELIPSIS
+%token <treeptr> BAD_TOKEN
+%token <treeptr> ICON CCON FCON 
+%token <treeptr> ENUMERATION_CONSTANT IDENTIFIER STRING
+%token <treeptr> SIZEOF
+%token <treeptr> INCOP DECOP SHL SHR LE GE EQ NE
+%token <treeptr> ANDAND OROR MUASN DIASN MOASN PLASN ASN
+%token <treeptr> MIASN SLASN SRASN ANASN
+%token <treeptr> ERASN ORASN TYPEDEF_NAME
+%token <treeptr> CM SM LT GT PLUS MINUS MUL DIV MOD LP RP LB RB LC RC COLON
+%token <treeptr> QUEST AND OR ER NOT FOLLOW BANG DOT
 
-%token CASE DEFAULT IF SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
+%token <treeptr> TYPEDEF EXTERN STATIC AUTO REGISTER 
+%token <treeptr> CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
+%token <treeptr> STRUCT UNION ENUM ELIPSIS
+
+%token <treeptr> CASE DEFAULT IF SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
 /* Lowest Precedence */
 %left  THEN
@@ -53,79 +56,79 @@ extern int yylex(void);
 %start file
 
 /* we will need these once we are building syntax tree nodes
-%type     identifier
-%type         file
-%type     translation_unit
-%type     external_declaration
-%type     function_definition
-%type     declaration
-%type     untyped_declaration
-%type     declaration_list
-%type     declaration_specifiers
-%type     storage_class_specifier
-%type     type_specifier
-%type     actual_type_specifier
-%type     type_adjective
-%type     type_qualifier
-%type     struct_or_union_specifier
-%type     struct_or_union
-%type     struct_declaration_list
-%type     init_declarator_list
-%type     init_declarator
-%type     struct_declaration
-%type     specifier_qualifier_list
-%type     struct_declarator_list
-%type     struct_declarator
-%type     enum_specifier
-%type     enumerator_list
-%type     enumerator
-%type     declarator
-%type     direct_declarator
-%type     function_declarator
-%type     direct_function_declarator
-%type     pointer
-%type     type_qualifier_list
-%type     parameter_type_list
-%type     parameter_list
-%type     parameter_declaration
-%type     identifier_list
-%type     initializer
-%type     initializer_list
-%type     type_name
-%type     abstract_declarator
-%type     direct_abstract_declarator
-%type     statement
-%type     labeled_statement
-%type     expression_statement
-%type     compound_statement
-%type     compound_statement_opt
-%type     statement_list
-%type     selection_statement
-%type     iteration_statement
-%type     forcntrl
-%type     jump_statement
-%type     expression
-%type     assignment_expression
-%type     assignment_operator
-%type     conditional_expression
-%type     constant_expression
-%type     logical_or_expression
-%type     logical_and_expression
-%type     inclusive_or_expression
-%type     exclusive_or_expression
-%type     and_expression
-%type     equality_expression
-%type     relational_expression
-%type     shift_expression
-%type     additive_expression
-%type     multiplicative_expression
-%type     cast_expression
-%type     unary_expression
-%type     unary_operator
-%type     postfix_expression
-%type     primary_expression
-%type     argument_expression_list
-%type     constant
+%type <treeptr>     identifier
+%type <treeptr>         file
+%type <treeptr>     translation_unit
+%type <treeptr>     external_declaration
+%type <treeptr>     function_definition
+%type <treeptr>     declaration
+%type <treeptr>     untyped_declaration
+%type <treeptr>     declaration_list
+%type <treeptr>     declaration_specifiers
+%type <treeptr>     storage_class_specifier
+%type <treeptr>     type_specifier
+%type <treeptr>     actual_type_specifier
+%type <treeptr>     type_adjective
+%type <treeptr>     type_qualifier
+%type <treeptr>     struct_or_union_specifier
+%type <treeptr>     struct_or_union
+%type <treeptr>     struct_declaration_list
+%type <treeptr>     init_declarator_list
+%type <treeptr>     init_declarator
+%type <treeptr>     struct_declaration
+%type <treeptr>     specifier_qualifier_list
+%type <treeptr>     struct_declarator_list
+%type <treeptr>     struct_declarator
+%type <treeptr>     enum_specifier
+%type <treeptr>     enumerator_list
+%type <treeptr>     enumerator
+%type <treeptr>     declarator
+%type <treeptr>     direct_declarator
+%type <treeptr>     function_declarator
+%type <treeptr>     direct_function_declarator
+%type <treeptr>     pointer
+%type <treeptr>     type_qualifier_list
+%type <treeptr>     parameter_type_list
+%type <treeptr>     parameter_list
+%type <treeptr>     parameter_declaration
+%type <treeptr>     identifier_list
+%type <treeptr>     initializer
+%type <treeptr>     initializer_list
+%type <treeptr>     type_name
+%type <treeptr>     abstract_declarator
+%type <treeptr>     direct_abstract_declarator
+%type <treeptr>     statement
+%type <treeptr>     labeled_statement
+%type <treeptr>     expression_statement
+%type <treeptr>     compound_statement
+%type <treeptr>     compound_statement_opt
+%type <treeptr>     statement_list
+%type <treeptr>     selection_statement
+%type <treeptr>     iteration_statement
+%type <treeptr>     forcntrl
+%type <treeptr>     jump_statement
+%type <treeptr>     expression
+%type <treeptr>     assignment_expression
+%type <treeptr>     assignment_operator
+%type <treeptr>     conditional_expression
+%type <treeptr>     constant_expression
+%type <treeptr>     logical_or_expression
+%type <treeptr>     logical_and_expression
+%type <treeptr>     inclusive_or_expression
+%type <treeptr>     exclusive_or_expression
+%type <treeptr>     and_expression
+%type <treeptr>     equality_expression
+%type <treeptr>     relational_expression
+%type <treeptr>     shift_expression
+%type <treeptr>     additive_expression
+%type <treeptr>     multiplicative_expression
+%type <treeptr>     cast_expression
+%type <treeptr>     unary_expression
+%type <treeptr>     unary_operator
+%type <treeptr>     postfix_expression
+%type <treeptr>     primary_expression
+%type <treeptr>     argument_expression_list
+%type <treeptr>     constant
 */
 
 %%

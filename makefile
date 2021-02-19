@@ -2,18 +2,18 @@ c113c: clex.o main.o cgram.tab.o
 	gcc -Wall -o c113c clex.o main.o cgram.tab.o
 
 main.o: main.c
-	gcc -g -Wall -c main.c
+	gcc -ggdb3 -Wall -c main.c
 
 clex.c: clex.l cgram.tab.h
 	flex -o clex.c clex.l
 
-clex.o: clex.c
-	gcc -g -Wall -c clex.c
+clex.o: clex.c tree.h
+	gcc -ggdb3 -Wall -c clex.c
 
 cgram.tab.o: cgram.tab.c
-	gcc -g -Wall -c cgram.tab.c
+	gcc -ggdb3 -Wall -c cgram.tab.c
 
-cgram.tab.h cgram.tab.c: cgram.y
+cgram.tab.h cgram.tab.c: cgram.y tree.h
 	bison -d cgram.y
 
 clean: 
