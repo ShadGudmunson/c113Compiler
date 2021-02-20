@@ -119,14 +119,10 @@ int main(int argc, char **argv)
 
         yyparse();
 
-        reverse(&head);
-        //printList();
-        fclose(yyin);
         if(new_str != NULL){
             free(new_str);
             new_str = NULL;
         }
     }
-    deleteList();
     return 0;
 }

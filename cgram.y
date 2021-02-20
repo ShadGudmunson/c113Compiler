@@ -55,7 +55,7 @@ extern int yylex(void);
 
 %start file
 
-/* we will need these once we are building syntax tree nodes
+/* we will need these once we are building syntax tree nodes */
 %type <treeptr>     identifier
 %type <treeptr>         file
 %type <treeptr>     translation_unit
@@ -129,7 +129,7 @@ extern int yylex(void);
 %type <treeptr>     primary_expression
 %type <treeptr>     argument_expression_list
 %type <treeptr>     constant
-*/
+
 
 %%
 
@@ -144,14 +144,15 @@ identifier
 
 file
     : translation_unit
-      {
+      { 
       }
     ;
 
 translation_unit: 
     external_declaration { }
     | translation_unit external_declaration
-    { }
+    { printNode($1);
+    }
     ;
 
 /* "global" things. Does not imply that "extern" is present. */
@@ -170,21 +171,21 @@ function_definition:
       { /* old school pre-ANSI, no return type */
       } 
       compound_statement
-      {
+      { printNode($1);
       }
 
     | function_declarator declaration_list 
       { /* old school pre ANSI */
       } 
       compound_statement
-      {
+      { printNode($1);
       }
 
     | declaration_specifiers function_declarator 
       { /* proper ANSI C function definition */
       } 
       compound_statement 
-      {
+      { printNode($1);
       }
 
     | declaration_specifiers function_declarator  declaration_list
@@ -197,24 +198,24 @@ function_definition:
 
 declaration
 	: declaration_specifiers SM
-          {
+    { printNode($1);
 	  }
 	| declaration_specifiers  
           init_declarator_list SM
-	  {
+	  { printNode($1);
 	  }
 	;
 
 untyped_declaration
 	 : init_declarator_list SM
-	    {
+	    { printNode($1);
             }
 	 ;
 
 declaration_list
 	: declaration { }
 	| declaration_list declaration
-	  { 
+	  { printNode($1);
 	  }
 	;
 
@@ -222,17 +223,17 @@ declaration_specifiers
 	: storage_class_specifier 
           /* defines TYPEDEF,EXTERN,STATIC,AUTO,REGISTER*/
 	| storage_class_specifier declaration_specifiers
-          {
+          { printNode($1);
           }
 	| type_specifier 
 	| type_specifier 
           declaration_specifiers
-	  { 
+	  {   printNode($1);
           }
 	| type_qualifier  
 	| type_qualifier declaration_specifiers
-          {  
-          }
+          {   printNode($1);
+            }
 	;
 
 

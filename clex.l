@@ -15,81 +15,13 @@ int rows = 0, words = 0, chars = 0;
 
 void yyerror (char const *s){
 	fprintf (stderr, "%s\n", s);
+	fprintf (stderr, "Something went wrong with \"%s\" in file %s on line %d\n", yylval.treeptr->leaf->text, yylval.treeptr->leaf->filename, yylval.treeptr->leaf->lineno);
+	exit(1);
 }
 
 void invalidToken(){
 	printf("This feature is not suppored in c113c.");
 	exit(1);
-}
-
-char * convertString(char* str){
-	int i, j = 0;
-	str = strtok(str, "\"");
-	char *new_str = malloc(strlen(str) + 1);
-	for(i = 0; i < strlen(str); i++, j++){
-		if(str[i] == 92){
-			switch(str[i+1]){
-				case 'n':
-					new_str[j] = 10;
-					i++;
-					break;
-				case 't':
-					new_str[j] = 9;
-					i++;
-					break;
-				case '0':
-					new_str[j] = 0;
-					i++;
-					break;
-				case 'a':
-					new_str[j] = 7;
-					i++;
-					break;
-				case 'b':
-					new_str[j] = 8;
-					i++;
-					break;
-				case 'v':
-					new_str[j] = 11;
-					i++;
-					break;
-				case 'f':
-					new_str[j] = 12;
-					i++;
-					break;
-				case 'r':
-					new_str[j] = 13;
-					i++;
-					break;
-
-			}
-		} else{
-			new_str[j] = str[i];
-		}
-	}
-	return new_str;
-}
-
-void tokenInit(){
-	yytoken->category = 0;
-	yytoken->text = "";
-	yytoken->lineno = 0;
-	yytoken->filename = "";
-	yytoken->ival = 0;
-	yytoken->dval = 0;
-	yytoken->sval = "";
-}
-
-int alctoken(int category){
-	yytoken = malloc(sizeof(struct token));
-	tokenInit();
-	yytoken->category = category;
-	yytoken->text = strdup(yytext);
-	yytoken->lineno = rows;
-	yytoken->filename = filename;
-	insert_head(yytoken);
-	return category;
-
 }
 
 %}
@@ -327,24 +259,18 @@ int alctoken(int category){
 	invalidToken();
 }
 \"[^"\n]*\"	{
-	alctoken(STRING);
-	yytoken->sval = convertString(yytext);
-	return STRING;
+	
+	return alctoken(STRING);
 }
 0x[0-9a-fA-f]+|0X[0-9a-fA-f]+|[0-9]+ {
-	alctoken(ICON);
-	yytoken->ival = atoi(yytoken->text);
-	return ICON;
+	return alctoken(ICON);
 }
 [0-9]*"."[0-9]+|[0-9]+"."[0-9]* {
-	alctoken(FCON);
-	yytoken->dval = atof(yytoken->text);
-	return FCON;
+	return alctoken(FCON);
 }
 '.{1}' {
-	alctoken(CCON);
-	yytoken->sval = convertString(yytext);
-	return CCON;
+	
+	return alctoken(CCON);
 }
 <<EOF>> {
 	return alctoken(EOF);
@@ -352,9 +278,7 @@ int alctoken(int category){
 \n {rows++;}
 [a-zA-Z][a-zA-Z0-9]* {
 	words++;
-	alctoken(IDENTIFIER);
-	yytoken->sval = convertString(yytext);
-	return IDENTIFIER;
+	return alctoken(IDENTIFIER);
 }
 [^ \t] {/*do nothing*/}
 [//].* {rows++;}
