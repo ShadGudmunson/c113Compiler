@@ -14,7 +14,7 @@ extern int rows;
 extern char *filename;
 extern int insert_head();
 
-struct tree *alcTree(int label, int nkids, ...)
+struct tree *alcTree(int label, char *symbolname, int nkids, ...)
 {
     int i;
     va_list ap;
@@ -25,6 +25,7 @@ struct tree *alcTree(int label, int nkids, ...)
        exit(1); 
     }
     ptr->label = label;
+    ptr->symbolname = symbolname;
     ptr->nkids = nkids;
     va_start(ap, nkids);
     for(i=0; i < nkids; i++)

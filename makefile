@@ -1,7 +1,7 @@
 c113c: clex.o main.o cgram.tab.o tree.o
 	gcc -Wall -o c113c clex.o main.o cgram.tab.o tree.o
 
-main.o: main.c
+main.o: main.c tree.h
 	gcc -ggdb3 -Wall -c main.c
 
 clex.c: clex.l cgram.tab.h

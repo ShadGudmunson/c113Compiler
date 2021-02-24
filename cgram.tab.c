@@ -79,10 +79,11 @@
 extern int yyerror(char *);
 extern int yylex(void);
 
+extern struct tree *root;
 /* declare externs for global variables and helper function prototypes */
 
 
-#line 86 "cgram.tab.c"
+#line 87 "cgram.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -658,31 +659,31 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   137,   137,   140,   146,   152,   153,   160,   163,   165,
-     171,   170,   178,   177,   185,   184,   192,   191,   200,   203,
-     210,   216,   217,   223,   225,   228,   229,   233,   234,   243,
-     246,   249,   252,   255,   261,   262,   266,   269,   272,   275,
-     278,   281,   284,   285,   289,   292,   295,   298,   304,   307,
-     314,   313,   318,   318,   321,   327,   329,   334,   336,   342,
-     346,   352,   353,   358,   361,   367,   368,   371,   372,   378,
-     379,   386,   387,   390,   396,   399,   402,   408,   409,   415,
-     419,   418,   427,   430,   436,   439,   442,   445,   448,   451,
-     454,   460,   461,   467,   470,   473,   479,   482,   486,   489,
-     495,   496,   502,   503,   509,   510,   516,   518,   520,   525,
-     527,   532,   533,   535,   540,   541,   546,   547,   552,   553,
-     554,   560,   563,   566,   569,   572,   575,   578,   581,   584,
-     590,   591,   592,   593,   594,   595,   599,   602,   605,   611,
-     614,   620,   624,   623,   632,   636,   640,   648,   649,   655,
-     659,   663,   669,   673,   677,   683,   686,   689,   692,   695,
-     698,   701,   704,   712,   715,   718,   721,   724,   730,   733,
-     740,   741,   747,   748,   749,   750,   751,   752,   753,   754,
-     755,   756,   757,   762,   763,   770,   775,   776,   782,   783,
-     788,   789,   795,   796,   802,   803,   809,   810,   813,   819,
-     820,   823,   826,   829,   835,   836,   839,   845,   846,   849,
-     855,   856,   859,   862,   868,   869,   876,   877,   880,   883,
-     886,   889,   895,   898,   901,   904,   907,   910,   917,   918,
-     921,   924,   927,   930,   933,   936,   942,   945,   946,   949,
-     955,   958,   964,   967,   970,   973
+       0,   138,   138,   142,   149,   156,   157,   165,   168,   170,
+     176,   175,   183,   182,   190,   189,   197,   196,   205,   208,
+     215,   221,   222,   228,   230,   233,   234,   238,   239,   248,
+     251,   254,   257,   260,   266,   267,   271,   274,   277,   280,
+     283,   286,   289,   290,   294,   297,   300,   303,   309,   312,
+     319,   318,   323,   323,   326,   332,   334,   339,   341,   347,
+     351,   357,   358,   363,   366,   372,   373,   376,   377,   383,
+     384,   391,   392,   395,   401,   404,   407,   413,   414,   420,
+     424,   423,   432,   435,   441,   444,   447,   450,   453,   456,
+     459,   465,   466,   472,   475,   478,   484,   487,   491,   494,
+     500,   501,   507,   508,   514,   515,   521,   523,   525,   530,
+     532,   537,   538,   540,   545,   546,   551,   552,   557,   558,
+     559,   565,   568,   571,   574,   577,   580,   583,   586,   589,
+     595,   596,   597,   598,   599,   600,   604,   607,   610,   616,
+     619,   625,   629,   628,   637,   641,   645,   653,   654,   660,
+     664,   668,   674,   678,   682,   688,   691,   694,   697,   700,
+     703,   706,   709,   717,   720,   723,   726,   729,   735,   738,
+     745,   746,   752,   753,   754,   755,   756,   757,   758,   759,
+     760,   761,   762,   767,   768,   775,   780,   781,   787,   788,
+     793,   794,   800,   801,   807,   808,   814,   815,   818,   824,
+     825,   828,   831,   834,   840,   841,   844,   850,   851,   854,
+     860,   861,   864,   867,   873,   874,   881,   882,   885,   888,
+     891,   894,   900,   903,   906,   909,   912,   915,   922,   923,
+     926,   929,   932,   935,   938,   941,   947,   950,   951,   954,
+     960,   963,   969,   972,   975,   978
 };
 #endif
 
@@ -1737,1375 +1738,1379 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* identifier: IDENTIFIER  */
-#line 138 "cgram.y"
-      {
-      }
-#line 1744 "cgram.tab.c"
+#line 139 "cgram.y"
+                        {
+				(yyval.treeptr) = alcTree(1001, "identifier", 1, (yyvsp[0].treeptr));
+			}
+#line 1746 "cgram.tab.c"
     break;
 
   case 3: /* identifier: ENUMERATION_CONSTANT  */
-#line 141 "cgram.y"
-      {
-      }
-#line 1751 "cgram.tab.c"
+#line 143 "cgram.y"
+                        {
+				(yyval.treeptr) = alcTree(1001, "identifier", 1, (yyvsp[0].treeptr));
+			}
+#line 1754 "cgram.tab.c"
     break;
 
   case 4: /* file: translation_unit  */
-#line 147 "cgram.y"
-      { 
-      }
-#line 1758 "cgram.tab.c"
+#line 150 "cgram.y"
+                        { 
+				root = (yyvsp[0].treeptr);
+			}
+#line 1762 "cgram.tab.c"
     break;
 
   case 5: /* translation_unit: external_declaration  */
-#line 152 "cgram.y"
-                         { }
-#line 1764 "cgram.tab.c"
+#line 156 "cgram.y"
+                                     { }
+#line 1768 "cgram.tab.c"
     break;
 
   case 6: /* translation_unit: translation_unit external_declaration  */
-#line 154 "cgram.y"
-    { printNode((yyvsp[-1].treeptr));
-    }
-#line 1771 "cgram.tab.c"
+#line 158 "cgram.y"
+                { 
+			printNode((yyvsp[-1].treeptr));
+		}
+#line 1776 "cgram.tab.c"
     break;
 
   case 7: /* external_declaration: function_definition  */
-#line 161 "cgram.y"
-   { 
-   }
-#line 1778 "cgram.tab.c"
+#line 166 "cgram.y"
+         { 
+	 }
+#line 1783 "cgram.tab.c"
     break;
 
   case 8: /* external_declaration: declaration  */
-#line 164 "cgram.y"
-   { }
-#line 1784 "cgram.tab.c"
+#line 169 "cgram.y"
+         { }
+#line 1789 "cgram.tab.c"
     break;
 
   case 9: /* external_declaration: untyped_declaration  */
-#line 166 "cgram.y"
-   { }
-#line 1790 "cgram.tab.c"
+#line 171 "cgram.y"
+         { }
+#line 1795 "cgram.tab.c"
     break;
 
   case 10: /* $@1: %empty  */
-#line 171 "cgram.y"
-      { /* old school pre-ANSI, no return type */
-      }
-#line 1797 "cgram.tab.c"
+#line 176 "cgram.y"
+                        { /* old school pre-ANSI, no return type */
+			}
+#line 1802 "cgram.tab.c"
     break;
 
   case 11: /* function_definition: function_declarator $@1 compound_statement  */
-#line 174 "cgram.y"
-      { printNode((yyvsp[-2].treeptr));
-      }
-#line 1804 "cgram.tab.c"
+#line 179 "cgram.y"
+                        { printNode((yyvsp[-2].treeptr));
+			}
+#line 1809 "cgram.tab.c"
     break;
 
   case 12: /* $@2: %empty  */
-#line 178 "cgram.y"
-      { /* old school pre ANSI */
-      }
-#line 1811 "cgram.tab.c"
+#line 183 "cgram.y"
+                        { /* old school pre ANSI */
+			}
+#line 1816 "cgram.tab.c"
     break;
 
   case 13: /* function_definition: function_declarator declaration_list $@2 compound_statement  */
-#line 181 "cgram.y"
-      { printNode((yyvsp[-3].treeptr));
-      }
-#line 1818 "cgram.tab.c"
+#line 186 "cgram.y"
+                        { printNode((yyvsp[-3].treeptr));
+			}
+#line 1823 "cgram.tab.c"
     break;
 
   case 14: /* $@3: %empty  */
-#line 185 "cgram.y"
-      { /* proper ANSI C function definition */
-      }
-#line 1825 "cgram.tab.c"
+#line 190 "cgram.y"
+                        { /* proper ANSI C function definition */
+			}
+#line 1830 "cgram.tab.c"
     break;
 
   case 15: /* function_definition: declaration_specifiers function_declarator $@3 compound_statement  */
-#line 188 "cgram.y"
-      { printNode((yyvsp[-3].treeptr));
-      }
-#line 1832 "cgram.tab.c"
+#line 193 "cgram.y"
+                        { printNode((yyvsp[-3].treeptr));
+			}
+#line 1837 "cgram.tab.c"
     break;
 
   case 16: /* $@4: %empty  */
-#line 192 "cgram.y"
-      { /* declaration_list! This must be pre-ANSI  */
-      }
-#line 1839 "cgram.tab.c"
+#line 197 "cgram.y"
+                        { /* declaration_list! This must be pre-ANSI  */
+			}
+#line 1844 "cgram.tab.c"
     break;
 
   case 17: /* function_definition: declaration_specifiers function_declarator declaration_list $@4 compound_statement  */
-#line 195 "cgram.y"
-      {
-      }
-#line 1846 "cgram.tab.c"
+#line 200 "cgram.y"
+                        {
+			}
+#line 1851 "cgram.tab.c"
     break;
 
   case 18: /* declaration: declaration_specifiers SM  */
-#line 201 "cgram.y"
-    { printNode((yyvsp[-1].treeptr));
-	  }
-#line 1853 "cgram.tab.c"
+#line 206 "cgram.y"
+                { printNode((yyvsp[-1].treeptr));
+		}
+#line 1858 "cgram.tab.c"
     break;
 
   case 19: /* declaration: declaration_specifiers init_declarator_list SM  */
-#line 205 "cgram.y"
-          { printNode((yyvsp[-2].treeptr));
-	  }
-#line 1860 "cgram.tab.c"
+#line 210 "cgram.y"
+                { printNode((yyvsp[-2].treeptr));
+		}
+#line 1865 "cgram.tab.c"
     break;
 
   case 20: /* untyped_declaration: init_declarator_list SM  */
-#line 211 "cgram.y"
-            { printNode((yyvsp[-1].treeptr));
-            }
-#line 1867 "cgram.tab.c"
+#line 216 "cgram.y"
+                        { printNode((yyvsp[-1].treeptr));
+						}
+#line 1872 "cgram.tab.c"
     break;
 
   case 21: /* declaration_list: declaration  */
-#line 216 "cgram.y"
+#line 221 "cgram.y"
                       { }
-#line 1873 "cgram.tab.c"
+#line 1878 "cgram.tab.c"
     break;
 
   case 22: /* declaration_list: declaration_list declaration  */
-#line 218 "cgram.y"
-          { printNode((yyvsp[-1].treeptr));
-	  }
-#line 1880 "cgram.tab.c"
+#line 223 "cgram.y"
+                { printNode((yyvsp[-1].treeptr));
+		}
+#line 1885 "cgram.tab.c"
     break;
 
   case 24: /* declaration_specifiers: storage_class_specifier declaration_specifiers  */
-#line 226 "cgram.y"
-          { printNode((yyvsp[-1].treeptr));
-          }
-#line 1887 "cgram.tab.c"
+#line 231 "cgram.y"
+                                        { printNode((yyvsp[-1].treeptr));
+					}
+#line 1892 "cgram.tab.c"
     break;
 
   case 26: /* declaration_specifiers: type_specifier declaration_specifiers  */
-#line 231 "cgram.y"
-          {   printNode((yyvsp[-1].treeptr));
-          }
-#line 1894 "cgram.tab.c"
+#line 236 "cgram.y"
+                {   printNode((yyvsp[-1].treeptr));
+					}
+#line 1899 "cgram.tab.c"
     break;
 
   case 28: /* declaration_specifiers: type_qualifier declaration_specifiers  */
-#line 235 "cgram.y"
-          {   printNode((yyvsp[-1].treeptr));
-            }
-#line 1901 "cgram.tab.c"
+#line 240 "cgram.y"
+                                        {   printNode((yyvsp[-1].treeptr));
+						}
+#line 1906 "cgram.tab.c"
     break;
 
   case 29: /* storage_class_specifier: TYPEDEF  */
-#line 244 "cgram.y"
-           {
-           }
-#line 1908 "cgram.tab.c"
+#line 249 "cgram.y"
+                 {
+					 }
+#line 1913 "cgram.tab.c"
     break;
 
   case 30: /* storage_class_specifier: EXTERN  */
-#line 247 "cgram.y"
-           {
-           }
-#line 1915 "cgram.tab.c"
+#line 252 "cgram.y"
+                         {
+					 }
+#line 1920 "cgram.tab.c"
     break;
 
   case 31: /* storage_class_specifier: STATIC  */
-#line 250 "cgram.y"
-           {
-           }
-#line 1922 "cgram.tab.c"
+#line 255 "cgram.y"
+                 {
+					 }
+#line 1927 "cgram.tab.c"
     break;
 
   case 32: /* storage_class_specifier: AUTO  */
-#line 253 "cgram.y"
-           {
-           }
-#line 1929 "cgram.tab.c"
+#line 258 "cgram.y"
+                                         {
+					 }
+#line 1934 "cgram.tab.c"
     break;
 
   case 33: /* storage_class_specifier: REGISTER  */
-#line 256 "cgram.y"
-           {
-           }
-#line 1936 "cgram.tab.c"
+#line 261 "cgram.y"
+                 {
+					 }
+#line 1941 "cgram.tab.c"
     break;
 
   case 36: /* actual_type_specifier: VOID  */
-#line 267 "cgram.y"
+#line 272 "cgram.y"
         {
-        }
-#line 1943 "cgram.tab.c"
+				}
+#line 1948 "cgram.tab.c"
     break;
 
   case 37: /* actual_type_specifier: CHAR  */
-#line 270 "cgram.y"
-        {
-        }
-#line 1950 "cgram.tab.c"
+#line 275 "cgram.y"
+                                {
+				}
+#line 1955 "cgram.tab.c"
     break;
 
   case 38: /* actual_type_specifier: INT  */
-#line 273 "cgram.y"
+#line 278 "cgram.y"
         {
-        }
-#line 1957 "cgram.tab.c"
+				}
+#line 1962 "cgram.tab.c"
     break;
 
   case 39: /* actual_type_specifier: FLOAT  */
-#line 276 "cgram.y"
-        {
-        }
-#line 1964 "cgram.tab.c"
+#line 281 "cgram.y"
+                                {
+				}
+#line 1969 "cgram.tab.c"
     break;
 
   case 40: /* actual_type_specifier: DOUBLE  */
-#line 279 "cgram.y"
-        {
-        }
-#line 1971 "cgram.tab.c"
+#line 284 "cgram.y"
+                                {
+				}
+#line 1976 "cgram.tab.c"
     break;
 
   case 41: /* actual_type_specifier: TYPEDEF_NAME  */
-#line 282 "cgram.y"
+#line 287 "cgram.y"
         {
-        }
-#line 1978 "cgram.tab.c"
+				}
+#line 1983 "cgram.tab.c"
     break;
 
   case 44: /* type_adjective: SHORT  */
-#line 290 "cgram.y"
-           {
-           }
-#line 1985 "cgram.tab.c"
+#line 295 "cgram.y"
+                                         {
+					 }
+#line 1990 "cgram.tab.c"
     break;
 
   case 45: /* type_adjective: LONG  */
-#line 293 "cgram.y"
-           {
-           }
-#line 1992 "cgram.tab.c"
+#line 298 "cgram.y"
+                                         {
+					 }
+#line 1997 "cgram.tab.c"
     break;
 
   case 46: /* type_adjective: SIGNED  */
-#line 296 "cgram.y"
-           {
-           }
-#line 1999 "cgram.tab.c"
+#line 301 "cgram.y"
+                                         {
+					 }
+#line 2004 "cgram.tab.c"
     break;
 
   case 47: /* type_adjective: UNSIGNED  */
-#line 299 "cgram.y"
-           {
-           }
-#line 2006 "cgram.tab.c"
+#line 304 "cgram.y"
+                                         {
+					 }
+#line 2011 "cgram.tab.c"
     break;
 
   case 48: /* type_qualifier: CONST  */
-#line 305 "cgram.y"
-          {
-          }
-#line 2013 "cgram.tab.c"
+#line 310 "cgram.y"
+                                        {
+					}
+#line 2018 "cgram.tab.c"
     break;
 
   case 49: /* type_qualifier: VOLATILE  */
-#line 308 "cgram.y"
-          {
-          }
-#line 2020 "cgram.tab.c"
+#line 313 "cgram.y"
+                {
+					}
+#line 2025 "cgram.tab.c"
     break;
 
   case 50: /* $@5: %empty  */
-#line 314 "cgram.y"
-       { }
-#line 2026 "cgram.tab.c"
+#line 319 "cgram.y"
+                   { }
+#line 2031 "cgram.tab.c"
     break;
 
   case 51: /* struct_or_union_specifier: struct_or_union LC $@5 struct_declaration_list RC  */
-#line 315 "cgram.y"
-    {
-    }
-#line 2033 "cgram.tab.c"
+#line 320 "cgram.y"
+                {
+		}
+#line 2038 "cgram.tab.c"
     break;
 
   case 52: /* $@6: %empty  */
-#line 318 "cgram.y"
-                                    { }
-#line 2039 "cgram.tab.c"
+#line 323 "cgram.y"
+                                                { }
+#line 2044 "cgram.tab.c"
     break;
 
   case 53: /* struct_or_union_specifier: struct_or_union identifier LC $@6 struct_declaration_list RC  */
-#line 319 "cgram.y"
-    {
-    }
-#line 2046 "cgram.tab.c"
+#line 324 "cgram.y"
+                {
+		}
+#line 2051 "cgram.tab.c"
     break;
 
   case 54: /* struct_or_union_specifier: struct_or_union identifier  */
-#line 322 "cgram.y"
-    {
-    }
-#line 2053 "cgram.tab.c"
+#line 327 "cgram.y"
+                {
+		}
+#line 2058 "cgram.tab.c"
     break;
 
   case 55: /* struct_or_union: STRUCT  */
-#line 328 "cgram.y"
-      {  }
-#line 2059 "cgram.tab.c"
+#line 333 "cgram.y"
+                        {  }
+#line 2064 "cgram.tab.c"
     break;
 
   case 56: /* struct_or_union: UNION  */
-#line 330 "cgram.y"
-      {  }
-#line 2065 "cgram.tab.c"
+#line 335 "cgram.y"
+                        {  }
+#line 2070 "cgram.tab.c"
     break;
 
   case 57: /* struct_declaration_list: struct_declaration  */
-#line 335 "cgram.y"
-        {  }
-#line 2071 "cgram.tab.c"
+#line 340 "cgram.y"
+                                {  }
+#line 2076 "cgram.tab.c"
     break;
 
   case 58: /* struct_declaration_list: struct_declaration_list struct_declaration  */
-#line 337 "cgram.y"
+#line 342 "cgram.y"
                 {  }
-#line 2077 "cgram.tab.c"
+#line 2082 "cgram.tab.c"
     break;
 
   case 60: /* init_declarator_list: init_declarator_list CM init_declarator  */
-#line 347 "cgram.y"
-        { 
-        }
-#line 2084 "cgram.tab.c"
+#line 352 "cgram.y"
+                                { 
+				}
+#line 2089 "cgram.tab.c"
     break;
 
   case 61: /* init_declarator: declarator  */
-#line 352 "cgram.y"
+#line 357 "cgram.y"
                      { }
-#line 2090 "cgram.tab.c"
+#line 2095 "cgram.tab.c"
     break;
 
   case 62: /* init_declarator: declarator ASN initializer  */
-#line 354 "cgram.y"
-          { }
-#line 2096 "cgram.tab.c"
+#line 359 "cgram.y"
+                                        { }
+#line 2101 "cgram.tab.c"
     break;
 
   case 63: /* struct_declaration: specifier_qualifier_list SM  */
-#line 359 "cgram.y"
-          {
-	  }
-#line 2103 "cgram.tab.c"
+#line 364 "cgram.y"
+                {
+		}
+#line 2108 "cgram.tab.c"
     break;
 
   case 64: /* struct_declaration: specifier_qualifier_list struct_declarator_list SM  */
-#line 362 "cgram.y"
-          {
-          }
-#line 2110 "cgram.tab.c"
+#line 367 "cgram.y"
+                {
+					}
+#line 2115 "cgram.tab.c"
     break;
 
   case 66: /* specifier_qualifier_list: type_specifier specifier_qualifier_list  */
-#line 369 "cgram.y"
+#line 374 "cgram.y"
                 {
 		}
-#line 2117 "cgram.tab.c"
+#line 2122 "cgram.tab.c"
     break;
 
   case 68: /* specifier_qualifier_list: type_qualifier specifier_qualifier_list  */
-#line 373 "cgram.y"
+#line 378 "cgram.y"
                 {
 		}
-#line 2124 "cgram.tab.c"
+#line 2129 "cgram.tab.c"
     break;
 
   case 70: /* struct_declarator_list: struct_declarator_list CM struct_declarator  */
-#line 381 "cgram.y"
+#line 386 "cgram.y"
                 {
 		}
-#line 2131 "cgram.tab.c"
+#line 2136 "cgram.tab.c"
     break;
 
   case 72: /* struct_declarator: COLON constant_expression  */
-#line 388 "cgram.y"
+#line 393 "cgram.y"
                 {
 		}
-#line 2138 "cgram.tab.c"
+#line 2143 "cgram.tab.c"
     break;
 
   case 73: /* struct_declarator: declarator COLON constant_expression  */
-#line 391 "cgram.y"
+#line 396 "cgram.y"
                 {
 		}
-#line 2145 "cgram.tab.c"
+#line 2150 "cgram.tab.c"
     break;
 
   case 74: /* enum_specifier: ENUM LC enumerator_list RC  */
-#line 397 "cgram.y"
+#line 402 "cgram.y"
                 {
 		}
-#line 2152 "cgram.tab.c"
+#line 2157 "cgram.tab.c"
     break;
 
   case 75: /* enum_specifier: ENUM identifier LC enumerator_list RC  */
-#line 400 "cgram.y"
+#line 405 "cgram.y"
                 {
 		}
-#line 2159 "cgram.tab.c"
+#line 2164 "cgram.tab.c"
     break;
 
   case 76: /* enum_specifier: ENUM identifier  */
-#line 403 "cgram.y"
+#line 408 "cgram.y"
                 {
 		}
-#line 2166 "cgram.tab.c"
+#line 2171 "cgram.tab.c"
     break;
 
   case 78: /* enumerator_list: enumerator_list CM enumerator  */
-#line 410 "cgram.y"
+#line 415 "cgram.y"
                 {
 		}
-#line 2173 "cgram.tab.c"
+#line 2178 "cgram.tab.c"
     break;
 
   case 79: /* enumerator: IDENTIFIER  */
-#line 416 "cgram.y"
+#line 421 "cgram.y"
                 {
 		}
-#line 2180 "cgram.tab.c"
+#line 2185 "cgram.tab.c"
     break;
 
   case 80: /* $@7: %empty  */
-#line 419 "cgram.y"
+#line 424 "cgram.y"
                 {
 		}
-#line 2187 "cgram.tab.c"
+#line 2192 "cgram.tab.c"
     break;
 
   case 81: /* enumerator: IDENTIFIER $@7 ASN constant_expression  */
-#line 422 "cgram.y"
+#line 427 "cgram.y"
                 {
 		}
-#line 2194 "cgram.tab.c"
+#line 2199 "cgram.tab.c"
     break;
 
   case 82: /* declarator: direct_declarator  */
-#line 428 "cgram.y"
-        {
+#line 433 "cgram.y"
+                                {
 	}
-#line 2201 "cgram.tab.c"
+#line 2206 "cgram.tab.c"
     break;
 
   case 83: /* declarator: pointer direct_declarator  */
-#line 431 "cgram.y"
-        {
+#line 436 "cgram.y"
+                                {
 	}
-#line 2208 "cgram.tab.c"
+#line 2213 "cgram.tab.c"
     break;
 
   case 84: /* direct_declarator: identifier  */
-#line 437 "cgram.y"
+#line 442 "cgram.y"
         {
-        }
-#line 2215 "cgram.tab.c"
+				}
+#line 2220 "cgram.tab.c"
     break;
 
   case 85: /* direct_declarator: LP declarator RP  */
-#line 440 "cgram.y"
-        {
+#line 445 "cgram.y"
+                                {
 	}
-#line 2222 "cgram.tab.c"
+#line 2227 "cgram.tab.c"
     break;
 
   case 86: /* direct_declarator: direct_declarator LB RB  */
-#line 443 "cgram.y"
-        {
-        }
-#line 2229 "cgram.tab.c"
+#line 448 "cgram.y"
+                                {
+				}
+#line 2234 "cgram.tab.c"
     break;
 
   case 87: /* direct_declarator: direct_declarator LB constant_expression RB  */
-#line 446 "cgram.y"
-        {
-        }
-#line 2236 "cgram.tab.c"
+#line 451 "cgram.y"
+                                {
+				}
+#line 2241 "cgram.tab.c"
     break;
 
   case 88: /* direct_declarator: direct_declarator LP parameter_type_list RP  */
-#line 449 "cgram.y"
-        {
+#line 454 "cgram.y"
+                                {
 	}
-#line 2243 "cgram.tab.c"
+#line 2248 "cgram.tab.c"
     break;
 
   case 89: /* direct_declarator: direct_declarator LP RP  */
-#line 452 "cgram.y"
-        {
+#line 457 "cgram.y"
+                                {
 	}
-#line 2250 "cgram.tab.c"
+#line 2255 "cgram.tab.c"
     break;
 
   case 90: /* direct_declarator: direct_declarator LP identifier_list RP  */
-#line 455 "cgram.y"
-        {
+#line 460 "cgram.y"
+                                {
 	}
-#line 2257 "cgram.tab.c"
+#line 2262 "cgram.tab.c"
     break;
 
   case 92: /* function_declarator: pointer direct_function_declarator  */
-#line 462 "cgram.y"
-    {
-    }
-#line 2264 "cgram.tab.c"
+#line 467 "cgram.y"
+                {
+		}
+#line 2269 "cgram.tab.c"
     break;
 
   case 93: /* direct_function_declarator: direct_declarator LP parameter_type_list RP  */
-#line 468 "cgram.y"
-      {
-      }
-#line 2271 "cgram.tab.c"
+#line 473 "cgram.y"
+                        {
+			}
+#line 2276 "cgram.tab.c"
     break;
 
   case 94: /* direct_function_declarator: direct_declarator LP RP  */
-#line 471 "cgram.y"
-      {
-      }
-#line 2278 "cgram.tab.c"
+#line 476 "cgram.y"
+                        {
+			}
+#line 2283 "cgram.tab.c"
     break;
 
   case 95: /* direct_function_declarator: direct_declarator LP identifier_list RP  */
-#line 474 "cgram.y"
-      { /* pre-ANSI, error case */
-      }
-#line 2285 "cgram.tab.c"
+#line 479 "cgram.y"
+                        { /* pre-ANSI, error case */
+			}
+#line 2290 "cgram.tab.c"
     break;
 
   case 96: /* pointer: MUL  */
-#line 480 "cgram.y"
-      {
-      }
-#line 2292 "cgram.tab.c"
+#line 485 "cgram.y"
+                        {
+			}
+#line 2297 "cgram.tab.c"
     break;
 
   case 97: /* pointer: MUL type_qualifier_list  */
-#line 484 "cgram.y"
-      {
-      }
-#line 2299 "cgram.tab.c"
+#line 489 "cgram.y"
+                        {
+			}
+#line 2304 "cgram.tab.c"
     break;
 
   case 98: /* pointer: MUL pointer  */
-#line 487 "cgram.y"
-      {
-      }
-#line 2306 "cgram.tab.c"
+#line 492 "cgram.y"
+                        {
+			}
+#line 2311 "cgram.tab.c"
     break;
 
   case 99: /* pointer: MUL type_qualifier_list pointer  */
-#line 490 "cgram.y"
-      {
-      }
-#line 2313 "cgram.tab.c"
+#line 495 "cgram.y"
+                        {
+			}
+#line 2318 "cgram.tab.c"
     break;
 
   case 101: /* type_qualifier_list: type_qualifier_list type_qualifier  */
-#line 497 "cgram.y"
-    {
-    }
-#line 2320 "cgram.tab.c"
+#line 502 "cgram.y"
+                {
+		}
+#line 2325 "cgram.tab.c"
     break;
 
   case 102: /* parameter_type_list: parameter_list  */
-#line 502 "cgram.y"
-                     { }
-#line 2326 "cgram.tab.c"
+#line 507 "cgram.y"
+                                 { }
+#line 2331 "cgram.tab.c"
     break;
 
   case 103: /* parameter_type_list: parameter_list CM ELIPSIS  */
-#line 504 "cgram.y"
-    {
-    }
-#line 2333 "cgram.tab.c"
+#line 509 "cgram.y"
+                {
+		}
+#line 2338 "cgram.tab.c"
     break;
 
   case 104: /* parameter_list: parameter_declaration  */
-#line 509 "cgram.y"
-                             { }
-#line 2339 "cgram.tab.c"
+#line 514 "cgram.y"
+                                         { }
+#line 2344 "cgram.tab.c"
     break;
 
   case 105: /* parameter_list: parameter_list CM parameter_declaration  */
-#line 511 "cgram.y"
-      {
-      }
-#line 2346 "cgram.tab.c"
+#line 516 "cgram.y"
+                        {
+			}
+#line 2351 "cgram.tab.c"
     break;
 
   case 106: /* parameter_declaration: declaration_specifiers declarator  */
-#line 517 "cgram.y"
-      { }
-#line 2352 "cgram.tab.c"
+#line 522 "cgram.y"
+                        { }
+#line 2357 "cgram.tab.c"
     break;
 
   case 107: /* parameter_declaration: declaration_specifiers  */
-#line 519 "cgram.y"
-      { }
-#line 2358 "cgram.tab.c"
+#line 524 "cgram.y"
+                        { }
+#line 2363 "cgram.tab.c"
     break;
 
   case 108: /* parameter_declaration: declaration_specifiers abstract_declarator  */
-#line 521 "cgram.y"
-      { }
-#line 2364 "cgram.tab.c"
+#line 526 "cgram.y"
+                        { }
+#line 2369 "cgram.tab.c"
     break;
 
   case 109: /* identifier_list: IDENTIFIER  */
-#line 526 "cgram.y"
+#line 531 "cgram.y"
                 { }
-#line 2370 "cgram.tab.c"
+#line 2375 "cgram.tab.c"
     break;
 
   case 110: /* identifier_list: identifier_list CM IDENTIFIER  */
-#line 528 "cgram.y"
+#line 533 "cgram.y"
                 { }
-#line 2376 "cgram.tab.c"
+#line 2381 "cgram.tab.c"
     break;
 
   case 112: /* initializer: LC initializer_list RC  */
-#line 534 "cgram.y"
+#line 539 "cgram.y"
                 { }
-#line 2382 "cgram.tab.c"
+#line 2387 "cgram.tab.c"
     break;
 
   case 113: /* initializer: LC initializer_list CM RC  */
-#line 536 "cgram.y"
+#line 541 "cgram.y"
                 { }
-#line 2388 "cgram.tab.c"
+#line 2393 "cgram.tab.c"
     break;
 
   case 115: /* initializer_list: initializer_list CM initializer  */
-#line 542 "cgram.y"
+#line 547 "cgram.y"
                 { }
-#line 2394 "cgram.tab.c"
+#line 2399 "cgram.tab.c"
     break;
 
   case 117: /* type_name: specifier_qualifier_list abstract_declarator  */
-#line 548 "cgram.y"
-          { }
-#line 2400 "cgram.tab.c"
+#line 553 "cgram.y"
+                                        { }
+#line 2405 "cgram.tab.c"
     break;
 
   case 120: /* abstract_declarator: pointer direct_abstract_declarator  */
-#line 555 "cgram.y"
+#line 560 "cgram.y"
                 {
 		}
-#line 2407 "cgram.tab.c"
+#line 2412 "cgram.tab.c"
     break;
 
   case 121: /* direct_abstract_declarator: LP abstract_declarator RP  */
-#line 561 "cgram.y"
+#line 566 "cgram.y"
                 {
 		}
-#line 2414 "cgram.tab.c"
+#line 2419 "cgram.tab.c"
     break;
 
   case 122: /* direct_abstract_declarator: LB RB  */
-#line 564 "cgram.y"
+#line 569 "cgram.y"
                 {
 		}
-#line 2421 "cgram.tab.c"
+#line 2426 "cgram.tab.c"
     break;
 
   case 123: /* direct_abstract_declarator: LB constant_expression RB  */
-#line 567 "cgram.y"
+#line 572 "cgram.y"
                 {
 		}
-#line 2428 "cgram.tab.c"
+#line 2433 "cgram.tab.c"
     break;
 
   case 124: /* direct_abstract_declarator: direct_abstract_declarator LB RB  */
-#line 570 "cgram.y"
+#line 575 "cgram.y"
                 {
 		}
-#line 2435 "cgram.tab.c"
+#line 2440 "cgram.tab.c"
     break;
 
   case 125: /* direct_abstract_declarator: direct_abstract_declarator LB constant_expression RB  */
-#line 573 "cgram.y"
+#line 578 "cgram.y"
                 {
 		}
-#line 2442 "cgram.tab.c"
+#line 2447 "cgram.tab.c"
     break;
 
   case 126: /* direct_abstract_declarator: LP RP  */
-#line 576 "cgram.y"
+#line 581 "cgram.y"
                 {
 		}
-#line 2449 "cgram.tab.c"
+#line 2454 "cgram.tab.c"
     break;
 
   case 127: /* direct_abstract_declarator: LP parameter_type_list RP  */
-#line 579 "cgram.y"
+#line 584 "cgram.y"
                 {
 		}
-#line 2456 "cgram.tab.c"
+#line 2461 "cgram.tab.c"
     break;
 
   case 128: /* direct_abstract_declarator: direct_abstract_declarator LP RP  */
-#line 582 "cgram.y"
+#line 587 "cgram.y"
                 {
 		}
-#line 2463 "cgram.tab.c"
+#line 2468 "cgram.tab.c"
     break;
 
   case 129: /* direct_abstract_declarator: direct_abstract_declarator LP parameter_type_list RP  */
-#line 585 "cgram.y"
+#line 590 "cgram.y"
                 {
 		}
-#line 2470 "cgram.tab.c"
+#line 2475 "cgram.tab.c"
     break;
 
   case 136: /* labeled_statement: identifier COLON statement  */
-#line 600 "cgram.y"
-    {
-    }
-#line 2477 "cgram.tab.c"
+#line 605 "cgram.y"
+                {
+		}
+#line 2482 "cgram.tab.c"
     break;
 
   case 137: /* labeled_statement: CASE constant_expression COLON statement  */
-#line 603 "cgram.y"
-      { 
-      }
-#line 2484 "cgram.tab.c"
+#line 608 "cgram.y"
+                        { 
+			}
+#line 2489 "cgram.tab.c"
     break;
 
   case 138: /* labeled_statement: DEFAULT COLON statement  */
-#line 606 "cgram.y"
-      {
-      }
-#line 2491 "cgram.tab.c"
+#line 611 "cgram.y"
+                        {
+			}
+#line 2496 "cgram.tab.c"
     break;
 
   case 139: /* expression_statement: SM  */
-#line 612 "cgram.y"
+#line 617 "cgram.y"
                 {
 		}
-#line 2498 "cgram.tab.c"
+#line 2503 "cgram.tab.c"
     break;
 
   case 140: /* expression_statement: expression SM  */
-#line 615 "cgram.y"
+#line 620 "cgram.y"
                 {
 		}
-#line 2505 "cgram.tab.c"
+#line 2510 "cgram.tab.c"
     break;
 
   case 141: /* compound_statement: LC RC  */
-#line 621 "cgram.y"
-    {
-    }
-#line 2512 "cgram.tab.c"
+#line 626 "cgram.y"
+                {
+		}
+#line 2517 "cgram.tab.c"
     break;
 
   case 142: /* $@8: %empty  */
-#line 624 "cgram.y"
-      {
-      }
-#line 2519 "cgram.tab.c"
+#line 629 "cgram.y"
+                        {
+			}
+#line 2524 "cgram.tab.c"
     break;
 
   case 143: /* compound_statement: LC $@8 compound_statement_opt RC  */
-#line 627 "cgram.y"
-      {
-      }
-#line 2526 "cgram.tab.c"
+#line 632 "cgram.y"
+                        {
+			}
+#line 2531 "cgram.tab.c"
     break;
 
   case 144: /* compound_statement_opt: statement_list  */
-#line 633 "cgram.y"
-    {
-    }
-#line 2533 "cgram.tab.c"
+#line 638 "cgram.y"
+                {
+		}
+#line 2538 "cgram.tab.c"
     break;
 
   case 145: /* compound_statement_opt: declaration_list  */
-#line 637 "cgram.y"
-    {
-    }
-#line 2540 "cgram.tab.c"
+#line 642 "cgram.y"
+                {
+		}
+#line 2545 "cgram.tab.c"
     break;
 
   case 146: /* compound_statement_opt: declaration_list statement_list  */
-#line 641 "cgram.y"
-    { 
-     
-    }
-#line 2548 "cgram.tab.c"
+#line 646 "cgram.y"
+                { 
+		 
+		}
+#line 2553 "cgram.tab.c"
     break;
 
   case 148: /* statement_list: statement_list statement  */
-#line 650 "cgram.y"
+#line 655 "cgram.y"
                 {
 		}
-#line 2555 "cgram.tab.c"
+#line 2560 "cgram.tab.c"
     break;
 
   case 149: /* selection_statement: IF LP expression RP statement  */
-#line 656 "cgram.y"
-      {   
+#line 661 "cgram.y"
+                        {   
 
-      }
-#line 2563 "cgram.tab.c"
+			}
+#line 2568 "cgram.tab.c"
     break;
 
   case 150: /* selection_statement: IF LP expression RP statement ELSE statement  */
-#line 660 "cgram.y"
-     {
-     }
-#line 2570 "cgram.tab.c"
+#line 665 "cgram.y"
+                 {
+		 }
+#line 2575 "cgram.tab.c"
     break;
 
   case 151: /* selection_statement: SWITCH LP expression RP statement  */
-#line 664 "cgram.y"
-     {
-     }
-#line 2577 "cgram.tab.c"
+#line 669 "cgram.y"
+                 {
+		 }
+#line 2582 "cgram.tab.c"
     break;
 
   case 152: /* iteration_statement: WHILE LP expression RP statement  */
-#line 670 "cgram.y"
-    {
+#line 675 "cgram.y"
+                {
 
-    }
-#line 2585 "cgram.tab.c"
+		}
+#line 2590 "cgram.tab.c"
     break;
 
   case 153: /* iteration_statement: DO statement WHILE LP expression RP SM  */
-#line 674 "cgram.y"
-    {
-    }
-#line 2592 "cgram.tab.c"
+#line 679 "cgram.y"
+                {
+		}
+#line 2597 "cgram.tab.c"
     break;
 
   case 154: /* iteration_statement: FOR LP forcntrl RP statement  */
-#line 678 "cgram.y"
-      { 
-      }
-#line 2599 "cgram.tab.c"
+#line 683 "cgram.y"
+                        { 
+			}
+#line 2604 "cgram.tab.c"
     break;
 
   case 155: /* forcntrl: SM SM  */
-#line 684 "cgram.y"
-     {
-     }
-#line 2606 "cgram.tab.c"
+#line 689 "cgram.y"
+                 {
+		 }
+#line 2611 "cgram.tab.c"
     break;
 
   case 156: /* forcntrl: SM SM expression  */
-#line 687 "cgram.y"
-     {
-     }
-#line 2613 "cgram.tab.c"
+#line 692 "cgram.y"
+                 {
+		 }
+#line 2618 "cgram.tab.c"
     break;
 
   case 157: /* forcntrl: SM expression SM  */
-#line 690 "cgram.y"
-     {
-     }
-#line 2620 "cgram.tab.c"
+#line 695 "cgram.y"
+                 {
+		 }
+#line 2625 "cgram.tab.c"
     break;
 
   case 158: /* forcntrl: SM expression SM expression  */
-#line 693 "cgram.y"
-     {
-     }
-#line 2627 "cgram.tab.c"
+#line 698 "cgram.y"
+                 {
+		 }
+#line 2632 "cgram.tab.c"
     break;
 
   case 159: /* forcntrl: expression SM SM  */
-#line 696 "cgram.y"
-     {
-     }
-#line 2634 "cgram.tab.c"
+#line 701 "cgram.y"
+                 {
+		 }
+#line 2639 "cgram.tab.c"
     break;
 
   case 160: /* forcntrl: expression SM SM expression  */
-#line 699 "cgram.y"
-     {
-     }
-#line 2641 "cgram.tab.c"
+#line 704 "cgram.y"
+                 {
+		 }
+#line 2646 "cgram.tab.c"
     break;
 
   case 161: /* forcntrl: expression SM expression SM  */
-#line 702 "cgram.y"
-     {
-     }
-#line 2648 "cgram.tab.c"
+#line 707 "cgram.y"
+                 {
+		 }
+#line 2653 "cgram.tab.c"
     break;
 
   case 162: /* forcntrl: expression SM expression SM expression  */
-#line 705 "cgram.y"
-     {
-     }
-#line 2655 "cgram.tab.c"
+#line 710 "cgram.y"
+                 {
+		 }
+#line 2660 "cgram.tab.c"
     break;
 
   case 163: /* jump_statement: GOTO identifier SM  */
-#line 713 "cgram.y"
-  {
-  }
-#line 2662 "cgram.tab.c"
+#line 718 "cgram.y"
+        {
+	}
+#line 2667 "cgram.tab.c"
     break;
 
   case 164: /* jump_statement: CONTINUE SM  */
-#line 716 "cgram.y"
-  {
-  }
-#line 2669 "cgram.tab.c"
+#line 721 "cgram.y"
+        {
+	}
+#line 2674 "cgram.tab.c"
     break;
 
   case 165: /* jump_statement: BREAK SM  */
-#line 719 "cgram.y"
-  {
-  }
-#line 2676 "cgram.tab.c"
+#line 724 "cgram.y"
+        {
+	}
+#line 2681 "cgram.tab.c"
     break;
 
   case 166: /* jump_statement: RETURN SM  */
-#line 722 "cgram.y"
-  {
-  }
-#line 2683 "cgram.tab.c"
+#line 727 "cgram.y"
+        {
+	}
+#line 2688 "cgram.tab.c"
     break;
 
   case 167: /* jump_statement: RETURN expression SM  */
-#line 725 "cgram.y"
-  {
-  }
-#line 2690 "cgram.tab.c"
+#line 730 "cgram.y"
+        {
+	}
+#line 2695 "cgram.tab.c"
     break;
 
   case 168: /* expression: assignment_expression  */
-#line 731 "cgram.y"
+#line 736 "cgram.y"
                 {
 		}
-#line 2697 "cgram.tab.c"
+#line 2702 "cgram.tab.c"
     break;
 
   case 169: /* expression: expression CM assignment_expression  */
-#line 734 "cgram.y"
+#line 739 "cgram.y"
                 {
 		}
-#line 2704 "cgram.tab.c"
+#line 2709 "cgram.tab.c"
     break;
 
   case 171: /* assignment_expression: unary_expression assignment_operator assignment_expression  */
-#line 742 "cgram.y"
-          {
-          }
-#line 2711 "cgram.tab.c"
+#line 747 "cgram.y"
+                                        {
+					}
+#line 2716 "cgram.tab.c"
     break;
 
   case 172: /* assignment_operator: ASN  */
-#line 747 "cgram.y"
+#line 752 "cgram.y"
                 { }
-#line 2717 "cgram.tab.c"
+#line 2722 "cgram.tab.c"
     break;
 
   case 173: /* assignment_operator: MUASN  */
-#line 748 "cgram.y"
+#line 753 "cgram.y"
                 { }
-#line 2723 "cgram.tab.c"
+#line 2728 "cgram.tab.c"
     break;
 
   case 174: /* assignment_operator: DIASN  */
-#line 749 "cgram.y"
+#line 754 "cgram.y"
                 { }
-#line 2729 "cgram.tab.c"
+#line 2734 "cgram.tab.c"
     break;
 
   case 175: /* assignment_operator: MOASN  */
-#line 750 "cgram.y"
+#line 755 "cgram.y"
                 { }
-#line 2735 "cgram.tab.c"
+#line 2740 "cgram.tab.c"
     break;
 
   case 176: /* assignment_operator: PLASN  */
-#line 751 "cgram.y"
+#line 756 "cgram.y"
                 { }
-#line 2741 "cgram.tab.c"
+#line 2746 "cgram.tab.c"
     break;
 
   case 177: /* assignment_operator: MIASN  */
-#line 752 "cgram.y"
+#line 757 "cgram.y"
                 { }
-#line 2747 "cgram.tab.c"
+#line 2752 "cgram.tab.c"
     break;
 
   case 178: /* assignment_operator: SLASN  */
-#line 753 "cgram.y"
+#line 758 "cgram.y"
                 { }
-#line 2753 "cgram.tab.c"
+#line 2758 "cgram.tab.c"
     break;
 
   case 179: /* assignment_operator: SRASN  */
-#line 754 "cgram.y"
+#line 759 "cgram.y"
                 { }
-#line 2759 "cgram.tab.c"
+#line 2764 "cgram.tab.c"
     break;
 
   case 180: /* assignment_operator: ANASN  */
-#line 755 "cgram.y"
+#line 760 "cgram.y"
                 { }
-#line 2765 "cgram.tab.c"
+#line 2770 "cgram.tab.c"
     break;
 
   case 181: /* assignment_operator: ERASN  */
-#line 756 "cgram.y"
+#line 761 "cgram.y"
                 { }
-#line 2771 "cgram.tab.c"
+#line 2776 "cgram.tab.c"
     break;
 
   case 182: /* assignment_operator: ORASN  */
-#line 757 "cgram.y"
+#line 762 "cgram.y"
                 { }
-#line 2777 "cgram.tab.c"
+#line 2782 "cgram.tab.c"
     break;
 
   case 184: /* conditional_expression: logical_or_expression QUEST expression COLON conditional_expression  */
-#line 764 "cgram.y"
+#line 769 "cgram.y"
                 {
 		}
-#line 2784 "cgram.tab.c"
+#line 2789 "cgram.tab.c"
     break;
 
   case 187: /* logical_or_expression: logical_or_expression OROR logical_and_expression  */
-#line 777 "cgram.y"
+#line 782 "cgram.y"
                 {
-                }
-#line 2791 "cgram.tab.c"
+								}
+#line 2796 "cgram.tab.c"
     break;
 
   case 189: /* logical_and_expression: logical_and_expression ANDAND inclusive_or_expression  */
-#line 784 "cgram.y"
+#line 789 "cgram.y"
                 { }
-#line 2797 "cgram.tab.c"
+#line 2802 "cgram.tab.c"
     break;
 
   case 191: /* inclusive_or_expression: inclusive_or_expression OR exclusive_or_expression  */
-#line 790 "cgram.y"
+#line 795 "cgram.y"
                 {
 		}
-#line 2804 "cgram.tab.c"
+#line 2809 "cgram.tab.c"
     break;
 
   case 193: /* exclusive_or_expression: exclusive_or_expression ER and_expression  */
-#line 797 "cgram.y"
+#line 802 "cgram.y"
                 {
 		}
-#line 2811 "cgram.tab.c"
+#line 2816 "cgram.tab.c"
     break;
 
   case 195: /* and_expression: and_expression AND equality_expression  */
-#line 804 "cgram.y"
+#line 809 "cgram.y"
                 {
 		}
-#line 2818 "cgram.tab.c"
+#line 2823 "cgram.tab.c"
     break;
 
   case 197: /* equality_expression: equality_expression EQ relational_expression  */
-#line 811 "cgram.y"
+#line 816 "cgram.y"
                 {
-	        }
-#line 2825 "cgram.tab.c"
+					}
+#line 2830 "cgram.tab.c"
     break;
 
   case 198: /* equality_expression: equality_expression NE relational_expression  */
-#line 814 "cgram.y"
+#line 819 "cgram.y"
                 {
-                }
-#line 2832 "cgram.tab.c"
+								}
+#line 2837 "cgram.tab.c"
     break;
 
   case 200: /* relational_expression: relational_expression LT shift_expression  */
-#line 821 "cgram.y"
-     {
-     }
-#line 2839 "cgram.tab.c"
+#line 826 "cgram.y"
+                 {
+		 }
+#line 2844 "cgram.tab.c"
     break;
 
   case 201: /* relational_expression: relational_expression GT shift_expression  */
-#line 824 "cgram.y"
-     {
-     }
-#line 2846 "cgram.tab.c"
+#line 829 "cgram.y"
+                 {
+		 }
+#line 2851 "cgram.tab.c"
     break;
 
   case 202: /* relational_expression: relational_expression LE shift_expression  */
-#line 827 "cgram.y"
-     {
-     }
-#line 2853 "cgram.tab.c"
+#line 832 "cgram.y"
+                 {
+		 }
+#line 2858 "cgram.tab.c"
     break;
 
   case 203: /* relational_expression: relational_expression GE shift_expression  */
-#line 830 "cgram.y"
-     {
-     }
-#line 2860 "cgram.tab.c"
+#line 835 "cgram.y"
+                 {
+		 }
+#line 2865 "cgram.tab.c"
     break;
 
   case 205: /* shift_expression: shift_expression SHL additive_expression  */
-#line 837 "cgram.y"
-     {
-     }
-#line 2867 "cgram.tab.c"
+#line 842 "cgram.y"
+                 {
+		 }
+#line 2872 "cgram.tab.c"
     break;
 
   case 206: /* shift_expression: shift_expression SHR additive_expression  */
-#line 840 "cgram.y"
-     {
-     }
-#line 2874 "cgram.tab.c"
+#line 845 "cgram.y"
+                 {
+		 }
+#line 2879 "cgram.tab.c"
     break;
 
   case 208: /* additive_expression: additive_expression PLUS multiplicative_expression  */
-#line 847 "cgram.y"
-     {
-     }
-#line 2881 "cgram.tab.c"
+#line 852 "cgram.y"
+                 {
+		 }
+#line 2886 "cgram.tab.c"
     break;
 
   case 209: /* additive_expression: additive_expression MINUS multiplicative_expression  */
-#line 850 "cgram.y"
-     {
-     }
-#line 2888 "cgram.tab.c"
+#line 855 "cgram.y"
+                 {
+		 }
+#line 2893 "cgram.tab.c"
     break;
 
   case 211: /* multiplicative_expression: multiplicative_expression MUL cast_expression  */
-#line 857 "cgram.y"
-     {
-     }
-#line 2895 "cgram.tab.c"
+#line 862 "cgram.y"
+                 {
+		 }
+#line 2900 "cgram.tab.c"
     break;
 
   case 212: /* multiplicative_expression: multiplicative_expression DIV cast_expression  */
-#line 860 "cgram.y"
-     {
-     }
-#line 2902 "cgram.tab.c"
+#line 865 "cgram.y"
+                 {
+		 }
+#line 2907 "cgram.tab.c"
     break;
 
   case 213: /* multiplicative_expression: multiplicative_expression MOD cast_expression  */
-#line 863 "cgram.y"
-     {
-     }
-#line 2909 "cgram.tab.c"
+#line 868 "cgram.y"
+                 {
+		 }
+#line 2914 "cgram.tab.c"
     break;
 
   case 215: /* cast_expression: LP type_name RP cast_expression  */
-#line 870 "cgram.y"
-   {
-   }
-#line 2916 "cgram.tab.c"
+#line 875 "cgram.y"
+         {
+	 }
+#line 2921 "cgram.tab.c"
     break;
 
   case 217: /* unary_expression: INCOP unary_expression  */
-#line 878 "cgram.y"
-   {
-   }
-#line 2923 "cgram.tab.c"
+#line 883 "cgram.y"
+         {
+	 }
+#line 2928 "cgram.tab.c"
     break;
 
   case 218: /* unary_expression: DECOP unary_expression  */
-#line 881 "cgram.y"
-   {
-   }
-#line 2930 "cgram.tab.c"
+#line 886 "cgram.y"
+         {
+	 }
+#line 2935 "cgram.tab.c"
     break;
 
   case 219: /* unary_expression: unary_operator cast_expression  */
-#line 884 "cgram.y"
-   {
-   }
-#line 2937 "cgram.tab.c"
+#line 889 "cgram.y"
+         {
+	 }
+#line 2942 "cgram.tab.c"
     break;
 
   case 220: /* unary_expression: SIZEOF unary_expression  */
-#line 887 "cgram.y"
-   {
-   }
-#line 2944 "cgram.tab.c"
+#line 892 "cgram.y"
+         {
+	 }
+#line 2949 "cgram.tab.c"
     break;
 
   case 221: /* unary_expression: SIZEOF LP type_name RP  */
-#line 890 "cgram.y"
-   {  
-   }
-#line 2951 "cgram.tab.c"
+#line 895 "cgram.y"
+         {  
+	 }
+#line 2956 "cgram.tab.c"
     break;
 
   case 222: /* unary_operator: AND  */
-#line 896 "cgram.y"
-   {
-   }
-#line 2958 "cgram.tab.c"
+#line 901 "cgram.y"
+         {
+	 }
+#line 2963 "cgram.tab.c"
     break;
 
   case 223: /* unary_operator: MUL  */
-#line 899 "cgram.y"
-   {
-   }
-#line 2965 "cgram.tab.c"
+#line 904 "cgram.y"
+         {
+	 }
+#line 2970 "cgram.tab.c"
     break;
 
   case 224: /* unary_operator: PLUS  */
-#line 902 "cgram.y"
-   {
-   }
-#line 2972 "cgram.tab.c"
+#line 907 "cgram.y"
+         {
+	 }
+#line 2977 "cgram.tab.c"
     break;
 
   case 225: /* unary_operator: MINUS  */
-#line 905 "cgram.y"
-   {
-   }
-#line 2979 "cgram.tab.c"
+#line 910 "cgram.y"
+         {
+	 }
+#line 2984 "cgram.tab.c"
     break;
 
   case 226: /* unary_operator: NOT  */
-#line 908 "cgram.y"
-   {
-   }
-#line 2986 "cgram.tab.c"
+#line 913 "cgram.y"
+         {
+	 }
+#line 2991 "cgram.tab.c"
     break;
 
   case 227: /* unary_operator: BANG  */
-#line 911 "cgram.y"
-   {
-   }
-#line 2993 "cgram.tab.c"
+#line 916 "cgram.y"
+         {
+	 }
+#line 2998 "cgram.tab.c"
     break;
 
   case 229: /* postfix_expression: postfix_expression LB expression RB  */
-#line 919 "cgram.y"
-     {
-     }
-#line 3000 "cgram.tab.c"
+#line 924 "cgram.y"
+                 {
+		 }
+#line 3005 "cgram.tab.c"
     break;
 
   case 230: /* postfix_expression: postfix_expression LP RP  */
-#line 922 "cgram.y"
-     {
-     }
-#line 3007 "cgram.tab.c"
+#line 927 "cgram.y"
+                 {
+		 }
+#line 3012 "cgram.tab.c"
     break;
 
   case 231: /* postfix_expression: postfix_expression LP argument_expression_list RP  */
-#line 925 "cgram.y"
-     {
-     }
-#line 3014 "cgram.tab.c"
+#line 930 "cgram.y"
+                 {
+		 }
+#line 3019 "cgram.tab.c"
     break;
 
   case 232: /* postfix_expression: postfix_expression DOT identifier  */
-#line 928 "cgram.y"
-     {
-     }
-#line 3021 "cgram.tab.c"
+#line 933 "cgram.y"
+                 {
+		 }
+#line 3026 "cgram.tab.c"
     break;
 
   case 233: /* postfix_expression: postfix_expression FOLLOW identifier  */
-#line 931 "cgram.y"
-     {
-     }
-#line 3028 "cgram.tab.c"
+#line 936 "cgram.y"
+                 {
+		 }
+#line 3033 "cgram.tab.c"
     break;
 
   case 234: /* postfix_expression: postfix_expression INCOP  */
-#line 934 "cgram.y"
-     {
-     }
-#line 3035 "cgram.tab.c"
+#line 939 "cgram.y"
+                 {
+		 }
+#line 3040 "cgram.tab.c"
     break;
 
   case 235: /* postfix_expression: postfix_expression DECOP  */
-#line 937 "cgram.y"
-     {
-     }
-#line 3042 "cgram.tab.c"
+#line 942 "cgram.y"
+                 {
+		 }
+#line 3047 "cgram.tab.c"
     break;
 
   case 236: /* primary_expression: IDENTIFIER  */
-#line 943 "cgram.y"
-   { 
-   }
-#line 3049 "cgram.tab.c"
+#line 948 "cgram.y"
+         { 
+	 }
+#line 3054 "cgram.tab.c"
     break;
 
   case 238: /* primary_expression: STRING  */
-#line 947 "cgram.y"
-     {
-     }
-#line 3056 "cgram.tab.c"
+#line 952 "cgram.y"
+                 {
+		 }
+#line 3061 "cgram.tab.c"
     break;
 
   case 239: /* primary_expression: LP expression RP  */
-#line 950 "cgram.y"
-   { 
-   }
-#line 3063 "cgram.tab.c"
+#line 955 "cgram.y"
+         { 
+	 }
+#line 3068 "cgram.tab.c"
     break;
 
   case 240: /* argument_expression_list: assignment_expression  */
-#line 956 "cgram.y"
-   {
-   }
-#line 3070 "cgram.tab.c"
+#line 961 "cgram.y"
+         {
+	 }
+#line 3075 "cgram.tab.c"
     break;
 
   case 241: /* argument_expression_list: argument_expression_list CM assignment_expression  */
-#line 959 "cgram.y"
-   {
-   }
-#line 3077 "cgram.tab.c"
+#line 964 "cgram.y"
+         {
+	 }
+#line 3082 "cgram.tab.c"
     break;
 
   case 242: /* constant: ICON  */
-#line 965 "cgram.y"
-   {
-   }
-#line 3084 "cgram.tab.c"
+#line 970 "cgram.y"
+         {
+	 }
+#line 3089 "cgram.tab.c"
     break;
 
   case 243: /* constant: CCON  */
-#line 968 "cgram.y"
-   {
-   }
-#line 3091 "cgram.tab.c"
+#line 973 "cgram.y"
+         {
+	 }
+#line 3096 "cgram.tab.c"
     break;
 
   case 244: /* constant: FCON  */
-#line 971 "cgram.y"
-   {
-   }
-#line 3098 "cgram.tab.c"
+#line 976 "cgram.y"
+         {
+	 }
+#line 3103 "cgram.tab.c"
     break;
 
   case 245: /* constant: ENUMERATION_CONSTANT  */
-#line 974 "cgram.y"
-   {
-   }
-#line 3105 "cgram.tab.c"
+#line 979 "cgram.y"
+         {
+	 }
+#line 3110 "cgram.tab.c"
     break;
 
 
-#line 3109 "cgram.tab.c"
+#line 3114 "cgram.tab.c"
 
       default: break;
     }
@@ -3299,5 +3304,5 @@ yyreturn:
   return yyresult;
 }
 
-#line 978 "cgram.y"
+#line 983 "cgram.y"
 

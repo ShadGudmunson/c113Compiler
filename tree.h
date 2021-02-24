@@ -6,7 +6,7 @@ struct tree {
    struct token *leaf;   /* if nkids == 0; NULL for ε productions */
 };
 
-struct tree *alcTree(int label, int nkids, ...);
+struct tree *alcTree(int label, char *symbolname,int nkids, ...);
 int alctoken(int category);
 void tokenInit();
 void addChild(struct tree *, struct tree*);

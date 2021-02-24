@@ -9,16 +9,17 @@
 extern int yyerror(char *);
 extern int yylex(void);
 
+extern struct tree *root;
 /* declare externs for global variables and helper function prototypes */
 
 %}
 
 %union {
-  struct tree *treeptr;
+	struct tree *treeptr;
 }
 
 %token <treeptr> BAD_TOKEN
-%token <treeptr> ICON CCON FCON 
+%token <treeptr> ICON CCON FCON
 %token <treeptr> ENUMERATION_CONSTANT IDENTIFIER STRING
 %token <treeptr> SIZEOF
 %token <treeptr> INCOP DECOP SHL SHR LE GE EQ NE
@@ -28,7 +29,7 @@ extern int yylex(void);
 %token <treeptr> CM SM LT GT PLUS MINUS MUL DIV MOD LP RP LB RB LC RC COLON
 %token <treeptr> QUEST AND OR ER NOT FOLLOW BANG DOT
 
-%token <treeptr> TYPEDEF EXTERN STATIC AUTO REGISTER 
+%token <treeptr> TYPEDEF EXTERN STATIC AUTO REGISTER
 %token <treeptr> CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
 %token <treeptr> STRUCT UNION ENUM ELIPSIS
 
@@ -129,465 +130,378 @@ extern int yylex(void);
 %type <treeptr>     primary_expression
 %type <treeptr>     argument_expression_list
 %type <treeptr>     constant
-
-
 %%
 
-identifier
-    : IDENTIFIER
-      {
-      }
+identifier:
+    IDENTIFIER
+        { }
     | ENUMERATION_CONSTANT
-      {
-      }
+        { }
     ;
 
-file
-    : translation_unit
-      { 
-      }
-    ;
+file: translation_unit { root = $1; };
 
-translation_unit: 
-    external_declaration { }
+translation_unit:
+    external_declaration
+        { }
     | translation_unit external_declaration
-    { printNode($1);
-    }
+        { }
     ;
 
 /* "global" things. Does not imply that "extern" is present. */
-external_declaration:  
-   function_definition
-   { 
-   }
-   |  declaration 
-   { }
-   |  untyped_declaration
-   { }
-   ;
-
-function_definition:
-      function_declarator 
-      { /* old school pre-ANSI, no return type */
-      } 
-      compound_statement
-      { printNode($1);
-      }
-
-    | function_declarator declaration_list 
-      { /* old school pre ANSI */
-      } 
-      compound_statement
-      { printNode($1);
-      }
-
-    | declaration_specifiers function_declarator 
-      { /* proper ANSI C function definition */
-      } 
-      compound_statement 
-      { printNode($1);
-      }
-
-    | declaration_specifiers function_declarator  declaration_list
-      { /* declaration_list! This must be pre-ANSI  */
-      } 
-      compound_statement
-      {
-      }
-;
-
-declaration
-	: declaration_specifiers SM
-    { printNode($1);
-	  }
-	| declaration_specifiers  
-          init_declarator_list SM
-	  { printNode($1);
-	  }
-	;
-
-untyped_declaration
-	 : init_declarator_list SM
-	    { printNode($1);
-            }
+external_declaration:
+	 function_definition
+        { }
+	 | declaration
+        { }
+	 | untyped_declaration
+	    { }
 	 ;
 
-declaration_list
-	: declaration { }
+function_definition:
+    function_declarator
+        { /* old school pre-ANSI, no return type */ }
+    compound_statement
+        { }
+    | function_declarator declaration_list
+        { /* old school pre ANSI */ }
+    compound_statement
+        { }
+    | declaration_specifiers function_declarator
+        { /* proper ANSI C function definition */ }
+    compound_statement
+        { }
+    | declaration_specifiers function_declarator  declaration_list
+        { /* declaration_list! This must be pre-ANSI  */ }
+    compound_statement
+        { }
+;
+
+declaration:
+    declaration_specifiers SM
+		{ printNode($1); }
+	| declaration_specifiers init_declarator_list SM
+		{ printNode($1); }
+	;
+
+untyped_declaration:
+    init_declarator_list SM
+        { printNode($1); }
+    ;
+
+declaration_list:
+    declaration
+        { }
 	| declaration_list declaration
-	  { printNode($1);
-	  }
+		{ printNode($1); }
 	;
 
-declaration_specifiers
-	: storage_class_specifier 
-          /* defines TYPEDEF,EXTERN,STATIC,AUTO,REGISTER*/
+declaration_specifiers:
+ storage_class_specifier
+    /* defines TYPEDEF,EXTERN,STATIC,AUTO,REGISTER*/
 	| storage_class_specifier declaration_specifiers
-          { printNode($1);
-          }
-	| type_specifier 
-	| type_specifier 
-          declaration_specifiers
-	  {   printNode($1);
-          }
-	| type_qualifier  
+        { printNode($1); }
+	| type_specifier
+        { }
+	| type_specifier declaration_specifiers
+        {   printNode($1); }
+	| type_qualifier
+        { }
 	| type_qualifier declaration_specifiers
-          {   printNode($1);
-            }
+        {   printNode($1); }
 	;
 
 
-storage_class_specifier
+storage_class_specifier:
 	/* here we will know the storage specifier */
-
-	:  TYPEDEF  /* indicate typedef is seen */
-	   {
-           }
+    TYPEDEF  /* indicate typedef is seen */
+        { }
 	 | EXTERN
-  	   {
-           }
+        { }
 	 | STATIC
-	   {
-           }
+		{ }
 	 | AUTO
-           {
-           }
+        { }
 	 | REGISTER
-	   {
-           }
+		{ }
 	;
 
-type_specifier
-           :  actual_type_specifier /* build ctype */
-	   | type_adjective 
-	   ;
+type_specifier:
+    actual_type_specifier /* build ctype */
+        { }
+    | type_adjective
+        { }
+    ;
 
-actual_type_specifier
-	: VOID
-	{
-        }	
-        | CHAR
-        {
-        }
+actual_type_specifier:
+    VOID
+        { }
+    | CHAR
+        { }
 	| INT
-	{
-        }
+        { }
 	| FLOAT
-        {
-        }
-        | DOUBLE
-        {
-        }
-        | TYPEDEF_NAME
-	{
-        }
+        { }
+    | DOUBLE
+        { }
+    | TYPEDEF_NAME
+        { }
 	| struct_or_union_specifier
 	| enum_specifier
 	;
 
-type_adjective    /* Build ctype for all */
-	 : SHORT
-           {
-           }
-	 | LONG
-           {
-           }
-	 | SIGNED
-           {
-           }
-	 | UNSIGNED
-           {
-           }
-	 ;
+type_adjective:    /* Build ctype for all */
+    SHORT
+        { }
+    | LONG
+        { }
+    | SIGNED
+        { }
+    | UNSIGNED
+        { }
+    ;
 
-type_qualifier
-	: CONST
-          {
-          } 
-	 | VOLATILE
-	  {
-          } 
+type_qualifier:
+    CONST
+        { }
+	| VOLATILE
+		{ }
 	;
 
 struct_or_union_specifier
-    : struct_or_union
-    LC { } struct_declaration_list RC
-    {
-    }
-
+    : struct_or_union LC { } struct_declaration_list RC
+        { }
     | struct_or_union identifier LC { } struct_declaration_list RC
-    {
-    }
+        { }
     | struct_or_union identifier
-    {
-    }
+        { }
     ;
 
-struct_or_union
-    : STRUCT
-      {  } /* build ctype */
+struct_or_union:
+    STRUCT
+        {  } /* build ctype */
     | UNION
-      {  }  /* build ctype */
+        {  }  /* build ctype */
     ;
 
-struct_declaration_list
-	: struct_declaration 
+struct_declaration_list:
+    struct_declaration
         {  }
 	| struct_declaration_list struct_declaration
 		{  }
 	;
 
-init_declarator_list
-
-	: init_declarator 
+init_declarator_list:
+    init_declarator
         /* an identifier has been found and added to the symbol table*/
         /* so reset ctype to be base type of declaration */
-
 	| init_declarator_list CM init_declarator
-        { 
-        }
+        { }
 	;
 
-init_declarator
-	: declarator { }
+init_declarator:
+    declarator
+        { }
 	| declarator ASN initializer
-          { }
+        { }
 	;
 
-struct_declaration
-	: specifier_qualifier_list SM
-	  {
-	  }
+struct_declaration:
+    specifier_qualifier_list SM
+		{ }
 	|  specifier_qualifier_list struct_declarator_list  SM
-	  {
-          }
+		{ }
 	;
 
-specifier_qualifier_list
-	: type_specifier /* ctype build */
+specifier_qualifier_list:
+ type_specifier /* ctype build */
 	| type_specifier specifier_qualifier_list  /* ctype build */
-		{
-		}
+		{ }
 	| type_qualifier /* ctype build */
+        { }
 	| type_qualifier specifier_qualifier_list  /* ctype build */
-		{
-		}
+		{ }
 	;
 
-struct_declarator_list
-	: struct_declarator
-	| struct_declarator_list CM
-	  struct_declarator
-		{
-		}
+struct_declarator_list:
+ struct_declarator
+	| struct_declarator_list CM struct_declarator
+		{ }
 	;
 
-struct_declarator
-	: declarator
+struct_declarator:
+ declarator
 	| COLON constant_expression
-		{
-		}
+		{ }
 	| declarator COLON constant_expression
-		{
-		}
+		{ }
 	;
 
-enum_specifier
-	: ENUM LC enumerator_list RC
-		{
-		}
+enum_specifier:
+ ENUM LC enumerator_list RC
+		{ }
 	| ENUM identifier LC enumerator_list RC
-		{
-		}
+		{ }
 	| ENUM identifier
-		{
-		}
+		{ }
 	;
 
-enumerator_list
-	: enumerator
+enumerator_list:
+ enumerator
 	| enumerator_list CM enumerator
-		{
-		}
+		{ }
 	;
 
-enumerator
-	: IDENTIFIER
-		{
-		}
-	| IDENTIFIER
-		{
-		}
-		ASN constant_expression
-		{
-		}
+enumerator:
+    IDENTIFIER
+		{ }
+	| IDENTIFIER { } ASN constant_expression
+        { }
 	;
 
-declarator
-	: direct_declarator
-        {
-	}
+declarator:
+ direct_declarator
+        { }
 	| pointer direct_declarator
-        {
-	}
+        { }
 	;
 
-direct_declarator
-	: identifier  /* this could be a TRUE identifier or a TYPEDEF identifier*/
-	{
-        }
+direct_declarator:
+    identifier  /* this could be a TRUE identifier or a TYPEDEF identifier*/
+        { }
 	| LP declarator RP
-        {
-	}
+        { }
 	| direct_declarator LB RB
-        {
-        }
+        { }
 	| direct_declarator LB constant_expression RB
-        {
-        }
-        | direct_declarator LP parameter_type_list RP
-        {
-	}
+        { }
+    | direct_declarator LP parameter_type_list RP
+        { }
 	| direct_declarator  LP RP
-        {
-	}
+        { }
 	| direct_declarator  LP identifier_list RP
-        {
-	}
-        ;
+        { }
+    ;
 
-function_declarator : 
-    direct_function_declarator 
+function_declarator:
+    direct_function_declarator
+        { }
     | pointer direct_function_declarator
-    {
-    }
+		{ }
     ;
 
-direct_function_declarator
-    : direct_declarator LP parameter_type_list RP
-      {
-      }
+direct_function_declarator:
+    direct_declarator LP parameter_type_list RP
+        { }
     | direct_declarator LP RP
-      {
-      }
+        { }
     | direct_declarator LP identifier_list RP
-      { /* pre-ANSI, error case */
-      }
+        { /* pre-ANSI, error case */}
     ;
 
-pointer
-    : MUL
-      {
-      }
-    | MUL 
+pointer:
+    MUL
+        { }
+    | MUL
     type_qualifier_list
-      {
-      }
+        { }
     | MUL pointer
-      {
-      }
+        { }
     | MUL type_qualifier_list pointer
-      {
-      }
+        { }
     ;
 
-type_qualifier_list
-    : type_qualifier
+type_qualifier_list:
+    type_qualifier
+        { }
     | type_qualifier_list type_qualifier
-    {
-    }
+        { }
     ;
 
-parameter_type_list
-    : parameter_list { }
+parameter_type_list:
+    parameter_list
+        { }
     | parameter_list CM ELIPSIS
-    {
-    }
+        { }
     ;
 
-parameter_list
-    : parameter_declaration  { }
+parameter_list:
+    parameter_declaration
+        { }
     | parameter_list CM parameter_declaration
-      {
-      }
+        { }
     ;
 
-parameter_declaration
-    : declaration_specifiers declarator
-      { }
-    |    declaration_specifiers
-      { }
-    |    declaration_specifiers abstract_declarator
-      { }
+parameter_declaration:
+    declaration_specifiers declarator
+        { }
+    | declaration_specifiers
+        { }
+    | declaration_specifiers abstract_declarator
+        { }
     ;
 
-identifier_list
-	: IDENTIFIER
+identifier_list:
+	IDENTIFIER
 		{ }
 	| identifier_list CM IDENTIFIER
 		{ }
 	;
 
-initializer
-	: assignment_expression
+initializer:
+    assignment_expression
 	| LC initializer_list RC
 		{ }
 	| LC initializer_list CM RC
 		{ }
 	;
 
-initializer_list
-	: initializer
+initializer_list:
+    initializer
+        { }
 	| initializer_list CM initializer
 		{ }
 	;
 
-type_name
-	: specifier_qualifier_list
+type_name:
+    specifier_qualifier_list
+        { }
 	| specifier_qualifier_list   abstract_declarator
-          { }
+        { }
 	;
 
-abstract_declarator
-	: pointer
+abstract_declarator:
+    pointer
+        { }
 	| direct_abstract_declarator
+        { }
 	| pointer direct_abstract_declarator
-		{
-		}
+		{ }
 	;
 
-direct_abstract_declarator
-	: LP abstract_declarator RP
-		{
-		}
+direct_abstract_declarator:
+    LP abstract_declarator RP
+		{ }
 	| LB RB
-		{
-		}
+		{ }
 	| LB constant_expression RB
-		{
-		}
+		{ }
 	| direct_abstract_declarator LB RB
-		{
-		}
+		{ }
 	| direct_abstract_declarator LB constant_expression RB
-		{
-		}
+		{ }
 	| LP RP
-		{
-		}
+		{ }
 	| LP parameter_type_list RP
-		{
-		}
+		{ }
 	| direct_abstract_declarator LP RP
-		{
-		}
+		{ }
 	| direct_abstract_declarator LP parameter_type_list RP
-		{
-		}
+		{ }
 	;
 
-statement: 
-        labeled_statement
+statement:
+    labeled_statement
 	| compound_statement
 	| expression_statement
 	| selection_statement
@@ -595,156 +509,112 @@ statement:
 	| jump_statement
 	;
 
-labeled_statement: 
+labeled_statement:
     identifier COLON statement
-    {
-    }
+        { }
     | CASE constant_expression COLON statement
-      { 
-      }
+        { }
     | DEFAULT COLON statement
-      {
-      }
+        { }
     ;
 
-expression_statement
-	: SM
-		{
-		}
+expression_statement:
+    SM
+		{ }
 	| expression SM
-		{
-		}
+		{ }
 	;
 
 compound_statement:
     LC  RC
-    {
-    }
-    | LC 
-      {
-      }
-      compound_statement_opt RC 
-      {
-      } 
+		{ }
+    | LC { } compound_statement_opt RC
+        { }
     ;
 
 compound_statement_opt:
-    statement_list 
-    {
-    }
-
+    statement_list
+		{ }
     | declaration_list
-    {
-    }
+		{ }
+    | declaration_list statement_list
+		{ }
+    ;
 
-    | declaration_list statement_list 
-    { 
-     
-    }
-
-;
-
-statement_list
-	: statement
+statement_list:
+ statement
 	| statement_list statement
-		{
-		}
+		{ }
 	;
 
-selection_statement: 
-   IF LP expression RP statement %prec THEN
-      {   
+selection_statement:
+	IF LP expression RP statement %prec THEN
+        { }
+    | IF LP expression RP statement ELSE statement
+        { }
+    | SWITCH LP expression RP statement
+        {  }
+    ;
 
-      }
-   | IF LP expression RP statement ELSE statement
-     {
-     }
-
-   | SWITCH LP expression RP statement
-     {
-     }
-   ;
-
-iteration_statement: 
+iteration_statement:
     WHILE LP expression RP statement
-    {
-
-    }
+        { }
     | DO statement WHILE LP expression RP SM
-    {
-    }		
-
+        { }
     | FOR LP forcntrl RP statement
-      { 
-      }
-     ;
+        { }
+    ;
 
-forcntrl
-     : SM SM
-     {
-     }
-     | SM SM expression
-     {
-     }
-     | SM expression  SM
-     {
-     }
-     | SM expression  SM expression
-     {
-     }
-     | expression  SM SM
-     {
-     }
-     | expression  SM SM expression
-     {
-     }
-     | expression  SM expression  SM
-     {
-     }
-     | expression  SM expression  SM expression
-     {
-     }
-     ;
+forcntrl:
+    SM SM
+        { }
+    | SM SM expression
+        { }
+    | SM expression  SM
+        { }
+    | SM expression  SM expression
+        { }
+    | expression  SM SM
+        { }
+    | expression  SM SM expression
+        { }
+    | expression  SM expression  SM
+        { }
+    | expression  SM expression  SM expression
+        { }
+    ;
 
 
 
 jump_statement:
-  GOTO identifier SM
-  {
-  }
-  | CONTINUE SM
-  {
-  }
-  | BREAK SM
-  {
-  }
-  | RETURN SM
-  {
-  }
-  | RETURN expression SM
-  {
-  }
-  ;
+	GOTO identifier SM
+        { }
+	| CONTINUE SM
+        { }
+	| BREAK SM
+        { }
+	| RETURN SM
+        { }
+	| RETURN expression SM
+        { }
+	;
 
-expression
-	: assignment_expression
-		{
-		}
+expression:
+    assignment_expression
+		{ }
 	| expression CM assignment_expression
-		{
-		}
+		{ }
 	;
 
 
-assignment_expression
-	: conditional_expression
+assignment_expression:
+    conditional_expression
 	| unary_expression assignment_operator assignment_expression
-          {
-          }
+        { }
 	;
 
-assignment_operator
-	: ASN   { }
+assignment_operator:
+    ASN   { }
 	| MUASN { }
 	| DIASN { }
 	| MOASN { }
@@ -758,221 +628,190 @@ assignment_operator
 	;
 
 
-conditional_expression
-	: logical_or_expression
+conditional_expression:
+    logical_or_expression
+        { }
 	| logical_or_expression QUEST expression COLON conditional_expression
-		{
-		}
+		{ }
 	;
 
 
-constant_expression
-	: conditional_expression
+constant_expression:
+    conditional_expression
+        { }
 	;
 
 
-logical_or_expression
-	: logical_and_expression
+logical_or_expression:
+    logical_and_expression
+        { }
 	| logical_or_expression OROR logical_and_expression
-		{
-                }
+		{ }
 	;
 
-logical_and_expression
-	: inclusive_or_expression
+logical_and_expression:
+    inclusive_or_expression
+        { }
 	| logical_and_expression ANDAND inclusive_or_expression
 		{ }
 	;
 
-inclusive_or_expression
-	: exclusive_or_expression
+inclusive_or_expression:
+    exclusive_or_expression
+        { }
 	| inclusive_or_expression OR exclusive_or_expression
-		{
-		}
+		{ }
 	;
 
-exclusive_or_expression
-	: and_expression
+exclusive_or_expression:
+    and_expression
+        { }
 	| exclusive_or_expression ER and_expression
-		{
-		}
+		{ }
 	;
 
-and_expression
-	: equality_expression
+and_expression:
+    equality_expression
+        { }
 	| and_expression AND equality_expression
-		{
-		}
+		{ }
 	;
 
-equality_expression
-	: relational_expression
+equality_expression:
+    relational_expression
+        { }
 	| equality_expression EQ relational_expression
-		{
-	        }
+		{ }
 	| equality_expression NE relational_expression
-		{
-                }			   
+		{ }
 	;
 
 relational_expression:
-   shift_expression
-   | relational_expression LT shift_expression
-     {
-     }
-   | relational_expression GT shift_expression
-     {
-     }
-   | relational_expression LE shift_expression
-     {
-     }
-   | relational_expression GE shift_expression
-     {
-     }
-   ;
+	 shift_expression
+        { }
+	 | relational_expression LT shift_expression
+        { }
+	 | relational_expression GT shift_expression
+        { }
+	 | relational_expression LE shift_expression
+        { }
+	 | relational_expression GE shift_expression
+		{ }
+	 ;
 
 shift_expression:
-   additive_expression
-   | shift_expression SHL additive_expression
-     {
-     }
-   | shift_expression SHR additive_expression
-     {
-     }
-     ;
+	 additive_expression
+        { }
+	 | shift_expression SHL additive_expression
+        { }
+	 | shift_expression SHR additive_expression
+        { }
+		 ;
 
-additive_expression: 
-   multiplicative_expression
-   | additive_expression PLUS multiplicative_expression
-     {
-     }
-   | additive_expression MINUS multiplicative_expression
-     {
-     }
-   ;
+additive_expression:
+	 multiplicative_expression
+        { }
+	 | additive_expression PLUS multiplicative_expression
+        { }
+	 | additive_expression MINUS multiplicative_expression
+        { }
+	 ;
 
 multiplicative_expression:
-   cast_expression
-   | multiplicative_expression MUL cast_expression
-     {
-     }
-   | multiplicative_expression DIV cast_expression
-     {
-     }
-   | multiplicative_expression MOD cast_expression
-     {
-     }
-   ;
+	 cast_expression
+        { }
+	 | multiplicative_expression MUL cast_expression
+        { }
+	 | multiplicative_expression DIV cast_expression
+        { }
+	 | multiplicative_expression MOD cast_expression
+        { }
+	 ;
 
 cast_expression:
-   unary_expression
-   | LP type_name RP cast_expression
-   {
-   }
-   ;
+	 unary_expression
+        { }
+	 | LP type_name RP cast_expression
+        { }
+	 ;
 
 
-unary_expression:        
-   postfix_expression
-   | INCOP unary_expression
-   {
-   }
-   | DECOP unary_expression
-   {
-   }
-   | unary_operator cast_expression
-   {
-   }
-   | SIZEOF unary_expression
-   {
-   }
-   | SIZEOF LP type_name RP
-   {  
-   }
-   ;
+unary_expression:
+	 postfix_expression
+        { }
+	 | INCOP unary_expression
+        { }
+	 | DECOP unary_expression
+        { }
+	 | unary_operator cast_expression
+        { }
+	 | SIZEOF unary_expression
+        { }
+	 | SIZEOF LP type_name RP
+        { }
+	 ;
 
 unary_operator:
-   AND
-   {
-   }
-   | MUL
-   {
-   }
-   | PLUS
-   {
-   }
-   | MINUS
-   {
-   }
-   | NOT
-   {
-   }
-   | BANG
-   {
-   }
-   ;
+	 AND
+        { }
+	 | MUL
+        { }
+	 | PLUS
+        { }
+	 | MINUS
+        { }
+	 | NOT
+        { }
+	 | BANG
+        { }
+	 ;
 
 
-postfix_expression:      
-   primary_expression
-   | postfix_expression LB expression RB
-     {
-     }
-   | postfix_expression LP RP
-     {
-     }
-   | postfix_expression LP  argument_expression_list RP
-     {
-     }
-   | postfix_expression DOT identifier
-     {
-     }
-   | postfix_expression FOLLOW identifier
-     {
-     }
-   | postfix_expression INCOP
-     {
-     }
-   | postfix_expression DECOP
-     {
-     }
-   ;
+postfix_expression:
+	 primary_expression
+	 | postfix_expression LB expression RB
+		 { }
+	 | postfix_expression LP RP
+		 { }
+	 | postfix_expression LP  argument_expression_list RP
+		 { }
+	 | postfix_expression DOT identifier
+		 { }
+	 | postfix_expression FOLLOW identifier
+		 { }
+	 | postfix_expression INCOP
+		 { }
+	 | postfix_expression DECOP
+		 { }
+	 ;
 
-primary_expression: 
-   IDENTIFIER
-   { 
-   }
-   | constant
-   | STRING
-     {
-     }
-   | LP expression RP
-   { 
-   }
-   ;
+primary_expression:
+	 IDENTIFIER
+        { }
+	 | constant
+        { }
+	 | STRING
+        { }
+	 | LP expression RP
+	 { }
+	 ;
 
-argument_expression_list: 
-   assignment_expression 
-   {
-   }
-   | argument_expression_list CM assignment_expression
-   {
-   }
-   ;
+argument_expression_list:
+    assignment_expression
+        { }
+    | argument_expression_list CM assignment_expression
+        { }
+    ;
 
 constant:
-   ICON
-   {
-   }
-   | CCON
-   {
-   }
-   | FCON
-   {
-   }
-   | ENUMERATION_CONSTANT
-   {
-   }
-   ;
+    ICON
+        { }
+    | CCON
+        { }
+    | FCON
+        { }
+    | ENUMERATION_CONSTANT
+        { }
+    ;
 
 %%
