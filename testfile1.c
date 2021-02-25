@@ -7,3 +7,7 @@ int main(){
     }
     return 0;
 }
+
+void test(int var){
+    var++;
+}

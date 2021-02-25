@@ -17,7 +17,7 @@ cgram.tab.o: cgram.tab.c
 	gcc -ggdb3 -Wall -c cgram.tab.c
 
 cgram.tab.h cgram.tab.c: cgram.y tree.h
-	bison -d cgram.y
+	bison -v -d cgram.y
 
 clean: 
 	rm *.o clex.c cgram.tab.h c113c

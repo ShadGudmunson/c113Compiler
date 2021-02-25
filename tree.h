@@ -14,4 +14,6 @@ void printNode(struct tree *);
 void visit(struct tree *tr);
 void postTrav(struct tree *tr, void (*visit)(struct tree *));
 void preTrav(struct tree *tr, void (*visit)(struct tree *));
-char * convertString(char* str);
+char *convertString(char* str);
+char *humanreadable(struct tree *t);
+void treeprint(struct tree *t, int depth);

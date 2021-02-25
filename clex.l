@@ -15,7 +15,8 @@ int rows = 0, words = 0, chars = 0;
 
 void yyerror (char const *s){
 	fprintf (stderr, "%s\n", s);
-	fprintf (stderr, "Something went wrong with \"%s\" in file %s on line %d\n", yylval.treeptr->leaf->text, yylval.treeptr->leaf->filename, yylval.treeptr->leaf->lineno);
+	fprintf (stderr, "Something went wrong with \"%s\" in file %s on line %d\n",\
+	 yylval.treeptr->leaf->text, yylval.treeptr->leaf->filename, yylval.treeptr->leaf->lineno);
 	exit(1);
 }
 

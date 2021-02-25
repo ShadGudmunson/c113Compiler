@@ -6,6 +6,7 @@
 
 #define FILEERR 2
 #define MALERR  3
+#define YYDEBUG 1
 
 struct tokenlist {
     struct token *t;
@@ -33,7 +34,6 @@ int main(int argc, char **argv)
 
     for(int i = 1; i < argc; i++){
         filename = argv[i];
-        printf("%s\n", argv[i]);
         if(strstr(argv[i], ".c") == NULL){
             if((new_str = malloc(strlen(argv[i])+strlen(".c")+1)) != NULL){
                 new_str[0] = '\0';   // ensures the memory is an empty string

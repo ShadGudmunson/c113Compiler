@@ -66,9 +66,6 @@ int alctoken(int category)
         yylval.treeptr->leaf->ival = atoi(yylval.treeptr->leaf->text);
     }
     
-    printf("From alctoken:\n");
-    printNode(yylval.treeptr);
-
 	return category;
 
 }
@@ -185,4 +182,23 @@ char * convertString(char* str)
 		}
 	}
 	return new_str;
+}
+
+char *humanreadable(struct tree *t){
+    return(t->symbolname);
+}
+
+void treeprint(struct tree *t, int depth)
+{
+    int i;
+    if (t->nkids != 0){
+        printf("%*s %s: %d\n", depth*2, " ", humanreadable(t), t->nkids);
+  
+        for(i=0; i < t->nkids ; i++){
+            treeprint(t->kids[i], depth+1);
+        }
+    } else {
+        printf("%*s %s: %d\n", depth*2, " ",t->leaf->text, t->leaf->category);
+    }
+    
 }
