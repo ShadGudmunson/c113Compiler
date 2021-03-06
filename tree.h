@@ -17,3 +17,6 @@ void preTrav(struct tree *tr, void (*visit)(struct tree *));
 char *convertString(char* str);
 char *humanreadable(struct tree *t);
 void treeprint(struct tree *t, int depth);
+void parseTree(struct tree *t);
+void printsyms(struct tree *t);
+void printsymbol(char *s);

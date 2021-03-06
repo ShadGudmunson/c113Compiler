@@ -1,13 +1,10 @@
-#include <stdio.h>
-
 int main(){
-    while(1){
-        double test = 20.0;
-        printf("hello\tworld!");
-    }
-    return 0;
+    int test = 20;
+    double test2 = 521.0;
+    char juice = '3';
 }
 
-void test(int var){
-    var++;
+void foo()
+{
+    int jim = 42;
 }

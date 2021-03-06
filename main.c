@@ -3,9 +3,8 @@
 #include <string.h>
 #include "ytab.h"
 #include "tree.h"
+#include "errdef.h"
 
-#define FILEERR 2
-#define MALERR  3
 #define YYDEBUG 1
 
 struct tokenlist {
@@ -59,6 +58,8 @@ int main(int argc, char **argv)
         }
 
         yyparse();
+
+        preTrav(root, printsyms);
 
         if(new_str != NULL){
             free(new_str);

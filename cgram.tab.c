@@ -73,6 +73,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tree.h"
+#include "prodrule.h"
+#include "symtab.h"
 
 //#define YYDEBUG 1
 //#define DEBUG
@@ -84,7 +86,7 @@ extern struct tree *root;
 /* declare externs for global variables and helper function prototypes */
 
 
-#line 88 "cgram.tab.c"
+#line 90 "cgram.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -652,30 +654,30 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   137,   137,   139,   143,   148,   150,   156,   158,   160,
-     165,   167,   169,   171,   176,   178,   183,   188,   190,   195,
-     197,   199,   201,   203,   205,   212,   214,   216,   218,   220,
-     225,   227,   232,   234,   236,   238,   240,   242,   244,   246,
-     251,   253,   255,   257,   262,   264,   269,   271,   273,   278,
-     280,   285,   287,   292,   295,   300,   302,   307,   309,   314,
-     315,   317,   319,   324,   325,   330,   331,   333,   338,   340,
-     342,   347,   349,   354,   356,   361,   363,   368,   370,   372,
-     374,   376,   378,   380,   384,   386,   391,   393,   395,   400,
-     402,   404,   406,   411,   413,   418,   420,   425,   427,   432,
-     434,   436,   441,   443,   448,   450,   452,   457,   459,   464,
-     466,   471,   473,   475,   481,   483,   485,   487,   489,   491,
-     493,   495,   497,   502,   503,   504,   505,   506,   507,   511,
-     513,   515,   520,   522,   527,   529,   534,   536,   538,   543,
-     545,   550,   552,   554,   559,   561,   563,   568,   570,   572,
-     574,   576,   578,   580,   582,   589,   591,   593,   595,   597,
-     602,   604,   610,   612,   617,   618,   619,   620,   621,   622,
-     623,   624,   625,   626,   627,   632,   634,   640,   645,   647,
-     652,   654,   659,   661,   666,   668,   673,   675,   680,   682,
-     684,   689,   691,   693,   695,   697,   702,   704,   706,   711,
-     713,   715,   720,   722,   724,   726,   731,   733,   739,   741,
-     743,   745,   747,   749,   754,   756,   758,   760,   762,   764,
-     770,   771,   773,   775,   777,   779,   781,   783,   788,   790,
-     792,   794,   799,   801,   806,   808,   810,   812
+       0,   139,   139,   141,   145,   152,   154,   160,   162,   164,
+     169,   171,   173,   175,   180,   182,   187,   192,   194,   199,
+     201,   203,   205,   207,   209,   216,   218,   220,   222,   224,
+     229,   231,   236,   238,   240,   242,   244,   246,   248,   250,
+     256,   258,   260,   262,   267,   269,   274,   276,   278,   283,
+     285,   290,   292,   297,   300,   305,   307,   312,   314,   319,
+     320,   322,   324,   329,   330,   335,   336,   338,   343,   345,
+     347,   352,   354,   359,   361,   366,   368,   373,   375,   377,
+     379,   381,   383,   385,   389,   391,   396,   398,   400,   405,
+     407,   409,   411,   416,   418,   423,   425,   430,   432,   437,
+     439,   441,   446,   448,   453,   455,   457,   462,   464,   469,
+     471,   476,   478,   480,   486,   488,   490,   492,   494,   496,
+     498,   500,   502,   507,   509,   511,   513,   515,   517,   522,
+     524,   526,   531,   533,   538,   540,   545,   547,   549,   554,
+     556,   561,   563,   565,   570,   572,   574,   579,   581,   583,
+     585,   587,   589,   591,   593,   600,   602,   604,   606,   608,
+     613,   615,   621,   623,   628,   629,   630,   631,   632,   633,
+     634,   635,   636,   637,   638,   643,   645,   651,   656,   658,
+     663,   665,   670,   672,   677,   679,   684,   686,   691,   693,
+     695,   700,   702,   704,   706,   708,   713,   715,   717,   722,
+     724,   726,   731,   733,   735,   737,   742,   744,   750,   752,
+     754,   756,   758,   760,   765,   767,   769,   771,   773,   775,
+     781,   782,   784,   786,   788,   790,   792,   794,   799,   801,
+     803,   805,   810,   812,   817,   819,   821,   823
 };
 #endif
 
@@ -1733,1389 +1735,1391 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* identifier: IDENTIFIER  */
-#line 138 "cgram.y"
-        {  }
-#line 1739 "cgram.tab.c"
+#line 140 "cgram.y"
+        { (yyval.treeptr) = alcTree(identifier_id, "identifier", 1, (yyvsp[0].treeptr)); }
+#line 1741 "cgram.tab.c"
     break;
 
   case 3: /* identifier: ENUMERATION_CONSTANT  */
-#line 140 "cgram.y"
+#line 142 "cgram.y"
         {  }
-#line 1745 "cgram.tab.c"
+#line 1747 "cgram.tab.c"
     break;
 
   case 4: /* file: translation_unit  */
-#line 143 "cgram.y"
+#line 145 "cgram.y"
                        { root = (yyvsp[0].treeptr);
-    treeprint(root, 0);
+    preTrav(root, parseTree);
+    printCurrentTable();
+    //treeprint(root, 0);
  }
-#line 1753 "cgram.tab.c"
+#line 1757 "cgram.tab.c"
     break;
 
   case 5: /* translation_unit: external_declaration  */
-#line 149 "cgram.y"
+#line 153 "cgram.y"
         {  }
-#line 1759 "cgram.tab.c"
+#line 1763 "cgram.tab.c"
     break;
 
   case 6: /* translation_unit: translation_unit external_declaration  */
-#line 151 "cgram.y"
-        { (yyval.treeptr) = alcTree(1003, "translation_unit", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 1765 "cgram.tab.c"
+#line 155 "cgram.y"
+        { (yyval.treeptr) = alcTree(translation_unit_tr_ex, "translation_unit", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 1769 "cgram.tab.c"
     break;
 
   case 7: /* external_declaration: function_definition  */
-#line 157 "cgram.y"
+#line 161 "cgram.y"
         {  }
-#line 1771 "cgram.tab.c"
+#line 1775 "cgram.tab.c"
     break;
 
   case 8: /* external_declaration: declaration  */
-#line 159 "cgram.y"
+#line 163 "cgram.y"
         {  }
-#line 1777 "cgram.tab.c"
+#line 1781 "cgram.tab.c"
     break;
 
   case 9: /* external_declaration: untyped_declaration  */
-#line 161 "cgram.y"
+#line 165 "cgram.y"
             {  }
-#line 1783 "cgram.tab.c"
+#line 1787 "cgram.tab.c"
     break;
 
   case 10: /* function_definition: function_declarator compound_statement  */
-#line 166 "cgram.y"
-        { /* old school pre-ANSI, no return type */ fprintf(stderr, "Error: pre-ANSI not supported"); exit(2); }
-#line 1789 "cgram.tab.c"
+#line 170 "cgram.y"
+        { /* old school pre-ANSI, no return type */ fprintf(stderr, "Error pre-ANSI not supported"); exit(2); }
+#line 1793 "cgram.tab.c"
     break;
 
   case 11: /* function_definition: function_declarator declaration_list compound_statement  */
-#line 168 "cgram.y"
-        { /* old school pre ANSI */ fprintf(stderr, "Error: pre-ANSI not supported"); exit(2);}
-#line 1795 "cgram.tab.c"
+#line 172 "cgram.y"
+        { /* old school pre ANSI */ fprintf(stderr, "Error pre-ANSI not supported"); exit(2);}
+#line 1799 "cgram.tab.c"
     break;
 
   case 12: /* function_definition: declaration_specifiers function_declarator compound_statement  */
-#line 170 "cgram.y"
-        { (yyval.treeptr) = alcTree(1007, "function_definition", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 1801 "cgram.tab.c"
+#line 174 "cgram.y"
+        { (yyval.treeptr) = alcTree(function_definition_de_fu_co, "function_definition", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 1805 "cgram.tab.c"
     break;
 
   case 13: /* function_definition: declaration_specifiers function_declarator declaration_list compound_statement  */
-#line 172 "cgram.y"
-        { /* declaration_list! This must be pre-ANSI  */ fprintf(stderr, "Error: pre-ANSI not supported"); exit(2); }
-#line 1807 "cgram.tab.c"
+#line 176 "cgram.y"
+        { /* declaration_list! This must be pre-ANSI  */ fprintf(stderr, "Error pre-ANSI not supported"); exit(2); }
+#line 1811 "cgram.tab.c"
     break;
 
   case 14: /* declaration: declaration_specifiers SM  */
-#line 177 "cgram.y"
-                { (yyval.treeptr) = alcTree(1011, "declaration", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 1813 "cgram.tab.c"
+#line 181 "cgram.y"
+                { (yyval.treeptr) = alcTree(declaration_de_sm, "declaration", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 1817 "cgram.tab.c"
     break;
 
   case 15: /* declaration: declaration_specifiers init_declarator_list SM  */
-#line 179 "cgram.y"
-                { (yyval.treeptr) = alcTree(1012, "declaration", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 1819 "cgram.tab.c"
+#line 183 "cgram.y"
+                { (yyval.treeptr) = alcTree(declaration_de_in_sm, "declaration", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 1823 "cgram.tab.c"
     break;
 
   case 16: /* untyped_declaration: init_declarator_list SM  */
-#line 184 "cgram.y"
-        { (yyval.treeptr) = alcTree(1013, "untyped_declaration", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 1825 "cgram.tab.c"
+#line 188 "cgram.y"
+        { (yyval.treeptr) = alcTree(untyped_declaration_in_sm, "untyped_declaration", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 1829 "cgram.tab.c"
     break;
 
   case 17: /* declaration_list: declaration  */
-#line 189 "cgram.y"
+#line 193 "cgram.y"
         {  }
-#line 1831 "cgram.tab.c"
+#line 1835 "cgram.tab.c"
     break;
 
   case 18: /* declaration_list: declaration_list declaration  */
-#line 191 "cgram.y"
-                { (yyval.treeptr) = alcTree(1015, "declaration_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 1837 "cgram.tab.c"
+#line 195 "cgram.y"
+                { (yyval.treeptr) = alcTree(declaration_list_de_de, "declaration_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 1841 "cgram.tab.c"
     break;
 
   case 20: /* declaration_specifiers: storage_class_specifier declaration_specifiers  */
-#line 198 "cgram.y"
-        { (yyval.treeptr) = alcTree(1016, "declaration_specifiers", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 1843 "cgram.tab.c"
+#line 202 "cgram.y"
+        { (yyval.treeptr) = alcTree(declaration_specifiers_st_de, "declaration_specifiers", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 1847 "cgram.tab.c"
     break;
 
   case 21: /* declaration_specifiers: type_specifier  */
-#line 200 "cgram.y"
+#line 204 "cgram.y"
         {  }
-#line 1849 "cgram.tab.c"
+#line 1853 "cgram.tab.c"
     break;
 
   case 22: /* declaration_specifiers: type_specifier declaration_specifiers  */
-#line 202 "cgram.y"
-        { (yyval.treeptr) = alcTree(1018, "declaration_specifiers", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 1855 "cgram.tab.c"
+#line 206 "cgram.y"
+        { (yyval.treeptr) = alcTree(declaration_specifiers_tyse_de, "declaration_specifiers", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 1859 "cgram.tab.c"
     break;
 
   case 23: /* declaration_specifiers: type_qualifier  */
-#line 204 "cgram.y"
+#line 208 "cgram.y"
         {  }
-#line 1861 "cgram.tab.c"
+#line 1865 "cgram.tab.c"
     break;
 
   case 24: /* declaration_specifiers: type_qualifier declaration_specifiers  */
-#line 206 "cgram.y"
-        { (yyval.treeptr) = alcTree(1020, "declaration_specifiers", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 1867 "cgram.tab.c"
+#line 210 "cgram.y"
+        { (yyval.treeptr) = alcTree(declaration_specifiers_tyqu_de, "declaration_specifiers", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 1871 "cgram.tab.c"
     break;
 
   case 25: /* storage_class_specifier: TYPEDEF  */
-#line 213 "cgram.y"
+#line 217 "cgram.y"
         {  }
-#line 1873 "cgram.tab.c"
+#line 1877 "cgram.tab.c"
     break;
 
   case 26: /* storage_class_specifier: EXTERN  */
-#line 215 "cgram.y"
+#line 219 "cgram.y"
         {  }
-#line 1879 "cgram.tab.c"
+#line 1883 "cgram.tab.c"
     break;
 
   case 27: /* storage_class_specifier: STATIC  */
-#line 217 "cgram.y"
+#line 221 "cgram.y"
                 {  }
-#line 1885 "cgram.tab.c"
+#line 1889 "cgram.tab.c"
     break;
 
   case 28: /* storage_class_specifier: AUTO  */
-#line 219 "cgram.y"
+#line 223 "cgram.y"
         {  }
-#line 1891 "cgram.tab.c"
+#line 1895 "cgram.tab.c"
     break;
 
   case 29: /* storage_class_specifier: REGISTER  */
-#line 221 "cgram.y"
+#line 225 "cgram.y"
                 {  }
-#line 1897 "cgram.tab.c"
+#line 1901 "cgram.tab.c"
     break;
 
   case 30: /* type_specifier: actual_type_specifier  */
-#line 226 "cgram.y"
+#line 230 "cgram.y"
         {  }
-#line 1903 "cgram.tab.c"
+#line 1907 "cgram.tab.c"
     break;
 
   case 31: /* type_specifier: type_adjective  */
-#line 228 "cgram.y"
+#line 232 "cgram.y"
         {  }
-#line 1909 "cgram.tab.c"
+#line 1913 "cgram.tab.c"
     break;
 
   case 32: /* actual_type_specifier: VOID  */
-#line 233 "cgram.y"
+#line 237 "cgram.y"
         {  }
-#line 1915 "cgram.tab.c"
+#line 1919 "cgram.tab.c"
     break;
 
   case 33: /* actual_type_specifier: CHAR  */
-#line 235 "cgram.y"
+#line 239 "cgram.y"
         {  }
-#line 1921 "cgram.tab.c"
+#line 1925 "cgram.tab.c"
     break;
 
   case 34: /* actual_type_specifier: INT  */
-#line 237 "cgram.y"
+#line 241 "cgram.y"
         {  }
-#line 1927 "cgram.tab.c"
+#line 1931 "cgram.tab.c"
     break;
 
   case 35: /* actual_type_specifier: FLOAT  */
-#line 239 "cgram.y"
+#line 243 "cgram.y"
         {  }
-#line 1933 "cgram.tab.c"
+#line 1937 "cgram.tab.c"
     break;
 
   case 36: /* actual_type_specifier: DOUBLE  */
-#line 241 "cgram.y"
+#line 245 "cgram.y"
         {  }
-#line 1939 "cgram.tab.c"
+#line 1943 "cgram.tab.c"
     break;
 
   case 37: /* actual_type_specifier: TYPEDEF_NAME  */
-#line 243 "cgram.y"
+#line 247 "cgram.y"
         {  }
-#line 1945 "cgram.tab.c"
+#line 1949 "cgram.tab.c"
     break;
 
   case 38: /* actual_type_specifier: struct_or_union_specifier  */
-#line 245 "cgram.y"
-        {}
-#line 1951 "cgram.tab.c"
+#line 249 "cgram.y"
+        {  }
+#line 1955 "cgram.tab.c"
     break;
 
   case 39: /* actual_type_specifier: enum_specifier  */
-#line 247 "cgram.y"
-        {}
-#line 1957 "cgram.tab.c"
+#line 251 "cgram.y"
+        {  }
+#line 1961 "cgram.tab.c"
     break;
 
   case 40: /* type_adjective: SHORT  */
-#line 252 "cgram.y"
+#line 257 "cgram.y"
         {  }
-#line 1963 "cgram.tab.c"
+#line 1967 "cgram.tab.c"
     break;
 
   case 41: /* type_adjective: LONG  */
-#line 254 "cgram.y"
+#line 259 "cgram.y"
         {  }
-#line 1969 "cgram.tab.c"
+#line 1973 "cgram.tab.c"
     break;
 
   case 42: /* type_adjective: SIGNED  */
-#line 256 "cgram.y"
+#line 261 "cgram.y"
         {  }
-#line 1975 "cgram.tab.c"
+#line 1979 "cgram.tab.c"
     break;
 
   case 43: /* type_adjective: UNSIGNED  */
-#line 258 "cgram.y"
+#line 263 "cgram.y"
         {  }
-#line 1981 "cgram.tab.c"
+#line 1985 "cgram.tab.c"
     break;
 
   case 44: /* type_qualifier: CONST  */
-#line 263 "cgram.y"
+#line 268 "cgram.y"
         {  }
-#line 1987 "cgram.tab.c"
+#line 1991 "cgram.tab.c"
     break;
 
   case 45: /* type_qualifier: VOLATILE  */
-#line 265 "cgram.y"
+#line 270 "cgram.y"
                 {  }
-#line 1993 "cgram.tab.c"
+#line 1997 "cgram.tab.c"
     break;
 
   case 46: /* struct_or_union_specifier: struct_or_union LC struct_declaration_list RC  */
-#line 270 "cgram.y"
-        { (yyval.treeptr) = alcTree(1040, "struct_or_union_specifier", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 1999 "cgram.tab.c"
+#line 275 "cgram.y"
+        { (yyval.treeptr) = alcTree(struct_or_union_specifier_st_lc_st_rc, "struct_or_union_specifier", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2003 "cgram.tab.c"
     break;
 
   case 47: /* struct_or_union_specifier: struct_or_union identifier LC struct_declaration_list RC  */
-#line 272 "cgram.y"
-        { (yyval.treeptr) = alcTree(1041, "struct_or_union_specifier", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2005 "cgram.tab.c"
+#line 277 "cgram.y"
+        { (yyval.treeptr) = alcTree(struct_or_union_specifier_st_id_lc_st_rc, "struct_or_union_specifier", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2009 "cgram.tab.c"
     break;
 
   case 48: /* struct_or_union_specifier: struct_or_union identifier  */
-#line 274 "cgram.y"
-        { (yyval.treeptr) = alcTree(1042, "struct_or_union_specifier", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2011 "cgram.tab.c"
+#line 279 "cgram.y"
+        { (yyval.treeptr) = alcTree(struct_or_union_specifier_st_id, "struct_or_union_specifier", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2015 "cgram.tab.c"
     break;
 
   case 49: /* struct_or_union: STRUCT  */
-#line 279 "cgram.y"
+#line 284 "cgram.y"
         { }
-#line 2017 "cgram.tab.c"
+#line 2021 "cgram.tab.c"
     break;
 
   case 50: /* struct_or_union: UNION  */
-#line 281 "cgram.y"
+#line 286 "cgram.y"
         { }
-#line 2023 "cgram.tab.c"
+#line 2027 "cgram.tab.c"
     break;
 
   case 51: /* struct_declaration_list: struct_declaration  */
-#line 286 "cgram.y"
+#line 291 "cgram.y"
         { }
-#line 2029 "cgram.tab.c"
+#line 2033 "cgram.tab.c"
     break;
 
   case 52: /* struct_declaration_list: struct_declaration_list struct_declaration  */
-#line 288 "cgram.y"
-                { (yyval.treeptr) = alcTree(1043, "struct_declaration_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2035 "cgram.tab.c"
+#line 293 "cgram.y"
+                { (yyval.treeptr) = alcTree(struct_declaration_list_st_st, "struct_declaration_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2039 "cgram.tab.c"
     break;
 
   case 54: /* init_declarator_list: init_declarator_list CM init_declarator  */
-#line 296 "cgram.y"
-        { (yyval.treeptr) = alcTree(1044, "init_declarator_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2041 "cgram.tab.c"
+#line 301 "cgram.y"
+        { (yyval.treeptr) = alcTree(init_declarator_list_in_cm_in, "init_declarator_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2045 "cgram.tab.c"
     break;
 
   case 55: /* init_declarator: declarator  */
-#line 301 "cgram.y"
+#line 306 "cgram.y"
         {  }
-#line 2047 "cgram.tab.c"
+#line 2051 "cgram.tab.c"
     break;
 
   case 56: /* init_declarator: declarator ASN initializer  */
-#line 303 "cgram.y"
-        { (yyval.treeptr) = alcTree(1046, "init_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2053 "cgram.tab.c"
+#line 308 "cgram.y"
+        { (yyval.treeptr) = alcTree(init_declarator_de_as_in, "init_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2057 "cgram.tab.c"
     break;
 
   case 57: /* struct_declaration: specifier_qualifier_list SM  */
-#line 308 "cgram.y"
-                { (yyval.treeptr) = alcTree(1047, "struct_declaration", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2059 "cgram.tab.c"
+#line 313 "cgram.y"
+                { (yyval.treeptr) = alcTree(struct_declaration_sp_sm, "struct_declaration", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2063 "cgram.tab.c"
     break;
 
   case 58: /* struct_declaration: specifier_qualifier_list struct_declarator_list SM  */
-#line 310 "cgram.y"
-                { (yyval.treeptr) = alcTree(1048, "struct_declaration", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2065 "cgram.tab.c"
+#line 315 "cgram.y"
+                { (yyval.treeptr) = alcTree(struct_declaration__sp_st_sm, "struct_declaration", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2069 "cgram.tab.c"
     break;
 
   case 60: /* specifier_qualifier_list: type_specifier specifier_qualifier_list  */
-#line 316 "cgram.y"
-                { (yyval.treeptr) = alcTree(1049, "specifier_qualifier_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2071 "cgram.tab.c"
+#line 321 "cgram.y"
+                { (yyval.treeptr) = alcTree(struct_declaration__sp_st_sm, "specifier_qualifier_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2075 "cgram.tab.c"
     break;
 
   case 61: /* specifier_qualifier_list: type_qualifier  */
-#line 318 "cgram.y"
+#line 323 "cgram.y"
         {  }
-#line 2077 "cgram.tab.c"
+#line 2081 "cgram.tab.c"
     break;
 
   case 62: /* specifier_qualifier_list: type_qualifier specifier_qualifier_list  */
-#line 320 "cgram.y"
-                { (yyval.treeptr) = alcTree(1051, "specifier_qualifier_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2083 "cgram.tab.c"
+#line 325 "cgram.y"
+                { (yyval.treeptr) = alcTree(struct_declaration__sp_st_sm, "specifier_qualifier_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2087 "cgram.tab.c"
     break;
 
   case 64: /* struct_declarator_list: struct_declarator_list CM struct_declarator  */
-#line 326 "cgram.y"
-                { (yyval.treeptr) = alcTree(1052, "struct_declarator_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2089 "cgram.tab.c"
+#line 331 "cgram.y"
+                { (yyval.treeptr) = alcTree(struct_declarator_list_st_cm_st, "struct_declarator_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2093 "cgram.tab.c"
     break;
 
   case 66: /* struct_declarator: COLON constant_expression  */
-#line 332 "cgram.y"
-                { (yyval.treeptr) = alcTree(1053, "struct_declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2095 "cgram.tab.c"
+#line 337 "cgram.y"
+                { (yyval.treeptr) = alcTree(struct_declarator_co_co, "struct_declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2099 "cgram.tab.c"
     break;
 
   case 67: /* struct_declarator: declarator COLON constant_expression  */
-#line 334 "cgram.y"
-                { (yyval.treeptr) = alcTree(1054, "struct_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2101 "cgram.tab.c"
+#line 339 "cgram.y"
+                { (yyval.treeptr) = alcTree(struct_declarator_de_co_co, "struct_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2105 "cgram.tab.c"
     break;
 
   case 68: /* enum_specifier: ENUM LC enumerator_list RC  */
-#line 339 "cgram.y"
-                { (yyval.treeptr) = alcTree(1055, "enum_specifier", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2107 "cgram.tab.c"
+#line 344 "cgram.y"
+                { (yyval.treeptr) = alcTree(enum_specifier_en_lc_en_rc, "enum_specifier", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2111 "cgram.tab.c"
     break;
 
   case 69: /* enum_specifier: ENUM identifier LC enumerator_list RC  */
-#line 341 "cgram.y"
-                { (yyval.treeptr) = alcTree(1056, "enum_specifier", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2113 "cgram.tab.c"
+#line 346 "cgram.y"
+                { (yyval.treeptr) = alcTree(enum_specifier_en_id_lc_en_rc, "enum_specifier", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2117 "cgram.tab.c"
     break;
 
   case 70: /* enum_specifier: ENUM identifier  */
-#line 343 "cgram.y"
-                { (yyval.treeptr) = alcTree(1057, "enum_specifier", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2119 "cgram.tab.c"
+#line 348 "cgram.y"
+                { (yyval.treeptr) = alcTree(enum_specifier_en_id, "enum_specifier", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2123 "cgram.tab.c"
     break;
 
   case 71: /* enumerator_list: enumerator  */
-#line 348 "cgram.y"
+#line 353 "cgram.y"
         {  }
-#line 2125 "cgram.tab.c"
+#line 2129 "cgram.tab.c"
     break;
 
   case 72: /* enumerator_list: enumerator_list CM enumerator  */
-#line 350 "cgram.y"
-                { (yyval.treeptr) = alcTree(1059, "enumerator_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2131 "cgram.tab.c"
+#line 355 "cgram.y"
+                { (yyval.treeptr) = alcTree(enumerator_list_en_cm_en, "enumerator_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2135 "cgram.tab.c"
     break;
 
   case 73: /* enumerator: IDENTIFIER  */
-#line 355 "cgram.y"
+#line 360 "cgram.y"
                 {  }
-#line 2137 "cgram.tab.c"
+#line 2141 "cgram.tab.c"
     break;
 
   case 74: /* enumerator: IDENTIFIER ASN constant_expression  */
-#line 357 "cgram.y"
-        { (yyval.treeptr) = alcTree(1061, "enumerator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2143 "cgram.tab.c"
+#line 362 "cgram.y"
+        { (yyval.treeptr) = alcTree(enumerator_id_as_co, "enumerator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2147 "cgram.tab.c"
     break;
 
   case 75: /* declarator: direct_declarator  */
-#line 362 "cgram.y"
+#line 367 "cgram.y"
         {  }
-#line 2149 "cgram.tab.c"
+#line 2153 "cgram.tab.c"
     break;
 
   case 76: /* declarator: pointer direct_declarator  */
-#line 364 "cgram.y"
-        { (yyval.treeptr) = alcTree(1063, "declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2155 "cgram.tab.c"
+#line 369 "cgram.y"
+        { (yyval.treeptr) = alcTree(declarator_po_di, "declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2159 "cgram.tab.c"
     break;
 
   case 77: /* direct_declarator: identifier  */
-#line 369 "cgram.y"
+#line 374 "cgram.y"
         { }
-#line 2161 "cgram.tab.c"
+#line 2165 "cgram.tab.c"
     break;
 
   case 78: /* direct_declarator: LP declarator RP  */
-#line 371 "cgram.y"
-        { (yyval.treeptr) = alcTree(1064, "direct_declarator", 2, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr)); }
-#line 2167 "cgram.tab.c"
+#line 376 "cgram.y"
+        { (yyval.treeptr) = alcTree(direct_declarator_lp_de_rp, "direct_declarator", 2, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr)); }
+#line 2171 "cgram.tab.c"
     break;
 
   case 79: /* direct_declarator: direct_declarator LB RB  */
-#line 373 "cgram.y"
-        { (yyval.treeptr) = alcTree(1065, "direct_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2173 "cgram.tab.c"
+#line 378 "cgram.y"
+        { (yyval.treeptr) = alcTree(direct_declarator_di_lb_rb, "direct_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2177 "cgram.tab.c"
     break;
 
   case 80: /* direct_declarator: direct_declarator LB constant_expression RB  */
-#line 375 "cgram.y"
-        { (yyval.treeptr) = alcTree(1066, "direct_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2179 "cgram.tab.c"
+#line 380 "cgram.y"
+        { (yyval.treeptr) = alcTree(direct_declarator_di_lb_co_rb, "direct_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2183 "cgram.tab.c"
     break;
 
   case 81: /* direct_declarator: direct_declarator LP parameter_type_list RP  */
-#line 377 "cgram.y"
-        { (yyval.treeptr) = alcTree(1067, "direct_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2185 "cgram.tab.c"
+#line 382 "cgram.y"
+        { (yyval.treeptr) = alcTree(direct_declarator_di_lp_pa_rp, "direct_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2189 "cgram.tab.c"
     break;
 
   case 82: /* direct_declarator: direct_declarator LP RP  */
-#line 379 "cgram.y"
-        { (yyval.treeptr) = alcTree(1068, "direct_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2191 "cgram.tab.c"
+#line 384 "cgram.y"
+        { (yyval.treeptr) = alcTree(direct_declarator_di_lp_rp, "direct_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2195 "cgram.tab.c"
     break;
 
   case 83: /* direct_declarator: direct_declarator LP identifier_list RP  */
-#line 381 "cgram.y"
-        { (yyval.treeptr) = alcTree(1069, "direct_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2197 "cgram.tab.c"
+#line 386 "cgram.y"
+        { (yyval.treeptr) = alcTree(direct_declarator_di_lp_id_rp, "direct_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2201 "cgram.tab.c"
     break;
 
   case 84: /* function_declarator: direct_function_declarator  */
-#line 385 "cgram.y"
+#line 390 "cgram.y"
         {  }
-#line 2203 "cgram.tab.c"
+#line 2207 "cgram.tab.c"
     break;
 
   case 85: /* function_declarator: pointer direct_function_declarator  */
-#line 387 "cgram.y"
-                { (yyval.treeptr) = alcTree(1069, "function_declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2209 "cgram.tab.c"
+#line 392 "cgram.y"
+                { (yyval.treeptr) = alcTree(function_declarator_po_di, "function_declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2213 "cgram.tab.c"
     break;
 
   case 86: /* direct_function_declarator: direct_declarator LP parameter_type_list RP  */
-#line 392 "cgram.y"
-        { (yyval.treeptr) = alcTree(1070, "direct_function_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2215 "cgram.tab.c"
+#line 397 "cgram.y"
+        { (yyval.treeptr) = alcTree(direct_function_declarator_di_lp_pa_rp, "direct_function_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2219 "cgram.tab.c"
     break;
 
   case 87: /* direct_function_declarator: direct_declarator LP RP  */
-#line 394 "cgram.y"
-        { (yyval.treeptr) = alcTree(1071, "direct_function_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2221 "cgram.tab.c"
+#line 399 "cgram.y"
+        { (yyval.treeptr) = alcTree(direct_function_declarator_di_lp_rp, "direct_function_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2225 "cgram.tab.c"
     break;
 
   case 88: /* direct_function_declarator: direct_declarator LP identifier_list RP  */
-#line 396 "cgram.y"
+#line 401 "cgram.y"
         { /* pre-ANSI, error case */ printf("Error: pre-ANSI not supported"); exit(2);}
-#line 2227 "cgram.tab.c"
+#line 2231 "cgram.tab.c"
     break;
 
   case 89: /* pointer: MUL  */
-#line 401 "cgram.y"
+#line 406 "cgram.y"
         {  }
-#line 2233 "cgram.tab.c"
+#line 2237 "cgram.tab.c"
     break;
 
   case 90: /* pointer: MUL type_qualifier_list  */
-#line 403 "cgram.y"
-        { (yyval.treeptr) = alcTree(1075, "pointer", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2239 "cgram.tab.c"
+#line 408 "cgram.y"
+        { (yyval.treeptr) = alcTree(pointer_mu_ty, "pointer", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2243 "cgram.tab.c"
     break;
 
   case 91: /* pointer: MUL pointer  */
-#line 405 "cgram.y"
-        { (yyval.treeptr) = alcTree(1075, "pointer", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr));}
-#line 2245 "cgram.tab.c"
+#line 410 "cgram.y"
+        { (yyval.treeptr) = alcTree(pointer_mu_po, "pointer", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr));}
+#line 2249 "cgram.tab.c"
     break;
 
   case 92: /* pointer: MUL type_qualifier_list pointer  */
-#line 407 "cgram.y"
-        { (yyval.treeptr) = alcTree(1076, "pointer", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2251 "cgram.tab.c"
+#line 412 "cgram.y"
+        { (yyval.treeptr) = alcTree(pointer_mu_ty_po, "pointer", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2255 "cgram.tab.c"
     break;
 
   case 93: /* type_qualifier_list: type_qualifier  */
-#line 412 "cgram.y"
+#line 417 "cgram.y"
         {  }
-#line 2257 "cgram.tab.c"
+#line 2261 "cgram.tab.c"
     break;
 
   case 94: /* type_qualifier_list: type_qualifier_list type_qualifier  */
-#line 414 "cgram.y"
-        { (yyval.treeptr) = alcTree(1078, "type_qualifier_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2263 "cgram.tab.c"
+#line 419 "cgram.y"
+        { (yyval.treeptr) = alcTree(type_qualifier_list_ty_ty, "type_qualifier_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2267 "cgram.tab.c"
     break;
 
   case 95: /* parameter_type_list: parameter_list  */
-#line 419 "cgram.y"
+#line 424 "cgram.y"
         {  }
-#line 2269 "cgram.tab.c"
+#line 2273 "cgram.tab.c"
     break;
 
   case 96: /* parameter_type_list: parameter_list CM ELIPSIS  */
-#line 421 "cgram.y"
-        { (yyval.treeptr) = alcTree(1080, "parameter_type_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2275 "cgram.tab.c"
+#line 426 "cgram.y"
+        { (yyval.treeptr) = alcTree(parameter_type_list_pa_cm_el, "parameter_type_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2279 "cgram.tab.c"
     break;
 
   case 97: /* parameter_list: parameter_declaration  */
-#line 426 "cgram.y"
+#line 431 "cgram.y"
         {  }
-#line 2281 "cgram.tab.c"
+#line 2285 "cgram.tab.c"
     break;
 
   case 98: /* parameter_list: parameter_list CM parameter_declaration  */
-#line 428 "cgram.y"
-        { (yyval.treeptr) = alcTree(1082, "parameter_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2287 "cgram.tab.c"
+#line 433 "cgram.y"
+        { (yyval.treeptr) = alcTree(parameter_list_pa_cm_pa, "parameter_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2291 "cgram.tab.c"
     break;
 
   case 99: /* parameter_declaration: declaration_specifiers declarator  */
-#line 433 "cgram.y"
-        { (yyval.treeptr) = alcTree(1083, "parameter_declaration", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2293 "cgram.tab.c"
+#line 438 "cgram.y"
+        { (yyval.treeptr) = alcTree(parameter_declaration_de_de, "parameter_declaration", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2297 "cgram.tab.c"
     break;
 
   case 100: /* parameter_declaration: declaration_specifiers  */
-#line 435 "cgram.y"
+#line 440 "cgram.y"
         {  }
-#line 2299 "cgram.tab.c"
+#line 2303 "cgram.tab.c"
     break;
 
   case 101: /* parameter_declaration: declaration_specifiers abstract_declarator  */
-#line 437 "cgram.y"
-        { (yyval.treeptr) = alcTree(1085, "parameter_declaration", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2305 "cgram.tab.c"
+#line 442 "cgram.y"
+        { (yyval.treeptr) = alcTree(parameter_declaration_de_ab, "parameter_declaration", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2309 "cgram.tab.c"
     break;
 
   case 102: /* identifier_list: IDENTIFIER  */
-#line 442 "cgram.y"
+#line 447 "cgram.y"
                 {  }
-#line 2311 "cgram.tab.c"
+#line 2315 "cgram.tab.c"
     break;
 
   case 103: /* identifier_list: identifier_list CM IDENTIFIER  */
-#line 444 "cgram.y"
-                { (yyval.treeptr) = alcTree(1087, "identifier_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2317 "cgram.tab.c"
+#line 449 "cgram.y"
+                { (yyval.treeptr) = alcTree(identifier_list_id_cm_id, "identifier_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2321 "cgram.tab.c"
     break;
 
   case 104: /* initializer: assignment_expression  */
-#line 449 "cgram.y"
+#line 454 "cgram.y"
         {  }
-#line 2323 "cgram.tab.c"
+#line 2327 "cgram.tab.c"
     break;
 
   case 105: /* initializer: LC initializer_list RC  */
-#line 451 "cgram.y"
-                { (yyval.treeptr) = alcTree(1088, "initializer", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2329 "cgram.tab.c"
+#line 456 "cgram.y"
+                { (yyval.treeptr) = alcTree(initializer_lc_in_rc, "initializer", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2333 "cgram.tab.c"
     break;
 
   case 106: /* initializer: LC initializer_list CM RC  */
-#line 453 "cgram.y"
-                { (yyval.treeptr) = alcTree(1089, "initializer", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2335 "cgram.tab.c"
+#line 458 "cgram.y"
+                { (yyval.treeptr) = alcTree(initializer_lc_in_cm_rc, "initializer", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2339 "cgram.tab.c"
     break;
 
   case 107: /* initializer_list: initializer  */
-#line 458 "cgram.y"
+#line 463 "cgram.y"
         {  }
-#line 2341 "cgram.tab.c"
+#line 2345 "cgram.tab.c"
     break;
 
   case 108: /* initializer_list: initializer_list CM initializer  */
-#line 460 "cgram.y"
-                { (yyval.treeptr) = alcTree(1091, "initializer_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2347 "cgram.tab.c"
+#line 465 "cgram.y"
+                { (yyval.treeptr) = alcTree(initializer_list_in_cm_in, "initializer_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2351 "cgram.tab.c"
     break;
 
   case 109: /* type_name: specifier_qualifier_list  */
-#line 465 "cgram.y"
+#line 470 "cgram.y"
         {  }
-#line 2353 "cgram.tab.c"
+#line 2357 "cgram.tab.c"
     break;
 
   case 110: /* type_name: specifier_qualifier_list abstract_declarator  */
-#line 467 "cgram.y"
-        { (yyval.treeptr) = alcTree(1093, "type_name", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2359 "cgram.tab.c"
+#line 472 "cgram.y"
+        { (yyval.treeptr) = alcTree(type_name_sp_ab, "type_name", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2363 "cgram.tab.c"
     break;
 
   case 111: /* abstract_declarator: pointer  */
-#line 472 "cgram.y"
+#line 477 "cgram.y"
         {  }
-#line 2365 "cgram.tab.c"
+#line 2369 "cgram.tab.c"
     break;
 
   case 112: /* abstract_declarator: direct_abstract_declarator  */
-#line 474 "cgram.y"
+#line 479 "cgram.y"
         {  }
-#line 2371 "cgram.tab.c"
+#line 2375 "cgram.tab.c"
     break;
 
   case 113: /* abstract_declarator: pointer direct_abstract_declarator  */
-#line 476 "cgram.y"
-                { (yyval.treeptr) = alcTree(1096, "abstract_declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2377 "cgram.tab.c"
+#line 481 "cgram.y"
+                { (yyval.treeptr) = alcTree(abstract_declarator_po_di, "abstract_declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2381 "cgram.tab.c"
     break;
 
   case 114: /* direct_abstract_declarator: LP abstract_declarator RP  */
-#line 482 "cgram.y"
-                { (yyval.treeptr) = alcTree(1097, "direct_abstract_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2383 "cgram.tab.c"
+#line 487 "cgram.y"
+                { (yyval.treeptr) = alcTree(direct_abstract_declarator_lp_ab_rp, "direct_abstract_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2387 "cgram.tab.c"
     break;
 
   case 115: /* direct_abstract_declarator: LB RB  */
-#line 484 "cgram.y"
-                { (yyval.treeptr) = alcTree(1098, "direct_abstract_declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2389 "cgram.tab.c"
+#line 489 "cgram.y"
+                { (yyval.treeptr) = alcTree(direct_abstract_declarator_lb_rb, "direct_abstract_declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2393 "cgram.tab.c"
     break;
 
   case 116: /* direct_abstract_declarator: LB constant_expression RB  */
-#line 486 "cgram.y"
-                { (yyval.treeptr) = alcTree(1099, "direct_abstract_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2395 "cgram.tab.c"
+#line 491 "cgram.y"
+                { (yyval.treeptr) = alcTree(direct_abstract_declarator_lb_co_rb, "direct_abstract_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2399 "cgram.tab.c"
     break;
 
   case 117: /* direct_abstract_declarator: direct_abstract_declarator LB RB  */
-#line 488 "cgram.y"
-                { (yyval.treeptr) = alcTree(1100, "direct_abstract_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2401 "cgram.tab.c"
+#line 493 "cgram.y"
+                { (yyval.treeptr) = alcTree(direct_abstract_declarator_di_lb_rb, "direct_abstract_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2405 "cgram.tab.c"
     break;
 
   case 118: /* direct_abstract_declarator: direct_abstract_declarator LB constant_expression RB  */
-#line 490 "cgram.y"
-                { (yyval.treeptr) = alcTree(1101, "direct_abstract_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2407 "cgram.tab.c"
+#line 495 "cgram.y"
+                { (yyval.treeptr) = alcTree(direct_abstract_declarator_di_lb_co_rb, "direct_abstract_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2411 "cgram.tab.c"
     break;
 
   case 119: /* direct_abstract_declarator: LP RP  */
-#line 492 "cgram.y"
-                { (yyval.treeptr) = alcTree(1102, "direct_abstract_declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2413 "cgram.tab.c"
+#line 497 "cgram.y"
+                { (yyval.treeptr) = alcTree(direct_abstract_declarator_lp_rp, "direct_abstract_declarator", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2417 "cgram.tab.c"
     break;
 
   case 120: /* direct_abstract_declarator: LP parameter_type_list RP  */
-#line 494 "cgram.y"
-                { (yyval.treeptr) = alcTree(1103, "direct_abstract_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2419 "cgram.tab.c"
+#line 499 "cgram.y"
+                { (yyval.treeptr) = alcTree(direct_abstract_declarator_lp_pa_rp, "direct_abstract_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2423 "cgram.tab.c"
     break;
 
   case 121: /* direct_abstract_declarator: direct_abstract_declarator LP RP  */
-#line 496 "cgram.y"
-                { (yyval.treeptr) = alcTree(1104, "direct_abstract_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2425 "cgram.tab.c"
+#line 501 "cgram.y"
+                { (yyval.treeptr) = alcTree(direct_abstract_declarator_di_lp_rp, "direct_abstract_declarator", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2429 "cgram.tab.c"
     break;
 
   case 122: /* direct_abstract_declarator: direct_abstract_declarator LP parameter_type_list RP  */
-#line 498 "cgram.y"
-                { (yyval.treeptr) = alcTree(1105, "direct_abstract_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2431 "cgram.tab.c"
+#line 503 "cgram.y"
+                { (yyval.treeptr) = alcTree(direct_abstract_declarator_di_lp_pa_rp, "direct_abstract_declarator", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2435 "cgram.tab.c"
     break;
 
   case 123: /* statement: labeled_statement  */
-#line 502 "cgram.y"
-                      {  }
-#line 2437 "cgram.tab.c"
+#line 508 "cgram.y"
+        {  }
+#line 2441 "cgram.tab.c"
     break;
 
   case 124: /* statement: compound_statement  */
-#line 503 "cgram.y"
-                             {  }
-#line 2443 "cgram.tab.c"
+#line 510 "cgram.y"
+        {  }
+#line 2447 "cgram.tab.c"
     break;
 
   case 125: /* statement: expression_statement  */
-#line 504 "cgram.y"
-                               {  }
-#line 2449 "cgram.tab.c"
+#line 512 "cgram.y"
+        {  }
+#line 2453 "cgram.tab.c"
     break;
 
   case 126: /* statement: selection_statement  */
-#line 505 "cgram.y"
-                              {  }
-#line 2455 "cgram.tab.c"
+#line 514 "cgram.y"
+        {  }
+#line 2459 "cgram.tab.c"
     break;
 
   case 127: /* statement: iteration_statement  */
-#line 506 "cgram.y"
-                              {  }
-#line 2461 "cgram.tab.c"
+#line 516 "cgram.y"
+        {  }
+#line 2465 "cgram.tab.c"
     break;
 
   case 128: /* statement: jump_statement  */
-#line 507 "cgram.y"
-                         {  }
-#line 2467 "cgram.tab.c"
+#line 518 "cgram.y"
+        {  }
+#line 2471 "cgram.tab.c"
     break;
 
   case 129: /* labeled_statement: identifier COLON statement  */
-#line 512 "cgram.y"
-        { (yyval.treeptr) = alcTree(1112, "labeled_statement", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2473 "cgram.tab.c"
+#line 523 "cgram.y"
+        { (yyval.treeptr) = alcTree(labeled_statement_id_co_st, "labeled_statement", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2477 "cgram.tab.c"
     break;
 
   case 130: /* labeled_statement: CASE constant_expression COLON statement  */
-#line 514 "cgram.y"
-        { (yyval.treeptr) = alcTree(1113, "labeled_statement", 3, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr)); }
-#line 2479 "cgram.tab.c"
+#line 525 "cgram.y"
+        { (yyval.treeptr) = alcTree(labeled_statement_ca_co_co_st, "labeled_statement", 3, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr)); }
+#line 2483 "cgram.tab.c"
     break;
 
   case 131: /* labeled_statement: DEFAULT COLON statement  */
-#line 516 "cgram.y"
-        { (yyval.treeptr) = alcTree(1114, "labeled_statement", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2485 "cgram.tab.c"
+#line 527 "cgram.y"
+        { (yyval.treeptr) = alcTree(labeled_statement_de_co_st, "labeled_statement", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2489 "cgram.tab.c"
     break;
 
   case 132: /* expression_statement: SM  */
-#line 521 "cgram.y"
+#line 532 "cgram.y"
                 {  }
-#line 2491 "cgram.tab.c"
+#line 2495 "cgram.tab.c"
     break;
 
   case 133: /* expression_statement: expression SM  */
-#line 523 "cgram.y"
-                { (yyval.treeptr) = alcTree(1116, "expression_statement", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2497 "cgram.tab.c"
+#line 534 "cgram.y"
+                { (yyval.treeptr) = alcTree(expression_statement_ex_sm, "expression_statement", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2501 "cgram.tab.c"
     break;
 
   case 134: /* compound_statement: LC RC  */
-#line 528 "cgram.y"
-                { (yyval.treeptr) = alcTree(1117, "compound_statement", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2503 "cgram.tab.c"
+#line 539 "cgram.y"
+                { (yyval.treeptr) = alcTree(compound_statement_lc_rc, "compound_statement", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2507 "cgram.tab.c"
     break;
 
   case 135: /* compound_statement: LC compound_statement_opt RC  */
-#line 530 "cgram.y"
-        { (yyval.treeptr) = alcTree(1118, "compound_statement", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2509 "cgram.tab.c"
+#line 541 "cgram.y"
+        { (yyval.treeptr) = alcTree(compound_statement_lc_co_rc, "compound_statement", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2513 "cgram.tab.c"
     break;
 
   case 136: /* compound_statement_opt: statement_list  */
-#line 535 "cgram.y"
+#line 546 "cgram.y"
                 {  }
-#line 2515 "cgram.tab.c"
+#line 2519 "cgram.tab.c"
     break;
 
   case 137: /* compound_statement_opt: declaration_list  */
-#line 537 "cgram.y"
+#line 548 "cgram.y"
                 {  }
-#line 2521 "cgram.tab.c"
+#line 2525 "cgram.tab.c"
     break;
 
   case 138: /* compound_statement_opt: declaration_list statement_list  */
-#line 539 "cgram.y"
-                { (yyval.treeptr) = alcTree(1121, "compound_statement_opt", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2527 "cgram.tab.c"
+#line 550 "cgram.y"
+                { (yyval.treeptr) = alcTree(compound_statement_opt_de_st, "compound_statement_opt", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2531 "cgram.tab.c"
     break;
 
   case 139: /* statement_list: statement  */
-#line 544 "cgram.y"
+#line 555 "cgram.y"
         {  }
-#line 2533 "cgram.tab.c"
+#line 2537 "cgram.tab.c"
     break;
 
   case 140: /* statement_list: statement_list statement  */
-#line 546 "cgram.y"
-                { (yyval.treeptr) = alcTree(1123, "statement_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2539 "cgram.tab.c"
+#line 557 "cgram.y"
+                { (yyval.treeptr) = alcTree(statement_list_st_st, "statement_list", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2543 "cgram.tab.c"
     break;
 
   case 141: /* selection_statement: IF LP expression RP statement  */
-#line 551 "cgram.y"
-        { (yyval.treeptr) = alcTree(1124, "selection_statement", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr));}
-#line 2545 "cgram.tab.c"
+#line 562 "cgram.y"
+        { (yyval.treeptr) = alcTree(selection_statement_if_lp_ex_rp_st, "selection_statement", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr));}
+#line 2549 "cgram.tab.c"
     break;
 
   case 142: /* selection_statement: IF LP expression RP statement ELSE statement  */
-#line 553 "cgram.y"
-        { (yyval.treeptr) = alcTree(1125, "selection_statement", 6, (yyvsp[-6].treeptr), (yyvsp[-5].treeptr), (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[0].treeptr)); }
-#line 2551 "cgram.tab.c"
+#line 564 "cgram.y"
+        { (yyval.treeptr) = alcTree(selection_statement_if_lp_ex_rp_st_el_st, "selection_statement", 6, (yyvsp[-6].treeptr), (yyvsp[-5].treeptr), (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[0].treeptr)); }
+#line 2555 "cgram.tab.c"
     break;
 
   case 143: /* selection_statement: SWITCH LP expression RP statement  */
-#line 555 "cgram.y"
-        { (yyval.treeptr) = alcTree(1126, "selection_statement", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr));  }
-#line 2557 "cgram.tab.c"
+#line 566 "cgram.y"
+        { (yyval.treeptr) = alcTree(selection_statement_sw_lp_ex_rp_st, "selection_statement", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr));  }
+#line 2561 "cgram.tab.c"
     break;
 
   case 144: /* iteration_statement: WHILE LP expression RP statement  */
-#line 560 "cgram.y"
-        { (yyval.treeptr) = alcTree(1127, "iteration_statement", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2563 "cgram.tab.c"
+#line 571 "cgram.y"
+        { (yyval.treeptr) = alcTree(iteration_statement_wh_lp_ex_rp_st, "iteration_statement", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2567 "cgram.tab.c"
     break;
 
   case 145: /* iteration_statement: DO statement WHILE LP expression RP SM  */
-#line 562 "cgram.y"
-        { (yyval.treeptr) = alcTree(1128, "iteration_statement", 7, (yyvsp[-6].treeptr), (yyvsp[-5].treeptr), (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2569 "cgram.tab.c"
+#line 573 "cgram.y"
+        { (yyval.treeptr) = alcTree(iteration_statement_do_st_wh_lp_ex_rp_sm, "iteration_statement", 7, (yyvsp[-6].treeptr), (yyvsp[-5].treeptr), (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2573 "cgram.tab.c"
     break;
 
   case 146: /* iteration_statement: FOR LP forcntrl RP statement  */
-#line 564 "cgram.y"
-        { (yyval.treeptr) = alcTree(1129, "iteration_statement", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2575 "cgram.tab.c"
+#line 575 "cgram.y"
+        { (yyval.treeptr) = alcTree(iteration_statement_fo_lp_fo_rp_st, "iteration_statement", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2579 "cgram.tab.c"
     break;
 
   case 147: /* forcntrl: SM SM  */
-#line 569 "cgram.y"
-        { (yyval.treeptr) = alcTree(1130, "forcntrl", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2581 "cgram.tab.c"
+#line 580 "cgram.y"
+        { (yyval.treeptr) = alcTree(forcntrl_sm_sm, "forcntrl", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2585 "cgram.tab.c"
     break;
 
   case 148: /* forcntrl: SM SM expression  */
-#line 571 "cgram.y"
-        { (yyval.treeptr) = alcTree(1131, "forcntrl", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2587 "cgram.tab.c"
+#line 582 "cgram.y"
+        { (yyval.treeptr) = alcTree(forcntrl_sm_sm_ex, "forcntrl", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2591 "cgram.tab.c"
     break;
 
   case 149: /* forcntrl: SM expression SM  */
-#line 573 "cgram.y"
-        { (yyval.treeptr) = alcTree(1132, "forcntrl", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2593 "cgram.tab.c"
+#line 584 "cgram.y"
+        { (yyval.treeptr) = alcTree(forcntrl_sm_ex_sm, "forcntrl", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2597 "cgram.tab.c"
     break;
 
   case 150: /* forcntrl: SM expression SM expression  */
-#line 575 "cgram.y"
-        { (yyval.treeptr) = alcTree(1133, "forcntrl", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2599 "cgram.tab.c"
+#line 586 "cgram.y"
+        { (yyval.treeptr) = alcTree(forcntrl_sm_ex_sm_ex, "forcntrl", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2603 "cgram.tab.c"
     break;
 
   case 151: /* forcntrl: expression SM SM  */
-#line 577 "cgram.y"
-        { (yyval.treeptr) = alcTree(1134, "forcntrl", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2605 "cgram.tab.c"
+#line 588 "cgram.y"
+        { (yyval.treeptr) = alcTree(forcntrl_ex_sm_sm, "forcntrl", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2609 "cgram.tab.c"
     break;
 
   case 152: /* forcntrl: expression SM SM expression  */
-#line 579 "cgram.y"
-        { (yyval.treeptr) = alcTree(1135, "forcntrl", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2611 "cgram.tab.c"
+#line 590 "cgram.y"
+        { (yyval.treeptr) = alcTree(forcntrl_ex_sm_sm_ex, "forcntrl", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2615 "cgram.tab.c"
     break;
 
   case 153: /* forcntrl: expression SM expression SM  */
-#line 581 "cgram.y"
-        { (yyval.treeptr) = alcTree(1136, "forcntrl", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2617 "cgram.tab.c"
+#line 592 "cgram.y"
+        { (yyval.treeptr) = alcTree(forcntrl_ex_sm_ex_sm, "forcntrl", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2621 "cgram.tab.c"
     break;
 
   case 154: /* forcntrl: expression SM expression SM expression  */
-#line 583 "cgram.y"
-        { (yyval.treeptr) = alcTree(1137, "forcntrl", 4, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr)); }
-#line 2623 "cgram.tab.c"
+#line 594 "cgram.y"
+        { (yyval.treeptr) = alcTree(forcntrl_ex_sm_ex_sm_ex, "forcntrl", 4, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr)); }
+#line 2627 "cgram.tab.c"
     break;
 
   case 155: /* jump_statement: GOTO identifier SM  */
-#line 590 "cgram.y"
-        { (yyval.treeptr) = alcTree(1138, "jump_statement", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2629 "cgram.tab.c"
+#line 601 "cgram.y"
+        { (yyval.treeptr) = alcTree(jump_statement_go_id_sm, "jump_statement", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2633 "cgram.tab.c"
     break;
 
   case 156: /* jump_statement: CONTINUE SM  */
-#line 592 "cgram.y"
-        { (yyval.treeptr) = alcTree(1139, "jump_statement", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2635 "cgram.tab.c"
+#line 603 "cgram.y"
+        { (yyval.treeptr) = alcTree(jump_statement_co_sm, "jump_statement", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2639 "cgram.tab.c"
     break;
 
   case 157: /* jump_statement: BREAK SM  */
-#line 594 "cgram.y"
-        { (yyval.treeptr) = alcTree(1140, "jump_statement", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2641 "cgram.tab.c"
+#line 605 "cgram.y"
+        { (yyval.treeptr) = alcTree(jump_statement_br_sm, "jump_statement", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2645 "cgram.tab.c"
     break;
 
   case 158: /* jump_statement: RETURN SM  */
-#line 596 "cgram.y"
-        { (yyval.treeptr) = alcTree(1141, "jump_statement", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2647 "cgram.tab.c"
+#line 607 "cgram.y"
+        { (yyval.treeptr) = alcTree(jump_statement_re_sm, "jump_statement", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2651 "cgram.tab.c"
     break;
 
   case 159: /* jump_statement: RETURN expression SM  */
-#line 598 "cgram.y"
-        { (yyval.treeptr) = alcTree(1142, "jump_statement", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2653 "cgram.tab.c"
+#line 609 "cgram.y"
+        { (yyval.treeptr) = alcTree(jump_statement_re_ex_sm, "jump_statement", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2657 "cgram.tab.c"
     break;
 
   case 160: /* expression: assignment_expression  */
-#line 603 "cgram.y"
+#line 614 "cgram.y"
                 {  }
-#line 2659 "cgram.tab.c"
+#line 2663 "cgram.tab.c"
     break;
 
   case 161: /* expression: expression CM assignment_expression  */
-#line 605 "cgram.y"
-                { (yyval.treeptr) = alcTree(1144, "expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2665 "cgram.tab.c"
+#line 616 "cgram.y"
+                { (yyval.treeptr) = alcTree(expression_ex_cm_as, "expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2669 "cgram.tab.c"
     break;
 
   case 162: /* assignment_expression: conditional_expression  */
-#line 611 "cgram.y"
+#line 622 "cgram.y"
         {  }
-#line 2671 "cgram.tab.c"
+#line 2675 "cgram.tab.c"
     break;
 
   case 163: /* assignment_expression: unary_expression assignment_operator assignment_expression  */
-#line 613 "cgram.y"
-        { (yyval.treeptr) = alcTree(1146, "assignment_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2677 "cgram.tab.c"
+#line 624 "cgram.y"
+        { (yyval.treeptr) = alcTree(assignment_expression_un_as_as, "assignment_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2681 "cgram.tab.c"
     break;
 
   case 164: /* assignment_operator: ASN  */
-#line 617 "cgram.y"
-          {  }
-#line 2683 "cgram.tab.c"
+#line 628 "cgram.y"
+        {  }
+#line 2687 "cgram.tab.c"
     break;
 
   case 165: /* assignment_operator: MUASN  */
-#line 618 "cgram.y"
+#line 629 "cgram.y"
                 {  }
-#line 2689 "cgram.tab.c"
+#line 2693 "cgram.tab.c"
     break;
 
   case 166: /* assignment_operator: DIASN  */
-#line 619 "cgram.y"
+#line 630 "cgram.y"
                 {  }
-#line 2695 "cgram.tab.c"
+#line 2699 "cgram.tab.c"
     break;
 
   case 167: /* assignment_operator: MOASN  */
-#line 620 "cgram.y"
+#line 631 "cgram.y"
                 {  }
-#line 2701 "cgram.tab.c"
+#line 2705 "cgram.tab.c"
     break;
 
   case 168: /* assignment_operator: PLASN  */
-#line 621 "cgram.y"
+#line 632 "cgram.y"
                 {  }
-#line 2707 "cgram.tab.c"
+#line 2711 "cgram.tab.c"
     break;
 
   case 169: /* assignment_operator: MIASN  */
-#line 622 "cgram.y"
+#line 633 "cgram.y"
                 {  }
-#line 2713 "cgram.tab.c"
+#line 2717 "cgram.tab.c"
     break;
 
   case 170: /* assignment_operator: SLASN  */
-#line 623 "cgram.y"
+#line 634 "cgram.y"
                 {  }
-#line 2719 "cgram.tab.c"
+#line 2723 "cgram.tab.c"
     break;
 
   case 171: /* assignment_operator: SRASN  */
-#line 624 "cgram.y"
+#line 635 "cgram.y"
                 {  }
-#line 2725 "cgram.tab.c"
+#line 2729 "cgram.tab.c"
     break;
 
   case 172: /* assignment_operator: ANASN  */
-#line 625 "cgram.y"
+#line 636 "cgram.y"
                 {  }
-#line 2731 "cgram.tab.c"
+#line 2735 "cgram.tab.c"
     break;
 
   case 173: /* assignment_operator: ERASN  */
-#line 626 "cgram.y"
+#line 637 "cgram.y"
                 {  }
-#line 2737 "cgram.tab.c"
+#line 2741 "cgram.tab.c"
     break;
 
   case 174: /* assignment_operator: ORASN  */
-#line 627 "cgram.y"
+#line 638 "cgram.y"
                 {  }
-#line 2743 "cgram.tab.c"
+#line 2747 "cgram.tab.c"
     break;
 
   case 175: /* conditional_expression: logical_or_expression  */
-#line 633 "cgram.y"
+#line 644 "cgram.y"
         {  }
-#line 2749 "cgram.tab.c"
+#line 2753 "cgram.tab.c"
     break;
 
   case 176: /* conditional_expression: logical_or_expression QUEST expression COLON conditional_expression  */
-#line 635 "cgram.y"
-                { (yyval.treeptr) = alcTree(1159, "conditional_expression", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2755 "cgram.tab.c"
+#line 646 "cgram.y"
+                { (yyval.treeptr) = alcTree(conditional_expression_lo_qu_ex_co_co, "conditional_expression", 5, (yyvsp[-4].treeptr), (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2759 "cgram.tab.c"
     break;
 
   case 177: /* constant_expression: conditional_expression  */
-#line 641 "cgram.y"
+#line 652 "cgram.y"
         {  }
-#line 2761 "cgram.tab.c"
+#line 2765 "cgram.tab.c"
     break;
 
   case 178: /* logical_or_expression: logical_and_expression  */
-#line 646 "cgram.y"
+#line 657 "cgram.y"
         {  }
-#line 2767 "cgram.tab.c"
+#line 2771 "cgram.tab.c"
     break;
 
   case 179: /* logical_or_expression: logical_or_expression OROR logical_and_expression  */
-#line 648 "cgram.y"
-                { (yyval.treeptr) = alcTree(1162, "logical_or_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2773 "cgram.tab.c"
+#line 659 "cgram.y"
+                { (yyval.treeptr) = alcTree(logical_or_expression_lo_or_lo, "logical_or_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2777 "cgram.tab.c"
     break;
 
   case 180: /* logical_and_expression: inclusive_or_expression  */
-#line 653 "cgram.y"
+#line 664 "cgram.y"
         {  }
-#line 2779 "cgram.tab.c"
+#line 2783 "cgram.tab.c"
     break;
 
   case 181: /* logical_and_expression: logical_and_expression ANDAND inclusive_or_expression  */
-#line 655 "cgram.y"
-                { (yyval.treeptr) = alcTree(1164, "logical_and_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2785 "cgram.tab.c"
+#line 666 "cgram.y"
+                { (yyval.treeptr) = alcTree(logical_and_expression_lo_an_in, "logical_and_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2789 "cgram.tab.c"
     break;
 
   case 182: /* inclusive_or_expression: exclusive_or_expression  */
-#line 660 "cgram.y"
+#line 671 "cgram.y"
         {  }
-#line 2791 "cgram.tab.c"
+#line 2795 "cgram.tab.c"
     break;
 
   case 183: /* inclusive_or_expression: inclusive_or_expression OR exclusive_or_expression  */
-#line 662 "cgram.y"
-                { (yyval.treeptr) = alcTree(1166, "inclusive_or_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2797 "cgram.tab.c"
+#line 673 "cgram.y"
+                { (yyval.treeptr) = alcTree(inclusive_or_expression_in_or_ex, "inclusive_or_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2801 "cgram.tab.c"
     break;
 
   case 184: /* exclusive_or_expression: and_expression  */
-#line 667 "cgram.y"
+#line 678 "cgram.y"
         {  }
-#line 2803 "cgram.tab.c"
+#line 2807 "cgram.tab.c"
     break;
 
   case 185: /* exclusive_or_expression: exclusive_or_expression ER and_expression  */
-#line 669 "cgram.y"
-                { (yyval.treeptr) = alcTree(1168, "exclusive_or_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2809 "cgram.tab.c"
+#line 680 "cgram.y"
+                { (yyval.treeptr) = alcTree(exclusive_or_expression_ex_er_an, "exclusive_or_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2813 "cgram.tab.c"
     break;
 
   case 186: /* and_expression: equality_expression  */
-#line 674 "cgram.y"
+#line 685 "cgram.y"
         {  }
-#line 2815 "cgram.tab.c"
+#line 2819 "cgram.tab.c"
     break;
 
   case 187: /* and_expression: and_expression AND equality_expression  */
-#line 676 "cgram.y"
-                { (yyval.treeptr) = alcTree(1170, "and_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2821 "cgram.tab.c"
+#line 687 "cgram.y"
+                { (yyval.treeptr) = alcTree(and_expression_an_an_eq, "and_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2825 "cgram.tab.c"
     break;
 
   case 188: /* equality_expression: relational_expression  */
-#line 681 "cgram.y"
+#line 692 "cgram.y"
         {  }
-#line 2827 "cgram.tab.c"
+#line 2831 "cgram.tab.c"
     break;
 
   case 189: /* equality_expression: equality_expression EQ relational_expression  */
-#line 683 "cgram.y"
-                { (yyval.treeptr) = alcTree(1172, "equality_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2833 "cgram.tab.c"
+#line 694 "cgram.y"
+                { (yyval.treeptr) = alcTree(equality_expression_eq_eq_re, "equality_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2837 "cgram.tab.c"
     break;
 
   case 190: /* equality_expression: equality_expression NE relational_expression  */
-#line 685 "cgram.y"
-                { (yyval.treeptr) = alcTree(1173, "equality_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2839 "cgram.tab.c"
+#line 696 "cgram.y"
+                { (yyval.treeptr) = alcTree(equality_expression_eq_ne_re, "equality_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2843 "cgram.tab.c"
     break;
 
   case 191: /* relational_expression: shift_expression  */
-#line 690 "cgram.y"
+#line 701 "cgram.y"
         {  }
-#line 2845 "cgram.tab.c"
+#line 2849 "cgram.tab.c"
     break;
 
   case 192: /* relational_expression: relational_expression LT shift_expression  */
-#line 692 "cgram.y"
-        { (yyval.treeptr) = alcTree(1175, "relational_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2851 "cgram.tab.c"
+#line 703 "cgram.y"
+        { (yyval.treeptr) = alcTree(relational_expression_re_lt_sh, "relational_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2855 "cgram.tab.c"
     break;
 
   case 193: /* relational_expression: relational_expression GT shift_expression  */
-#line 694 "cgram.y"
-        { (yyval.treeptr) = alcTree(1176, "relational_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2857 "cgram.tab.c"
+#line 705 "cgram.y"
+        { (yyval.treeptr) = alcTree(relational_expression_re_gt_sh, "relational_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2861 "cgram.tab.c"
     break;
 
   case 194: /* relational_expression: relational_expression LE shift_expression  */
-#line 696 "cgram.y"
-        { (yyval.treeptr) = alcTree(1177, "relational_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2863 "cgram.tab.c"
+#line 707 "cgram.y"
+        { (yyval.treeptr) = alcTree(relational_expression_re_le_sh, "relational_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2867 "cgram.tab.c"
     break;
 
   case 195: /* relational_expression: relational_expression GE shift_expression  */
-#line 698 "cgram.y"
-                { (yyval.treeptr) = alcTree(1178, "relational_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2869 "cgram.tab.c"
+#line 709 "cgram.y"
+                { (yyval.treeptr) = alcTree(relational_expression_re_ge_sh, "relational_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2873 "cgram.tab.c"
     break;
 
   case 196: /* shift_expression: additive_expression  */
-#line 703 "cgram.y"
+#line 714 "cgram.y"
         {  }
-#line 2875 "cgram.tab.c"
+#line 2879 "cgram.tab.c"
     break;
 
   case 197: /* shift_expression: shift_expression SHL additive_expression  */
-#line 705 "cgram.y"
-        { (yyval.treeptr) = alcTree(1180, "shift_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2881 "cgram.tab.c"
+#line 716 "cgram.y"
+        { (yyval.treeptr) = alcTree(shift_expression_sh_shl_ad, "shift_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2885 "cgram.tab.c"
     break;
 
   case 198: /* shift_expression: shift_expression SHR additive_expression  */
-#line 707 "cgram.y"
-        { (yyval.treeptr) = alcTree(1181, "shift_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2887 "cgram.tab.c"
+#line 718 "cgram.y"
+        { (yyval.treeptr) = alcTree(shift_expression_sh_shr_ad, "shift_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2891 "cgram.tab.c"
     break;
 
   case 199: /* additive_expression: multiplicative_expression  */
-#line 712 "cgram.y"
+#line 723 "cgram.y"
         {  }
-#line 2893 "cgram.tab.c"
+#line 2897 "cgram.tab.c"
     break;
 
   case 200: /* additive_expression: additive_expression PLUS multiplicative_expression  */
-#line 714 "cgram.y"
-        { (yyval.treeptr) = alcTree(1183, "additive_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2899 "cgram.tab.c"
+#line 725 "cgram.y"
+        { (yyval.treeptr) = alcTree(additive_expression_ad_pl_mu, "additive_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2903 "cgram.tab.c"
     break;
 
   case 201: /* additive_expression: additive_expression MINUS multiplicative_expression  */
-#line 716 "cgram.y"
-        { (yyval.treeptr) = alcTree(1184, "additive_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2905 "cgram.tab.c"
+#line 727 "cgram.y"
+        { (yyval.treeptr) = alcTree(additive_expression_ad_mi_mu, "additive_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2909 "cgram.tab.c"
     break;
 
   case 202: /* multiplicative_expression: cast_expression  */
-#line 721 "cgram.y"
+#line 732 "cgram.y"
         {  }
-#line 2911 "cgram.tab.c"
+#line 2915 "cgram.tab.c"
     break;
 
   case 203: /* multiplicative_expression: multiplicative_expression MUL cast_expression  */
-#line 723 "cgram.y"
-        { (yyval.treeptr) = alcTree(1186, "multiplicative_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2917 "cgram.tab.c"
+#line 734 "cgram.y"
+        { (yyval.treeptr) = alcTree(multiplicative_expression_mu_mu_ca, "multiplicative_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2921 "cgram.tab.c"
     break;
 
   case 204: /* multiplicative_expression: multiplicative_expression DIV cast_expression  */
-#line 725 "cgram.y"
-        { (yyval.treeptr) = alcTree(1187, "multiplicative_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2923 "cgram.tab.c"
+#line 736 "cgram.y"
+        { (yyval.treeptr) = alcTree(multiplicative_expression_mu_di_ca, "multiplicative_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2927 "cgram.tab.c"
     break;
 
   case 205: /* multiplicative_expression: multiplicative_expression MOD cast_expression  */
-#line 727 "cgram.y"
-        { (yyval.treeptr) = alcTree(1188, "multiplicative_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2929 "cgram.tab.c"
+#line 738 "cgram.y"
+        { (yyval.treeptr) = alcTree(multiplicative_expression_mu_mo_ca, "multiplicative_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2933 "cgram.tab.c"
     break;
 
   case 206: /* cast_expression: unary_expression  */
-#line 732 "cgram.y"
+#line 743 "cgram.y"
         {  }
-#line 2935 "cgram.tab.c"
+#line 2939 "cgram.tab.c"
     break;
 
   case 207: /* cast_expression: LP type_name RP cast_expression  */
-#line 734 "cgram.y"
-        { (yyval.treeptr) = alcTree(1190, "cast_expression", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2941 "cgram.tab.c"
+#line 745 "cgram.y"
+        { (yyval.treeptr) = alcTree(cast_expression_lp_ty_rp_ca, "cast_expression", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2945 "cgram.tab.c"
     break;
 
   case 208: /* unary_expression: postfix_expression  */
-#line 740 "cgram.y"
+#line 751 "cgram.y"
         {  }
-#line 2947 "cgram.tab.c"
+#line 2951 "cgram.tab.c"
     break;
 
   case 209: /* unary_expression: INCOP unary_expression  */
-#line 742 "cgram.y"
-        { (yyval.treeptr) = alcTree(1192, "unary_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2953 "cgram.tab.c"
+#line 753 "cgram.y"
+        { (yyval.treeptr) = alcTree(unary_expression_in_un, "unary_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2957 "cgram.tab.c"
     break;
 
   case 210: /* unary_expression: DECOP unary_expression  */
-#line 744 "cgram.y"
-        { (yyval.treeptr) = alcTree(1193, "unary_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2959 "cgram.tab.c"
+#line 755 "cgram.y"
+        { (yyval.treeptr) = alcTree(unary_expression_de_un, "unary_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2963 "cgram.tab.c"
     break;
 
   case 211: /* unary_expression: unary_operator cast_expression  */
-#line 746 "cgram.y"
-        { (yyval.treeptr) = alcTree(1194, "unary_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2965 "cgram.tab.c"
+#line 757 "cgram.y"
+        { (yyval.treeptr) = alcTree(unary_expression_un_ca, "unary_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2969 "cgram.tab.c"
     break;
 
   case 212: /* unary_expression: SIZEOF unary_expression  */
-#line 748 "cgram.y"
-        { (yyval.treeptr) = alcTree(1195, "unary_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2971 "cgram.tab.c"
+#line 759 "cgram.y"
+        { (yyval.treeptr) = alcTree(unary_expression_si_un, "unary_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2975 "cgram.tab.c"
     break;
 
   case 213: /* unary_expression: SIZEOF LP type_name RP  */
-#line 750 "cgram.y"
-        { (yyval.treeptr) = alcTree(1196, "unary_expression", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 2977 "cgram.tab.c"
+#line 761 "cgram.y"
+        { (yyval.treeptr) = alcTree(unary_expression_si_lp_ty_rp, "unary_expression", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 2981 "cgram.tab.c"
     break;
 
   case 214: /* unary_operator: AND  */
-#line 755 "cgram.y"
+#line 766 "cgram.y"
         {  }
-#line 2983 "cgram.tab.c"
+#line 2987 "cgram.tab.c"
     break;
 
   case 215: /* unary_operator: MUL  */
-#line 757 "cgram.y"
+#line 768 "cgram.y"
         {  }
-#line 2989 "cgram.tab.c"
+#line 2993 "cgram.tab.c"
     break;
 
   case 216: /* unary_operator: PLUS  */
-#line 759 "cgram.y"
+#line 770 "cgram.y"
         {  }
-#line 2995 "cgram.tab.c"
+#line 2999 "cgram.tab.c"
     break;
 
   case 217: /* unary_operator: MINUS  */
-#line 761 "cgram.y"
+#line 772 "cgram.y"
         {  }
-#line 3001 "cgram.tab.c"
+#line 3005 "cgram.tab.c"
     break;
 
   case 218: /* unary_operator: NOT  */
-#line 763 "cgram.y"
+#line 774 "cgram.y"
         {  }
-#line 3007 "cgram.tab.c"
+#line 3011 "cgram.tab.c"
     break;
 
   case 219: /* unary_operator: BANG  */
-#line 765 "cgram.y"
+#line 776 "cgram.y"
         {  }
-#line 3013 "cgram.tab.c"
+#line 3017 "cgram.tab.c"
     break;
 
   case 221: /* postfix_expression: postfix_expression LB expression RB  */
-#line 772 "cgram.y"
-                 { (yyval.treeptr) = alcTree(1203, "postfix_expression", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 3019 "cgram.tab.c"
+#line 783 "cgram.y"
+                 { (yyval.treeptr) = alcTree(postfix_expression_po_lb_ex_rb, "postfix_expression", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 3023 "cgram.tab.c"
     break;
 
   case 222: /* postfix_expression: postfix_expression LP RP  */
-#line 774 "cgram.y"
-                 { (yyval.treeptr) = alcTree(1204, "postfix_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 3025 "cgram.tab.c"
+#line 785 "cgram.y"
+                 { (yyval.treeptr) = alcTree(postfix_expression_po_lp_rp, "postfix_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 3029 "cgram.tab.c"
     break;
 
   case 223: /* postfix_expression: postfix_expression LP argument_expression_list RP  */
-#line 776 "cgram.y"
-                 { (yyval.treeptr) = alcTree(1205, "postfix_expression", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 3031 "cgram.tab.c"
+#line 787 "cgram.y"
+                 { (yyval.treeptr) = alcTree(postfix_expression_po_lp__ar_rp, "postfix_expression", 4, (yyvsp[-3].treeptr), (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 3035 "cgram.tab.c"
     break;
 
   case 224: /* postfix_expression: postfix_expression DOT identifier  */
-#line 778 "cgram.y"
-                 { (yyval.treeptr) = alcTree(1206, "postfix_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 3037 "cgram.tab.c"
+#line 789 "cgram.y"
+                 { (yyval.treeptr) = alcTree(postfix_expression_po_do_id, "postfix_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 3041 "cgram.tab.c"
     break;
 
   case 225: /* postfix_expression: postfix_expression FOLLOW identifier  */
-#line 780 "cgram.y"
-                { (yyval.treeptr) = alcTree(1207, "postfix_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 3043 "cgram.tab.c"
+#line 791 "cgram.y"
+                { (yyval.treeptr) = alcTree(postfix_expression_po_fo_id, "postfix_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 3047 "cgram.tab.c"
     break;
 
   case 226: /* postfix_expression: postfix_expression INCOP  */
-#line 782 "cgram.y"
-                 { (yyval.treeptr) = alcTree(1208, "postfix_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 3049 "cgram.tab.c"
+#line 793 "cgram.y"
+                 { (yyval.treeptr) = alcTree(postfix_expression_po_in, "postfix_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 3053 "cgram.tab.c"
     break;
 
   case 227: /* postfix_expression: postfix_expression DECOP  */
-#line 784 "cgram.y"
-                 { (yyval.treeptr) = alcTree(1209, "postfix_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 3055 "cgram.tab.c"
+#line 795 "cgram.y"
+                 { (yyval.treeptr) = alcTree(postfix_expression_po_de, "postfix_expression", 2, (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 3059 "cgram.tab.c"
     break;
 
   case 228: /* primary_expression: IDENTIFIER  */
-#line 789 "cgram.y"
+#line 800 "cgram.y"
         {  }
-#line 3061 "cgram.tab.c"
+#line 3065 "cgram.tab.c"
     break;
 
   case 229: /* primary_expression: constant  */
-#line 791 "cgram.y"
+#line 802 "cgram.y"
         {  }
-#line 3067 "cgram.tab.c"
+#line 3071 "cgram.tab.c"
     break;
 
   case 230: /* primary_expression: STRING  */
-#line 793 "cgram.y"
+#line 804 "cgram.y"
         {  }
-#line 3073 "cgram.tab.c"
+#line 3077 "cgram.tab.c"
     break;
 
   case 231: /* primary_expression: LP expression RP  */
-#line 795 "cgram.y"
-         { (yyval.treeptr) = alcTree(1213, "primary_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 3079 "cgram.tab.c"
+#line 806 "cgram.y"
+         { (yyval.treeptr) = alcTree(primary_expression_lp_ex_rp, "primary_expression", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 3083 "cgram.tab.c"
     break;
 
   case 232: /* argument_expression_list: assignment_expression  */
-#line 800 "cgram.y"
+#line 811 "cgram.y"
         {  }
-#line 3085 "cgram.tab.c"
+#line 3089 "cgram.tab.c"
     break;
 
   case 233: /* argument_expression_list: argument_expression_list CM assignment_expression  */
-#line 802 "cgram.y"
-        { (yyval.treeptr) = alcTree(1215, "argument_expression_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
-#line 3091 "cgram.tab.c"
+#line 813 "cgram.y"
+        { (yyval.treeptr) = alcTree(argument_expression_list_ar_cm_as, "argument_expression_list", 3, (yyvsp[-2].treeptr), (yyvsp[-1].treeptr), (yyvsp[0].treeptr)); }
+#line 3095 "cgram.tab.c"
     break;
 
   case 234: /* constant: ICON  */
-#line 807 "cgram.y"
+#line 818 "cgram.y"
         {  }
-#line 3097 "cgram.tab.c"
+#line 3101 "cgram.tab.c"
     break;
 
   case 235: /* constant: CCON  */
-#line 809 "cgram.y"
+#line 820 "cgram.y"
         {  }
-#line 3103 "cgram.tab.c"
+#line 3107 "cgram.tab.c"
     break;
 
   case 236: /* constant: FCON  */
-#line 811 "cgram.y"
+#line 822 "cgram.y"
         {  }
-#line 3109 "cgram.tab.c"
+#line 3113 "cgram.tab.c"
     break;
 
   case 237: /* constant: ENUMERATION_CONSTANT  */
-#line 813 "cgram.y"
+#line 824 "cgram.y"
         {  }
-#line 3115 "cgram.tab.c"
+#line 3119 "cgram.tab.c"
     break;
 
 
-#line 3119 "cgram.tab.c"
+#line 3123 "cgram.tab.c"
 
       default: break;
     }
@@ -3309,4 +3313,5 @@ yyreturn:
   return yyresult;
 }
 
-#line 816 "cgram.y"
+#line 827 "cgram.y"
+

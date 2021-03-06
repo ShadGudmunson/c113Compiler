@@ -5,6 +5,7 @@
 #include "tree.h"
 #include "ytab.h"
 #include "cgram.tab.h"
+#include "symtab.h"
 
 #define CHILDNUM 9
 
@@ -14,10 +15,13 @@ extern int rows;
 extern char *filename;
 extern int insert_head();
 
+SymbolTable current = NULL;
+
 struct tree *alcTree(int label, char *symbolname, int nkids, ...)
 {
     int i;
     va_list ap;
+    
     struct tree *ptr = malloc(sizeof(struct tree) +
                                 (nkids-1)*sizeof(struct tree *));
     if (ptr == NULL) {
@@ -27,6 +31,7 @@ struct tree *alcTree(int label, char *symbolname, int nkids, ...)
     ptr->label = label;
     ptr->symbolname = symbolname;
     ptr->nkids = nkids;
+    ptr->leaf = yylval.treeptr->leaf;
     va_start(ap, nkids);
     for(i=0; i < nkids; i++)
         ptr->kids[i] = va_arg(ap, struct tree *);
@@ -34,7 +39,8 @@ struct tree *alcTree(int label, char *symbolname, int nkids, ...)
     return ptr;
 }
 
-void memerr(){
+void memerr()
+{
     fprintf(stderr, "There was an issue mallocing!");
     exit(1);
 }
@@ -50,7 +56,7 @@ int alctoken(int category)
 		yylval.treeptr->kids[i] = NULL;
 	}
 
-    if ((yylval.treeptr->leaf = (struct token *)malloc(sizeof (struct token)))==NULL)
+    if ((yylval.treeptr->leaf = (struct token *)calloc(1, sizeof (struct token)))==NULL)
         memerr();
     tokenInit();
 	yylval.treeptr->leaf->category = category;
@@ -110,7 +116,8 @@ void printNode(struct tree *tr)
     printf("\n\n\n");
 }
 
-void deleteNode(struct tree *tr){
+void deleteNode(struct tree *tr)
+{
     /*need to implement*/
 }
 
@@ -125,12 +132,13 @@ void postTrav(struct tree *tr, void (*visit)(struct tree *))
 
 }
 
-void preTrav(struct tree *tr, void (*visit)(struct tree *)){
+void preTrav(struct tree *tr, void (*visit)(struct tree *))
+{
     int i = 0;
     visit(tr);
     while(tr->kids[i] != NULL)
     {
-        visit(tr->kids[i]);
+        preTrav(tr->kids[i], visit);
         i++;
     }
 }
@@ -184,7 +192,8 @@ char * convertString(char* str)
 	return new_str;
 }
 
-char *humanreadable(struct tree *t){
+char *humanreadable(struct tree *t)
+{
     return(t->symbolname);
 }
 
@@ -202,3 +211,40 @@ void treeprint(struct tree *t, int depth)
     }
     
 }
+
+void debugSymbol(char *s, char *s2)
+{
+    printf("Symbol: %s\tText: %s\n", s, s2); fflush(stdout);
+}
+
+/**
+To be used in a traversal
+checks the the tree for variable definitions and adds them to current symbol table, or creates new symboltable
+*/
+void parseTree(struct tree *t)
+{
+    if (!strcmp(t->symbolname, "function_definition")){
+        current = mksymtab(current);
+    }
+
+    if (!strcmp(t->symbolname, "identifier")){
+        insert(current, t->leaf->sval);
+    }
+
+}
+
+void printsyms(struct tree *t)
+{
+
+    if (t->leaf != NULL){
+        debugSymbol(t->symbolname, t->leaf->text);
+    } else {
+        debugSymbol(t->symbolname, "empty");
+    }
+}
+
+void printsymbol(char *s)
+{
+    printf("Symbol: %s\n", s); fflush(stdout);
+}
+
