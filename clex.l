@@ -11,7 +11,7 @@ struct token *yytoken = NULL;
 extern char *filename;
 extern void insert_head(struct token *tok);
 
-int rows = 0, words = 0, chars = 0;
+int rows = 1, words = 0, chars = 0;
 
 void yyerror (char const *s){
 	fprintf (stderr, "%s\n", s);
@@ -260,10 +260,9 @@ void invalidToken(){
 	invalidToken();
 }
 \"[^"\n]*\"	{
-	
 	return alctoken(STRING);
 }
-0x[0-9a-fA-f]+|0X[0-9a-fA-f]+|[0-9]+ {
+[0-9]+ {
 	return alctoken(ICON);
 }
 [0-9]*"."[0-9]+|[0-9]+"."[0-9]* {

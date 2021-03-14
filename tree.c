@@ -14,30 +14,9 @@ extern char *yytext;
 extern int rows;
 extern char *filename;
 extern int insert_head();
+int serialnum = 0;
 
 SymbolTable current = NULL;
-
-struct tree *alcTree(int label, char *symbolname, int nkids, ...)
-{
-    int i;
-    va_list ap;
-    
-    struct tree *ptr = malloc(sizeof(struct tree) +
-                                (nkids-1)*sizeof(struct tree *));
-    if (ptr == NULL) {
-       fprintf(stderr, "alctree out of memory\n"); 
-       exit(1); 
-    }
-    ptr->label = label;
-    ptr->symbolname = symbolname;
-    ptr->nkids = nkids;
-    ptr->leaf = yylval.treeptr->leaf;
-    va_start(ap, nkids);
-    for(i=0; i < nkids; i++)
-        ptr->kids[i] = va_arg(ap, struct tree *);
-    va_end(ap);
-    return ptr;
-}
 
 void memerr()
 {
@@ -45,20 +24,44 @@ void memerr()
     exit(1);
 }
 
+struct tree *alcTree(int label, char *symbolname, int nkids, ...)
+{
+    va_list ap;
+    struct tree *ptr = malloc(sizeof(struct tree) +
+                                (nkids)*sizeof(struct tree *));
+    if (ptr == NULL) {
+       memerr();
+    }
+    ptr->id = serialnum++;
+    ptr->label = label;
+    ptr->symbolname = symbolname;
+    ptr->nkids = nkids;
+
+    va_start(ap, nkids);
+    for(int i = 0; i < nkids; i++){
+        ptr->kids[i] = va_arg(ap, struct tree *);
+    }
+    if (nkids == 0){
+        ptr->leaf = yylval.treeptr->leaf;
+    }
+    va_end(ap);
+    return ptr;
+}
+
 int alctoken(int category)
 {
-    if ((yylval.treeptr = (struct tree *)calloc(1, sizeof (struct tree))) == NULL)
+    if ((yylval.treeptr = (struct tree *)calloc(1, sizeof (struct tree) 
+                            + (CHILDNUM)*sizeof(struct tree *))) == NULL)
         memerr();
    	yylval.treeptr->label = category;
 	yylval.treeptr->symbolname = "";
 	yylval.treeptr->nkids = 0;
-	for(int i = 0; i < CHILDNUM; i++){
-		yylval.treeptr->kids[i] = NULL;
-	}
+    yylval.treeptr->leaf = NULL;
 
     if ((yylval.treeptr->leaf = (struct token *)calloc(1, sizeof (struct token)))==NULL)
         memerr();
     tokenInit();
+    yylval.treeptr->id = serialnum++;
 	yylval.treeptr->leaf->category = category;
 	yylval.treeptr->leaf->text = strdup(yytext);
 	yylval.treeptr->leaf->lineno = rows;
@@ -228,7 +231,7 @@ void parseTree(struct tree *t)
     }
 
     if (!strcmp(t->symbolname, "identifier")){
-        insert(current, t->leaf->sval);
+        insert(current, t->kids[0]->leaf->sval);
     }
 
 }
@@ -248,3 +251,270 @@ void printsymbol(char *s)
     printf("Symbol: %s\n", s); fflush(stdout);
 }
 
+
+
+/**
+Code from Dr.j needs to be adapted from his implementation to mine.
+*/
+int j;
+
+char *escape(char *s) 
+{
+    char *s2 = malloc(strlen(s)+4);
+    s = strdup(s);
+    if (s[0] == '\"') {
+        if (s[strlen(s)-1] != '\"') {
+        fprintf(stderr, "What is it?!\n");
+    }
+        s[strlen(s)-1] = '\0'; // chop off trailing double quote
+        sprintf(s2, "\\%s\\\"", s);
+        return s2;
+    }
+    else{
+        return s;
+    } 
+}
+
+char *pretty_print_name(struct tree *t) 
+{
+    char *s2 = malloc(40);
+    if (t->leaf == NULL) {
+        //modified
+        sprintf(s2, "%s#%d", t->symbolname, t->label);
+        return s2;
+    }
+    else {
+        sprintf(s2,"%s:%d", escape(t->leaf->text), t->leaf->category);
+        return s2;
+    }
+}
+/*supposed to be internal node*/
+void print_branch(struct tree *t, FILE *f)
+{
+   fprintf(f, "N%d [shape=box label=\"%s\"];\n", t->id, pretty_print_name(t));
+}
+
+/*supposed to be only for leaf nodes*/
+/*Probably only need one*/
+void print_leaf(struct tree *t, FILE *f)
+{
+    char *s = getname(t->leaf->category);
+    print_branch(t, f);
+    fprintf(f, "N%d [shape=box style=dotted label=\" %s \\n ", t->id, s);
+    fprintf(f, "text = %s \\l lineno = %d \\l\"];\n", escape(t->leaf->text),
+    t->leaf->lineno);
+}
+
+void print_graph2(struct tree *t, FILE *f)
+{
+    int i, j;
+    if (t->leaf != NULL) {
+        print_leaf(t, f);
+        return;
+    }
+    /* not a leaf ==> internal node */
+    print_branch(t, f);
+    for(i=0; i < t->nkids; i++) {
+        if (t->kids[i] != NULL) {
+            fprintf(f, "N%d -> N%d;\n", t->id, t->kids[i]->id);
+            print_graph2(t->kids[i], f);
+        } else { /* NULL kid, epsilon production or something */
+            fprintf(f, "N%d -> N%d%d;\n", t->id, t->kids[i]->id, j);
+            fprintf(f, "N%d%d [label=\"%s\"];\n", t->id, j, "Empty rule");
+            j++;
+        }
+    }
+}
+
+void print_graph(struct tree *t, char *filename)
+{
+    FILE *f = fopen(filename, "w"); /* should check for NULL */
+    fprintf(f, "digraph {\n");
+    j = 0;
+    print_graph2(t, f);
+    fprintf(f,"}\n");
+    fclose(f);
+}
+
+char * getname(int i)
+{
+    switch (i){
+        case 258:
+            return "bad_token";
+        case 259:
+            return "icon";
+        case 260:
+            return "ccon";
+        case 261:
+            return "fcon";
+        case 262:
+            return "enumeration_constant";
+        case 263:
+            return "identifier";
+        case 264:
+            return "string";
+        case 265:
+            return "sizeof";
+        case 266:
+            return "incop";
+        case 267:
+            return "decop";
+        case 268:
+            return "shl";
+        case 269:
+            return "shr";
+        case 270:
+            return "le";
+        case 271:
+            return "ge";
+        case 272:
+            return "eq";
+        case 273:
+            return "ne";
+        case 274:
+            return "andand";
+        case 275:
+            return "oror";
+        case 276:
+            return "muasn";
+        case 277:
+            return "diasn";
+        case 278:
+            return "moasn";
+        case 279:
+            return "plasn";
+        case 280:
+            return "asn";
+        case 281:
+            return "miasn";
+        case 282:
+            return "slasn";
+        case 283:
+            return "srasn";
+        case 284:
+            return "anasn";
+        case 285:
+            return "erasn";
+        case 286:
+            return "orasn";
+        case 287:
+            return "typedef_name";
+        case 288:
+            return "cm";
+        case 289:
+            return "sm";
+        case 290:
+            return "lt";
+        case 291:
+            return "gt";
+        case 292:
+            return "plus";
+        case 293:
+            return "minus";
+        case 294:
+            return "mul";
+        case 295:
+            return "div";
+        case 296:
+            return "mod";
+        case 297:
+            return "lp";
+        case 298:
+            return "rp";
+        case 299:
+            return "lb";
+        case 300:
+            return "rb";
+        case 301:
+            return "lc";
+        case 302:
+            return "rc";
+        case 303:
+            return "colon";
+        case 304:
+            return "quest";
+        case 305:
+            return "and";
+        case 306:
+            return "or";
+        case 307:
+            return "er";
+        case 308:
+            return "not";
+        case 309:
+            return "follow";
+        case 310:
+            return "bang";
+        case 311:
+            return "dot";
+        case 312:
+            return "typedef";
+        case 313:
+            return "extern";
+        case 314:
+            return "static";
+        case 315:
+            return "auto";
+        case 316:
+            return "register";
+        case 317:
+            return "char";
+        case 318:
+            return "short";
+        case 319:
+            return "int";
+        case 320:
+            return "long";
+        case 321:
+            return "signed";
+        case 322:
+            return "unsigned";
+        case 323:
+            return "float";
+        case 324:
+            return "double";
+        case 325:
+            return "const";
+        case 326:
+            return "volatile";
+        case 327:
+            return "void";
+        case 328:
+            return "struct";
+        case 329:
+            return "union";
+        case 330:
+            return "enum";
+        case 331:
+            return "elipsis";
+        case 332:
+            return "case";
+        case 333:
+            return "default";
+        case 334:
+            return "if";
+        case 335:
+            return "switch";
+        case 336:
+            return "while";
+        case 337:
+            return "do";
+        case 338:
+            return "for";
+        case 339:
+            return "goto";
+        case 340:
+            return "continue";
+        case 341:
+            return "break";
+        case 342:
+            return "return";
+        case 343:
+            return "then";
+        case 344:
+            return "else"; 
+        default:
+            return "unrecognized";
+   }
+   return "Not found";
+}

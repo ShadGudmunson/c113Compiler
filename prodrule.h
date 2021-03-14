@@ -16,9 +16,11 @@
 #define declaration_list_de_de 1015
 #define declaration_specifiers_st 1016
 #define declaration_specifiers_st_de 1017
-#define declaration_specifiers_ty 1018
+#define declaration_specifiers_tysp 1018
 #define declaration_specifiers_tyse_de 1019
+#define declaration_specifiers_tyqu 1020
 #define declaration_specifiers_tyqu_de 1021
+#define storage_class_specifier_ty 1217
 #define storage_class_specifier_ex 1022
 #define storage_class_specifier_st 1023
 #define storage_class_specifier_au 1024

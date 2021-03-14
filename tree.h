@@ -1,5 +1,6 @@
 struct tree {
-   int label;
+   int id;
+   int label; /*aka prodrule*/
    char *symbolname;
    int nkids;
    struct tree *kids[9]; /* if nkids >0 */
@@ -20,3 +21,11 @@ void treeprint(struct tree *t, int depth);
 void parseTree(struct tree *t);
 void printsyms(struct tree *t);
 void printsymbol(char *s);
+char *escape(char *s);
+char *pretty_print_name(struct tree *t);
+void print_branch(struct tree *t, FILE *f);
+char *yyname(int);
+void print_leaf(struct tree *t, FILE *f);
+void print_graph2(struct tree *t, FILE *f);
+void print_graph(struct tree *t, char *filename);
+char * getname(int i);
