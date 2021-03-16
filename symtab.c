@@ -7,7 +7,7 @@ extern SymbolTable current;
 
 SymbolTable mksymtab(SymbolTable parent, char *s)
 {
-    SymbolTableEntry *arr = calloc(NBUCKETS, sizeof(SymbolTableEntry));
+    SymbolTableEntry *arr = calloc(NBUCKETS, sizeof(SymbolTableEntry) + MAXNAMELEN);
     if (arr == NULL){
         fprintf(stderr, "Error! ran out of memory");
         exit(MALERR);
@@ -17,12 +17,16 @@ SymbolTable mksymtab(SymbolTable parent, char *s)
         fprintf(stderr, "Error! ran out of memory");
         exit(MALERR);
     }
-    ret->scopeName = strdup(s);
+    ret->scopeName = s;
     ret->nEntries = 0;
     ret->nBuckets = NBUCKETS;
     ret->parent = parent;
     ret->tbl = arr;
     
+    for(int i = 0; i < NBUCKETS; i++){
+        ret->tbl[i] = NULL;
+    }
+
     return ret;
 }
 
@@ -43,7 +47,7 @@ int hash(SymbolTable st, char *s)
 */
 void insert(SymbolTable st, char *key) 
 {
-   SymbolTableEntry item = calloc(1, sizeof(SymbolTableEntry));
+   SymbolTableEntry item = calloc(1, sizeof(SymbolTableEntry) + MAXNAMELEN);
     if (item == NULL){
         fprintf(stderr, "Error! ran out of memory");
         exit(MALERR);

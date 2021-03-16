@@ -49,8 +49,15 @@ struct tree *alcTree(int label, char *symbolname, int nkids, ...)
     for(int i = 0; i < nkids; i++){
         ptr->kids[i] = va_arg(ap, struct tree *);
     }
+
+    for(int i = nkids; i < NUMKIDS; i++){
+        ptr->kids[i] = NULL;
+    }
+
     if (nkids == 0){
         ptr->leaf = yylval.treeptr->leaf;
+    } else {
+        ptr->leaf = NULL;
     }
     va_end(ap);
     return ptr;
@@ -158,7 +165,7 @@ char * convertString(char* str)
 {
 	int i, j = 0;
 	str = strtok(str, "\"");
-	char *new_str = malloc(strlen(str) + 1);
+	char *new_str = calloc(1, (strlen(str) + 1));
 	for(i = 0; i < strlen(str); i++, j++){
 		if(str[i] == 92){
 			switch(str[i+1]){
@@ -334,7 +341,6 @@ char *pretty_print_name(struct tree *t)
 {
     char *s2 = malloc(40);
     if (t->leaf == NULL) {
-        //modified
         sprintf(s2, "%s#%d", t->symbolname, t->label);
         return s2;
     }
