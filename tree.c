@@ -13,8 +13,16 @@ extern YYSTYPE yylval;
 extern char *yytext;
 extern int rows;
 extern char *filename;
+extern int stdioflg;
+extern int stdlibflg;
+extern int stringflg;
+extern int mathflg;
+
 extern int insert_head();
+
 int serialnum = 0;
+int end = -1;
+
 
 SymbolTable current = NULL;
 
@@ -226,9 +234,58 @@ checks the the tree for variable definitions and adds them to current symbol tab
 */
 void parseTree(struct tree *t)
 {
-    if (!strcmp(t->symbolname, "function_definition")){
-        current = mksymtab(current);
+    if (current == NULL){
+        current = mksymtab(current, "global");
+        if (stdioflg){
+            current = mksymtab(current, "stdio.h");
+            insert(current, "printf");
+            insert(current, "sprintf");
+            insert(current, "fopen");
+            insert(current, "fclose");
+            insert(current, "fprintf");
+            insert(current, "fscanf");
+        }
+
+        if (stdlibflg){
+            current = mksymtab(current, "stdlib.h");
+            insert(current, "malloc");
+            insert(current, "realloc");
+            insert(current, "free");
+            insert(current, "rand");
+
+        }
+        
+        if (stringflg){
+            current = mksymtab(current, "string.h");
+            insert(current, "stringlen");
+            insert(current, "strcpy");
+            insert(current, "strcmp");
+            insert(current, "strtok");
+            
+        }
+        
+        if (mathflg){
+            current = mksymtab(current, "math.h");
+            insert(current, "sqrt");
+            insert(current, "cos");
+            insert(current, "pow");
+            insert(current, "sin");
+
+        }
     }
+
+    if (!strcmp(t->symbolname, "direct_function_declarator")){
+        current = mksymtab(current, t->kids[0]->kids[0]->kids[0]->leaf->sval);
+    }
+
+    if (!strcmp(t->symbolname, "struct_or_union_specifier")){
+        current = mksymtab(current, "struct");
+        end = t->kids[4]->id;
+    }
+
+    //if (t->id == end){
+    //    current = current->parent;
+    //}
 
     if (!strcmp(t->symbolname, "identifier")){
         insert(current, t->kids[0]->leaf->sval);
@@ -250,8 +307,6 @@ void printsymbol(char *s)
 {
     printf("Symbol: %s\n", s); fflush(stdout);
 }
-
-
 
 /**
 Code from Dr.j needs to be adapted from his implementation to mine.

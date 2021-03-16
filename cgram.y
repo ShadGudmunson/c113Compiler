@@ -5,6 +5,7 @@
 #include "tree.h"
 #include "prodrule.h"
 #include "symtab.h"
+#include "errdef.h"
 
 #define YYDEBUG 1
 //#define DEBUG
@@ -167,13 +168,13 @@ external_declaration:
 
 function_definition:
     function_declarator compound_statement
-        { /* old school pre-ANSI, no return type */ fprintf(stderr, "Error pre-ANSI not supported"); exit(2); }
+        { /* old school pre-ANSI, no return type */ fprintf(stderr, "Error pre-ANSI not supported"); exit(SYNERR); }
     | function_declarator declaration_list compound_statement
-        { /* old school pre ANSI */ fprintf(stderr, "Error pre-ANSI not supported"); exit(2);}
+        { /* old school pre ANSI */ fprintf(stderr, "Error pre-ANSI not supported"); exit(SYNERR);}
     | declaration_specifiers function_declarator compound_statement
         { $$ = alcTree(function_definition_de_fu_co, "function_definition", 3, $1, $2, $3); }
     | declaration_specifiers function_declarator  declaration_list compound_statement
-        { /* declaration_list! This must be pre-ANSI  */ fprintf(stderr, "Error pre-ANSI not supported"); exit(2); }
+        { /* declaration_list! This must be pre-ANSI  */ fprintf(stderr, "Error pre-ANSI not supported"); exit(SYNERR); }
     ;
 
 declaration:
@@ -398,7 +399,7 @@ direct_function_declarator:
     | direct_declarator LP RP
         { $$ = alcTree(direct_function_declarator_di_lp_rp, "direct_function_declarator", 3, $1, $2, $3); }
     | direct_declarator LP identifier_list RP
-        { /* pre-ANSI, error case */ printf("Error: pre-ANSI not supported"); exit(2);}
+        { /* pre-ANSI, error case */ printf("Error: pre-ANSI not supported"); exit(SYNERR);}
     ;
 
 pointer:

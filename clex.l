@@ -6,10 +6,16 @@
 #include "ytab.h"
 #include "tree.h"
 #include "cgram.tab.h"
+#include "errdef.h"
 
 struct token *yytoken = NULL;
 extern char *filename;
 extern void insert_head(struct token *tok);
+int stdioflg = 0;
+int stdlibflg = 0;
+int stringflg = 0;
+int mathflg = 0;
+
 
 int rows = 1, words = 0, chars = 0;
 
@@ -17,12 +23,14 @@ void yyerror (char const *s){
 	fprintf (stderr, "%s\n", s);
 	fprintf (stderr, "Something went wrong with \"%s\" in file %s on line %d\n",\
 	 yylval.treeptr->leaf->text, yylval.treeptr->leaf->filename, yylval.treeptr->leaf->lineno);
-	exit(1);
+	exit(LEXERR);
 }
 
 void invalidToken(){
+	fprintf (stderr, "Something went wrong with \"%s\" in file %s on line %d\n",\
+	 yylval.treeptr->leaf->text, yylval.treeptr->leaf->filename, yylval.treeptr->leaf->lineno);
 	printf("This feature is not suppored in c113c.");
-	exit(1);
+	exit(LEXERR);
 }
 
 %}
@@ -160,6 +168,10 @@ void invalidToken(){
 ";" {
     return alctoken(SM);
 }
+"#include <stdio.h>" { stdioflg = 1; }
+"#include <string.h>" { stringflg = 1; }
+"#include <stdlib.h>" { stdlibflg = 1; }
+"#include <math.h>" { mathflg = 1; }
 "<<" {
 	invalidToken();
 }
@@ -269,7 +281,6 @@ void invalidToken(){
 	return alctoken(FCON);
 }
 '.{1}' {
-	
 	return alctoken(CCON);
 }
 <<EOF>> {
@@ -281,8 +292,8 @@ void invalidToken(){
 	return alctoken(IDENTIFIER);
 }
 [^ \t] {/*do nothing*/}
-[//].* {rows++;}
-#.* {rows++;}
+[//].* {/*do nothing*/}
+#.* {/*do nothing*/}
 . {chars++;}
 
 %%

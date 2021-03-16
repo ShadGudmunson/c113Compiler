@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #define NBUCKETS 1024
+#define MAXNAMELEN 255
 
 typedef struct sym_table {
     int nBuckets;			/* # of buckets */
@@ -8,6 +9,7 @@ typedef struct sym_table {
     struct sym_table *parent;		/* enclosing scope, superclass etc. */
     struct sym_entry **tbl;
     /* more per-scope/per-symbol-table attributes go here */
+    char *scopeName;
 } *SymbolTable;
 
 typedef struct sym_entry {
@@ -17,7 +19,7 @@ typedef struct sym_entry {
     struct sym_entry *next;
 } *SymbolTableEntry;
 
-SymbolTable mksymtab(SymbolTable parent);
+SymbolTable mksymtab(SymbolTable parent, char* s);
 int hash(SymbolTable st, char *s);
 void insert(SymbolTable st, char *key);
 void printTable(SymbolTable st);

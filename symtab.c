@@ -1,22 +1,23 @@
 #include "symtab.h"
 #include "errdef.h"
+#include <string.h>
 #include <stdio.h>
 
 extern SymbolTable current;
 
-
-SymbolTable mksymtab(SymbolTable parent)
+SymbolTable mksymtab(SymbolTable parent, char *s)
 {
     SymbolTableEntry *arr = calloc(NBUCKETS, sizeof(SymbolTableEntry));
     if (arr == NULL){
         fprintf(stderr, "Error! ran out of memory");
         exit(MALERR);
     }
-    SymbolTable ret = calloc(1, sizeof(SymbolTable));
+    SymbolTable ret = calloc(1, sizeof(SymbolTable) + MAXNAMELEN);
     if (ret == NULL){
         fprintf(stderr, "Error! ran out of memory");
         exit(MALERR);
     }
+    ret->scopeName = strdup(s);
     ret->nEntries = 0;
     ret->nBuckets = NBUCKETS;
     ret->parent = parent;
@@ -42,7 +43,6 @@ int hash(SymbolTable st, char *s)
 */
 void insert(SymbolTable st, char *key) 
 {
-
    SymbolTableEntry item = calloc(1, sizeof(SymbolTableEntry));
     if (item == NULL){
         fprintf(stderr, "Error! ran out of memory");
@@ -57,6 +57,10 @@ void insert(SymbolTable st, char *key)
 
     //if there is already an item in the index 
     if (st->tbl[hashIndex] != NULL){
+        if (!strcmp(st->tbl[hashIndex]->s, key)){
+            fprintf(stderr, "Symbol '%s' double defined!\n", key);
+            exit(SYNERR);
+        }
         tmp = st->tbl[hashIndex];
         while (tmp->next != NULL){
             tmp = tmp->next;            
@@ -69,22 +73,24 @@ void insert(SymbolTable st, char *key)
 
 void printTable(SymbolTable st)
 {
+    printf("---- symbol table for: %s ----\n", st->scopeName);
+
     for (int i = 0; i < NBUCKETS; i++){
         if (st->tbl[i] != NULL){
-            printf("%d: %s\n", i, st->tbl[i]->s);
+            printf("\t%s\n", st->tbl[i]->s);
         }
     }
 }
 
 void printCurrentTable()
 {
+    printf("---- symbol table for: %s ----\n", current->scopeName);
     for (int i = 0; i < NBUCKETS; i++){
         if (current->tbl[i] != NULL){
-            printf("%d: %s\n", i, current->tbl[i]->s);
+            printf("\t%s\n",current->tbl[i]->s);
         }
     }
     if (current->parent != NULL){
-        printf("printing parent: \n");
         printTable(current->parent);
     }
 }
