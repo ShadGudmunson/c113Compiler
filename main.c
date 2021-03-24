@@ -101,7 +101,6 @@ int main(int argc, char **argv)
             
             if (symflag){
                 printCurrentTable();
-                /*not implemented yet*/
             }
     
             if (dotflag){
@@ -112,11 +111,11 @@ int main(int argc, char **argv)
                 sprintf(dotcommand, "dot -q -Tpng %s -o %s.png", dotfile, filename);
                 system(dotcommand);
                 
-                //sprintf(dotcommand, "xdg-open %s.png", filename);
-                //system(dotcommand);
+                sprintf(dotcommand, "xdg-open %s.png", filename);
+                system(dotcommand);
                 
-                //sprintf(dotcommand, "rm %s", dotfile);
-                //system(dotcommand);
+                sprintf(dotcommand, "rm %s", dotfile);
+                system(dotcommand);
             }
         }
 

@@ -145,8 +145,6 @@ identifier:
 
 file: translation_unit { root = $1;
     preTrav(root, parseTree);
-    //printCurrentTable();
-    //treeprint(root, 0);
  };
 
 translation_unit:
@@ -179,14 +177,14 @@ function_definition:
 
 declaration:
     declaration_specifiers SM
-		{ $$ = alcTree(declaration_de_sm, "declaration", 2, $1, $2); }
+		{ $$ = alcTree(declaration_de_sm, "declaration", 1, $1); }
 	| declaration_specifiers init_declarator_list SM
-		{ $$ = alcTree(declaration_de_in_sm, "declaration", 3, $1, $2, $3); }
+		{ $$ = alcTree(declaration_de_in_sm, "declaration", 2, $1, $2); }
 	;
 
 untyped_declaration:
     init_declarator_list SM
-        { $$ = alcTree(untyped_declaration_in_sm, "untyped_declaration", 2, $1, $2); }
+        { $$ = alcTree(untyped_declaration_in_sm, "untyped_declaration", 1, $1); }
     ;
 
 declaration_list:
@@ -311,9 +309,9 @@ init_declarator:
 
 struct_declaration:
     specifier_qualifier_list SM
-		{ $$ = alcTree(struct_declaration_sp_sm, "struct_declaration", 2, $1, $2); }
+		{ $$ = alcTree(struct_declaration_sp_sm, "struct_declaration", 1, $1); }
 	|  specifier_qualifier_list struct_declarator_list SM
-		{ $$ = alcTree(struct_declaration__sp_st_sm, "struct_declaration", 3, $1, $2, $3); }
+		{ $$ = alcTree(struct_declaration__sp_st_sm, "struct_declaration", 2, $1, $2); }
 	;
 
 specifier_qualifier_list:
@@ -374,17 +372,17 @@ direct_declarator:
     identifier  /* this could be a TRUE identifier or a TYPEDEF identifier*/
         { $$ = alcTree(declarator_po_di, "direct_declarator", 1, $1); }
 	| LP declarator RP
-        { $$ = alcTree(direct_declarator_lp_de_rp, "direct_declarator", 2, $1, $2); }
+        { $$ = alcTree(direct_declarator_lp_de_rp, "direct_declarator", 1, $1); }
 	| direct_declarator LB RB
         { $$ = alcTree(direct_declarator_di_lb_rb, "direct_declarator", 3, $1, $2, $3); }
 	| direct_declarator LB constant_expression RB
         { $$ = alcTree(direct_declarator_di_lb_co_rb, "direct_declarator", 4, $1, $2, $3, $4); }
     | direct_declarator LP parameter_type_list RP
-        { $$ = alcTree(direct_declarator_di_lp_pa_rp, "direct_declarator", 4, $1, $2, $3, $4); }
+        { $$ = alcTree(direct_declarator_di_lp_pa_rp, "direct_declarator", 2, $1, $3); }
 	| direct_declarator LP RP
-        { $$ = alcTree(direct_declarator_di_lp_rp, "direct_declarator", 3, $1, $2, $3); }
+        { $$ = alcTree(direct_declarator_di_lp_rp, "direct_declarator", 1, $1); }
 	| direct_declarator LP identifier_list RP
-        { $$ = alcTree(direct_declarator_di_lp_id_rp, "direct_declarator", 4, $1, $2, $3, $4); }
+        { $$ = alcTree(direct_declarator_di_lp_id_rp, "direct_declarator", 2, $1, $3); }
     ;
 function_declarator:
     direct_function_declarator
@@ -395,16 +393,16 @@ function_declarator:
 
 direct_function_declarator:
     direct_declarator LP parameter_type_list RP
-        { $$ = alcTree(direct_function_declarator_di_lp_pa_rp, "direct_function_declarator", 4, $1, $2, $3, $4); }
+        { $$ = alcTree(direct_function_declarator_di_lp_pa_rp, "direct_function_declarator", 2, $1, $3); }
     | direct_declarator LP RP
-        { $$ = alcTree(direct_function_declarator_di_lp_rp, "direct_function_declarator", 3, $1, $2, $3); }
+        { $$ = alcTree(direct_function_declarator_di_lp_rp, "direct_function_declarator", 1, $1); }
     | direct_declarator LP identifier_list RP
         { /* pre-ANSI, error case */ printf("Error: pre-ANSI not supported"); exit(SYNERR);}
     ;
 
 pointer:
     MUL
-        { $$ = alcTree(pointer_mu, "pointer", 0, $1); }
+        { $$ = alcTree(pointer_mu, "pointer", 1, $1); }
     | MUL type_qualifier_list
         { $$ = alcTree(pointer_mu_ty, "pointer", 2, $1, $2); }
     | MUL pointer
@@ -485,7 +483,7 @@ abstract_declarator:
 
 direct_abstract_declarator:
     LP abstract_declarator RP
-		{ $$ = alcTree(direct_abstract_declarator_lp_ab_rp, "direct_abstract_declarator", 3, $1, $2, $3); }
+		{ $$ = alcTree(direct_abstract_declarator_lp_ab_rp, "direct_abstract_declarator", 1, $2); }
 	| LB RB
 		{ $$ = alcTree(direct_abstract_declarator_lb_rb, "direct_abstract_declarator", 2, $1, $2); }
 	| LB constant_expression RB
@@ -532,7 +530,7 @@ expression_statement:
     SM
 		{ $$ = alcTree(expression_statement_sm, "expression_statement", 0, $1); }
 	| expression SM
-		{ $$ = alcTree(expression_statement_ex_sm, "expression_statement", 2, $1, $2); }
+		{ $$ = alcTree(expression_statement_ex_sm, "expression_statement", 1, $1); }
 	;
 
 compound_statement:
@@ -560,18 +558,18 @@ statement_list:
 
 selection_statement:
 	IF LP expression RP statement
-        { $$ = alcTree(selection_statement_if_lp_ex_rp_st, "selection_statement", 5, $1, $2, $3, $4, $5);}
+        { $$ = alcTree(selection_statement_if_lp_ex_rp_st, "selection_statement", 3, $1, $3, $5);}
     | IF LP expression RP statement ELSE statement
         { $$ = alcTree(selection_statement_if_lp_ex_rp_st_el_st, "selection_statement", 6, $1, $2, $3, $4, $5, $7); }
     | SWITCH LP expression RP statement
-        { $$ = alcTree(selection_statement_sw_lp_ex_rp_st, "selection_statement", 5, $1, $2, $3, $4, $5);  }
+        { $$ = alcTree(selection_statement_sw_lp_ex_rp_st, "selection_statement", 3, $1, $3, $5);  }
     ;
 
 iteration_statement:
     WHILE LP expression RP statement
-        { $$ = alcTree(iteration_statement_wh_lp_ex_rp_st, "iteration_statement", 5, $1, $2, $3, $4, $5); }
+        { $$ = alcTree(iteration_statement_wh_lp_ex_rp_st, "iteration_statement", 3, $1, $3, $5); }
     | DO statement WHILE LP expression RP SM
-        { $$ = alcTree(iteration_statement_do_st_wh_lp_ex_rp_sm, "iteration_statement", 7, $1, $2, $3, $4, $5, $6, $7); }
+        { $$ = alcTree(iteration_statement_do_st_wh_lp_ex_rp_sm, "iteration_statement", 4, $1, $2, $3, $5); }
     | FOR LP forcntrl RP statement
         { $$ = alcTree(iteration_statement_fo_lp_fo_rp_st, "iteration_statement", 5, $1, $2, $3, $4, $5); }
     ;
@@ -605,9 +603,9 @@ jump_statement:
 	| BREAK SM
         { $$ = alcTree(jump_statement_br_sm, "jump_statement", 2, $1, $2); }
 	| RETURN SM
-        { $$ = alcTree(jump_statement_re_sm, "jump_statement", 2, $1, $2); }
+        { $$ = alcTree(jump_statement_re_sm, "jump_statement", 1, $1); }
 	| RETURN expression SM
-        { $$ = alcTree(jump_statement_re_ex_sm, "jump_statement", 3, $1, $2, $3); }
+        { $$ = alcTree(jump_statement_re_ex_sm, "jump_statement", 2, $1, $2); }
 	;
 
 expression:
@@ -622,7 +620,7 @@ assignment_expression:
         { $$ = alcTree(assignment_expression_co, "assignment_expression", 1, $1); }
 	| unary_expression assignment_operator assignment_expression
         { $$ = alcTree(assignment_expression_un_as_as, "assignment_expression", 3, $1, $2, $3); }
-	;
+    ;
 
 assignment_operator:
     ASN { $$ = alcTree(assignment_expression_un_as_as, "assignment_operator", 0, $1); }
@@ -758,7 +756,7 @@ unary_expression:
 	 | SIZEOF unary_expression
         { $$ = alcTree(unary_expression_si_un, "unary_expression", 2, $1, $2); }
 	 | SIZEOF LP type_name RP
-        { $$ = alcTree(unary_expression_si_lp_ty_rp, "unary_expression", 4, $1, $2, $3, $4); }
+        { $$ = alcTree(unary_expression_si_lp_ty_rp, "unary_expression", 2, $1, $3); }
 	 ;
 
 unary_operator:
@@ -779,12 +777,13 @@ unary_operator:
 
 postfix_expression:
 	 primary_expression
+        { $$ = alcTree(postfix_expression_pr, "postfix_expression", 1, $1); }
 	 | postfix_expression LB expression RB
 		 { $$ = alcTree(postfix_expression_po_lb_ex_rb, "postfix_expression", 4, $1, $2, $3, $4); }
 	 | postfix_expression LP RP
-		 { $$ = alcTree(postfix_expression_po_lp_rp, "postfix_expression", 3, $1, $2, $3); }
+		 { $$ = alcTree(postfix_expression_po_lp_rp, "postfix_expression", 1, $1); }
 	 | postfix_expression LP  argument_expression_list RP
-		 { $$ = alcTree(postfix_expression_po_lp__ar_rp, "postfix_expression", 4, $1, $2, $3, $4); }
+		 { $$ = alcTree(postfix_expression_po_lp__ar_rp, "postfix_expression", 2, $1, $3); }
 	 | postfix_expression DOT identifier
 		 { $$ = alcTree(postfix_expression_po_do_id, "postfix_expression", 3, $1, $2, $3); }
 	 | postfix_expression FOLLOW identifier
@@ -796,14 +795,14 @@ postfix_expression:
 	 ;
 
 primary_expression:
-	 IDENTIFIER
-        { $$ = alcTree(primary_expression_id, "primary_expression", 0, $1); }
+	 IDENTIFIER 
+        { $$ = alcTree(primary_expression_id, "primary_expression", 1, $1); }
 	 | constant
         { $$ = alcTree(primary_expression_co, "primary_expression", 1, $1); }
 	 | STRING
         { $$ = alcTree(primary_expression_st, "primary_expression", 0, $1); }
 	 | LP expression RP
-	 { $$ = alcTree(primary_expression_lp_ex_rp, "primary_expression", 3, $1, $2, $3); }
+	 { $$ = alcTree(primary_expression_lp_ex_rp, "primary_expression", 1, $2); }
 	 ;
 
 argument_expression_list:

@@ -47,17 +47,17 @@ int hash(SymbolTable st, char *s)
 */
 void insert(SymbolTable st, char *key) 
 {
-   SymbolTableEntry item = calloc(1, sizeof(SymbolTableEntry) + MAXNAMELEN);
+    SymbolTableEntry item = calloc(1, sizeof(SymbolTableEntry) + MAXNAMELEN);
     if (item == NULL){
         fprintf(stderr, "Error! ran out of memory");
         exit(MALERR);
     }
-   SymbolTableEntry tmp = NULL;
-   item->s = key;
-   item->table = current;
+    SymbolTableEntry tmp = NULL;
+    item->s = key;
+    item->table = current;
 
-   //get the hash 
-   int hashIndex = hash(st, key);
+    //get the hash 
+    int hashIndex = hash(st, key);
 
     //if there is already an item in the index 
     if (st->tbl[hashIndex] != NULL){
@@ -73,6 +73,29 @@ void insert(SymbolTable st, char *key)
     } else {
         st->tbl[hashIndex] = item;
     }
+}
+
+int checktable(SymbolTable st, char* string)
+{
+    int hashIndex = hash(st, string);
+    SymbolTableEntry tmp = st->tbl[hashIndex];
+
+    if(tmp == NULL){
+        return 0;
+    }
+
+    do{
+        if(!strcmp(st->tbl[hashIndex]->s, string)){
+            return 1;
+        } else if (st->tbl[hashIndex]->next == NULL){
+            return 0;
+        }
+        if (tmp->next != NULL){
+            tmp = tmp->next;
+        }
+    } while (tmp->next != NULL);
+
+    return 0;
 }
 
 void printTable(SymbolTable st)
@@ -94,7 +117,9 @@ void printCurrentTable()
             printf("\t%s\n",current->tbl[i]->s);
         }
     }
-    if (current->parent != NULL){
-        printTable(current->parent);
+    SymbolTable tmp = current;
+    while (tmp->parent != NULL){
+        printTable(tmp->parent);
+        tmp = tmp->parent;
     }
 }

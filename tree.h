@@ -1,13 +1,6 @@
-#define NUMKIDS 9
-
-struct tree {
-   int id;
-   int label; /*aka prodrule*/
-   char *symbolname;
-   int nkids;
-   struct tree *kids[NUMKIDS]; /* if nkids >0 */
-   struct token *leaf;   /* if nkids == 0; NULL for ε productions */
-};
+#ifndef TREE_H
+#define TREE_H
+#include "treedef.h"
 
 struct tree *alcTree(int label, char *symbolname,int nkids, ...);
 int alctoken(int category);
@@ -30,4 +23,5 @@ char *yyname(int);
 void print_leaf(struct tree *t, FILE *f);
 void print_graph2(struct tree *t, FILE *f);
 void print_graph(struct tree *t, char *filename);
-char * getname(int i);
+char *getname(int i);
+#endif

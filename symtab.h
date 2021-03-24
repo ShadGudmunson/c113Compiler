@@ -22,5 +22,6 @@ typedef struct sym_entry {
 SymbolTable mksymtab(SymbolTable parent, char* s);
 int hash(SymbolTable st, char *s);
 void insert(SymbolTable st, char *key);
+int checktable(SymbolTable st, char* string);
 void printTable(SymbolTable st);
 void printCurrentTable();

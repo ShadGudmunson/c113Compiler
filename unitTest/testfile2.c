@@ -1,5 +1,5 @@
 int foo(int x, char *y) {
-   return x;
+   //return x;
    }
 
 int main()

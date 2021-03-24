@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdarg.h> 
+#include <stdarg.h>
 #include "tree.h"
 #include "ytab.h"
 #include "cgram.tab.h"
 #include "symtab.h"
+#include "errdef.h"
 
 #define CHILDNUM 9
 
@@ -25,6 +26,7 @@ int end = -1;
 
 
 SymbolTable current = NULL;
+SymbolTable global = NULL;
 
 void memerr()
 {
@@ -42,6 +44,7 @@ struct tree *alcTree(int label, char *symbolname, int nkids, ...)
     }
     ptr->id = serialnum++;
     ptr->label = label;
+    //ptr->type = -1;
     ptr->symbolname = symbolname;
     ptr->nkids = nkids;
 
@@ -65,10 +68,10 @@ struct tree *alcTree(int label, char *symbolname, int nkids, ...)
 
 int alctoken(int category)
 {
-    if ((yylval.treeptr = (struct tree *)calloc(1, sizeof (struct tree) 
+    if ((yylval.treeptr = (struct tree *)calloc(1, sizeof (struct tree)
                             + (CHILDNUM)*sizeof(struct tree *))) == NULL)
         memerr();
-   	yylval.treeptr->label = category;
+   	yylval.treeptr->label = -1;
 	yylval.treeptr->symbolname = "";
 	yylval.treeptr->nkids = 0;
     yylval.treeptr->leaf = NULL;
@@ -81,7 +84,7 @@ int alctoken(int category)
 	yylval.treeptr->leaf->text = strdup(yytext);
 	yylval.treeptr->leaf->lineno = rows;
 	yylval.treeptr->leaf->filename = filename;
-    
+
     if (category == STRING || category == CCON || category == IDENTIFIER){
         yylval.treeptr->leaf->sval = convertString(yytext);
     } else if(category == FCON){
@@ -89,7 +92,7 @@ int alctoken(int category)
     } else if(category == ICON){
         yylval.treeptr->leaf->ival = atoi(yylval.treeptr->leaf->text);
     }
-    
+
 	return category;
 
 }
@@ -220,14 +223,14 @@ void treeprint(struct tree *t, int depth)
     int i;
     if (t->nkids != 0){
         printf("%*s %s: %d\n", depth*2, " ", humanreadable(t), t->nkids);
-  
+
         for(i=0; i < t->nkids ; i++){
             treeprint(t->kids[i], depth+1);
         }
     } else {
         printf("%*s %s: %d\n", depth*2, " ",t->leaf->text, t->leaf->category);
     }
-    
+
 }
 
 void debugSymbol(char *s, char *s2)
@@ -242,7 +245,8 @@ checks the the tree for variable definitions and adds them to current symbol tab
 void parseTree(struct tree *t)
 {
     if (current == NULL){
-        current = mksymtab(current, "global");
+        global = mksymtab(current, "global");
+        current = global;
         if (stdioflg){
             current = mksymtab(current, "stdio.h");
             insert(current, "printf");
@@ -261,16 +265,16 @@ void parseTree(struct tree *t)
             insert(current, "rand");
 
         }
-        
+
         if (stringflg){
             current = mksymtab(current, "string.h");
             insert(current, "stringlen");
             insert(current, "strcpy");
             insert(current, "strcmp");
             insert(current, "strtok");
-            
+
         }
-        
+
         if (mathflg){
             current = mksymtab(current, "math.h");
             insert(current, "sqrt");
@@ -290,13 +294,39 @@ void parseTree(struct tree *t)
         end = t->kids[4]->id;
     }
 
+    if (!strcmp(t->symbolname, "function_declarator")){
+        insert(current, t->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval);
+    } else if (!strcmp(t->symbolname, "init_declarator")){
+        insert(current, t->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval);
+    }  else if (!strcmp(t->symbolname, "float_declarator")){
+        insert(current, t->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval);
+    } else if (!strcmp(t->symbolname, "char_declarator")){
+        insert(current, t->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval);
+    }
+
+    if (!strcmp(t->symbolname, "primary_expression")){
+        if (t->kids[0] != NULL &&
+        t->kids[0]->leaf->category != ICON &&
+        t->kids[0]->leaf->category != CCON &&
+        t->kids[0]->leaf->category != FCON &&
+        t->kids[0]->leaf->category != STRING && 
+        !checktable(current, t->kids[0]->leaf->sval)){
+            if (!checktable(global, t->kids[0]->leaf->sval) &&
+            t->kids[0]->leaf->category != ICON &&
+            t->kids[0]->leaf->category != CCON &&
+            t->kids[0]->leaf->category != FCON &&
+            t->kids[0]->leaf->category != STRING){
+            
+                fprintf(stderr, "%s used before defined!\n", t->kids[0]->leaf->sval);
+                exit(SYNERR);
+            }
+        }
+        //printf("checked %s\n", t->kids[0]->leaf->sval);
+    }
     //if (t->id == end){
     //    current = current->parent;
     //}
 
-    if (!strcmp(t->symbolname, "identifier")){
-        insert(current, t->kids[0]->leaf->sval);
-    }
 
 }
 
@@ -320,7 +350,7 @@ Code from Dr.j needs to be adapted from his implementation to mine.
 */
 int j;
 
-char *escape(char *s) 
+char *escape(char *s)
 {
     char *s2 = malloc(strlen(s)+4);
     s = strdup(s);
@@ -334,10 +364,10 @@ char *escape(char *s)
     }
     else{
         return s;
-    } 
+    }
 }
 
-char *pretty_print_name(struct tree *t) 
+char *pretty_print_name(struct tree *t)
 {
     char *s2 = malloc(40);
     if (t->leaf == NULL) {
@@ -396,6 +426,7 @@ void print_graph(struct tree *t, char *filename)
     fprintf(f,"}\n");
     fclose(f);
 }
+
 
 char * getname(int i)
 {
@@ -573,7 +604,7 @@ char * getname(int i)
         case 343:
             return "then";
         case 344:
-            return "else"; 
+            return "else";
         default:
             return "unrecognized";
    }
