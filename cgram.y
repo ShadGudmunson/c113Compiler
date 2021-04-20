@@ -145,6 +145,9 @@ identifier:
 
 file: translation_unit { root = $1;
     preTrav(root, parseTree);
+    postTrav(root, assignBaseType);
+    postrevTrav(root, typeCheck);
+
  };
 
 translation_unit:
@@ -270,10 +273,11 @@ type_qualifier:
 	;
 
 struct_or_union_specifier:
-    struct_or_union LC struct_declaration_list RC
-        { $$ = alcTree(struct_or_union_specifier_st_lc_st_rc, "struct_or_union_specifier", 4, $1, $2, $3, $4); }
-    | struct_or_union identifier LC struct_declaration_list RC
-        { $$ = alcTree(struct_or_union_specifier_st_id_lc_st_rc, "struct_or_union_specifier", 5, $1, $2, $3, $4, $5); }
+/*    struct_or_union LC struct_declaration_list RC
+        { $$ = alcTree(struct_or_union_specifier_st_lc_st_rc, "struct_or_union_specifier", 2, $1, $3); }
+    |*/ 
+    struct_or_union identifier LC struct_declaration_list RC
+        { $$ = alcTree(struct_or_union_specifier_st_id_lc_st_rc, "struct_or_union_specifier", 3, $1, $2, $4); }
     | struct_or_union identifier
         { $$ = alcTree(struct_or_union_specifier_st_id, "struct_or_union_specifier", 2, $1, $2); }
     ;
@@ -370,13 +374,13 @@ declarator:
 
 direct_declarator:
     identifier  /* this could be a TRUE identifier or a TYPEDEF identifier*/
-        { $$ = alcTree(declarator_po_di, "direct_declarator", 1, $1); }
+        { $$ = alcTree(direct_declarator_id, "direct_declarator", 1, $1); }
 	| LP declarator RP
         { $$ = alcTree(direct_declarator_lp_de_rp, "direct_declarator", 1, $1); }
 	| direct_declarator LB RB
-        { $$ = alcTree(direct_declarator_di_lb_rb, "direct_declarator", 3, $1, $2, $3); }
+        { $$ = alcTree(direct_declarator_di_lb_rb, "direct_declarator", 1, $1); }
 	| direct_declarator LB constant_expression RB
-        { $$ = alcTree(direct_declarator_di_lb_co_rb, "direct_declarator", 4, $1, $2, $3, $4); }
+        { $$ = alcTree(direct_declarator_di_lb_co_rb, "direct_declarator", 2, $1, $3); }
     | direct_declarator LP parameter_type_list RP
         { $$ = alcTree(direct_declarator_di_lp_pa_rp, "direct_declarator", 2, $1, $3); }
 	| direct_declarator LP RP
@@ -623,7 +627,7 @@ assignment_expression:
     ;
 
 assignment_operator:
-    ASN { $$ = alcTree(assignment_expression_un_as_as, "assignment_operator", 0, $1); }
+    ASN { $$ = alcTree(assignment_expression_un_as_as2, "assignment_operator", 0, $1); }
 	| MUASN { $$ = alcTree(assignment_expression_un_as_as, "assignment_operator", 0, $1); }
 	| DIASN { $$ = alcTree(assignment_expression_un_as_as, "assignment_operator", 0, $1); }
 	| MOASN { $$ = alcTree(assignment_expression_un_as_as, "assignment_operator", 0, $1); }

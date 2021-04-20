@@ -87,6 +87,7 @@ int main(int argc, char **argv)
     }
 
     for(; i < argc; i++){
+        clearglobalst();
         filename = argv[i];
         if(strstr(argv[i], ".c") == NULL){
             if((new_str = malloc(strlen(argv[i])+strlen(".c")+1)) != NULL){

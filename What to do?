@@ -1,2 +1,28 @@
-Add type information to symbol table.
-Watch lecture / read lecture notes on type checking
+====FIXED=====EVERYTHING IS BROKEN BECAUSE YOU CHANGED THE TYPE IN SYMTAB TO ACTUALLY BE A TYPE. NEED TO SWITCH OVER ALL OF THE CALLS TO INSERT TO FOLLOW THIS NOW. 
+====FIXED=====      - #includes
+====FIXED=====      - fix count parameters
+====FIXED=====      -   Fix Names
+====FIXED=====      - Adjust returntype to make sure pointers are different than basetypes.
+====FIXED=====        - Check # of parameters on insert
+====FIXED=====        - Check parameters on insert
+
+
+====FIXED=====CURRENTLY FIGHTING WITH TYPEPTR VS TYPEPTR * FOR RETURN TYPE OF TFI AND INPUT OF INSERT
+    
+====FIXED=====    Check that function call signatures match
+====FIXED=====        - Build call parameters
+====FIXED=====        - Check parameters are the same types as specified in the symboltable
+====FIXED=====    Check that operators' operands are compatible
+====FIXED=====        CURRENTLY HAVE STRICT TYPE CHECKING (i.e. int = int + int is okay but int = float + int is not)
+
+====FIXED=====    constants dont seem to be having their type assinged properly.
+
+====FIXED=====        - Create function that passes in the operator and the types of the operands
+====FIXED=====        - Create a switch based on the operator and have a list of operand types that are allowed.
+====FIXED=====    Allow prototypes and check against function definition 
+
+====FIXED=====    Change symbol table to use new type's instead of strings.
+    Fix arrays
+    Fix structs
+====FIXED=====    Adjust print to include return type for functions
+====FIXED=====    Clear symboltables inbetween files

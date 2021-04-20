@@ -123,6 +123,9 @@ void invalidToken(){
 "==" {
     return alctoken(EQ);
 }
+"!" {
+    return alctoken(NOT);
+}
 "!=" {
     return alctoken(NE);
 }

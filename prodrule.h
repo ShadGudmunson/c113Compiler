@@ -216,3 +216,5 @@
 #define constant_cc 1214
 #define constant_fc 1215
 #define constant_en 1216
+#define direct_declarator_id 1217
+#define assignment_expression_un_as_as2 1218

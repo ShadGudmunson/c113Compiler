@@ -1,10 +1,10 @@
-int foo(int x, char *y) {
+int bornk(int x, char *y) {
    return x;
    }
 
-int main()
+int main2()
 {
    int z;
-   z = foo(5, "funf");
+   z = bornk(5, "funf");
    return 0;
 }

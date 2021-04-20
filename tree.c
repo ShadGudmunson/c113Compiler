@@ -3,10 +3,12 @@
 #include <string.h>
 #include <stdarg.h>
 #include "tree.h"
+#include "type.h"
 #include "ytab.h"
 #include "cgram.tab.h"
 #include "symtab.h"
 #include "errdef.h"
+#include "prodrule.h"
 
 #define CHILDNUM 9
 
@@ -44,7 +46,7 @@ struct tree *alcTree(int label, char *symbolname, int nkids, ...)
     }
     ptr->id = serialnum++;
     ptr->label = label;
-    //ptr->type = -1;
+    ptr->type = calloc(1, sizeof(typeptr));
     ptr->symbolname = symbolname;
     ptr->nkids = nkids;
 
@@ -73,6 +75,7 @@ int alctoken(int category)
         memerr();
    	yylval.treeptr->label = -1;
 	yylval.treeptr->symbolname = "";
+    yylval.treeptr->type = calloc(1, sizeof(typeptr));
 	yylval.treeptr->nkids = 0;
     yylval.treeptr->leaf = NULL;
 
@@ -144,10 +147,29 @@ void deleteNode(struct tree *tr)
 
 void postTrav(struct tree *tr, void (*visit)(struct tree *))
 {
+    if (tr == NULL){
+        return;
+    }
+
     int i = 0;
-    while(tr->kids[i] != NULL){
-        visit(tr->kids[i]);
+    while(i < tr->nkids){
+        postTrav(tr->kids[i], visit);
         i++;
+    }
+    visit(tr);
+
+}
+
+void postrevTrav(struct tree *tr, void (*visit)(struct tree *))
+{
+    if (tr == NULL){
+        return;
+    }
+
+    int i = (tr->nkids - 1);
+    while(i >= 0){
+        postrevTrav(tr->kids[i], visit);
+        i--;
     }
     visit(tr);
 
@@ -157,7 +179,7 @@ void preTrav(struct tree *tr, void (*visit)(struct tree *))
 {
     int i = 0;
     visit(tr);
-    while(tr->kids[i] != NULL)
+    while(i < tr->nkids)
     {
         preTrav(tr->kids[i], visit);
         i++;
@@ -248,77 +270,192 @@ void parseTree(struct tree *t)
         global = mksymtab(current, "global");
         current = global;
         if (stdioflg){
-            insert(global, "printf", "tmpval");
-            insert(global, "sprintf", "tmpval");
-            insert(global, "fopen", "tmpval");
-            insert(global, "fclose", "tmpval");
-            insert(global, "fprintf", "tmpval");
-            insert(global, "fscanf", "tmpval");
+            alctype(FUNC_TYPE);
+            insert(global, "printf", tfi("printf"), 0);
+            insert(global, "sprintf", tfi("sprintf"), 0);
+            insert(global, "fopen", tfi("fopen"), 0);
+            insert(global, "fclose", tfi("fclose"), 0);
+            insert(global, "fprintf", tfi("fprintf"), 0);
+            insert(global, "fscanf", tfi("fscanf"), 0);
         }
 
         if (stdlibflg){
-            insert(global, "malloc", "tmpval");
-            insert(global, "realloc", "tmpval");
-            insert(global, "free", "tmpval");
-            insert(global, "rand", "tmpval");
-
+            insert(global, "malloc", tfi("malloc"), 0);
+            insert(global, "realloc", tfi("realloc"), 0);
+            insert(global, "free", tfi("free"), 0);
+            insert(global, "rand", tfi("rand"), 0);
         }
 
         if (stringflg){
-            insert(global, "stringlen", "tmpval");
-            insert(global, "strcpy", "tmpval");
-            insert(global, "strcmp", "tmpval");
-            insert(global, "strtok", "tmpval");
-
+            insert(global, "strlen", tfi("strlen"), 0);
+            insert(global, "strcpy", tfi("strcpy"), 0);
+            insert(global, "strcmp", tfi("strcmp"), 0);
+            insert(global, "strtok", tfi("strtok"), 0);
         }
 
         if (mathflg){
-            insert(global, "sqrt", "tmpval");
-            insert(global, "cos", "tmpval");
-            insert(global, "pow", "tmpval");
-            insert(global, "sin", "tmpval");
-
+            insert(global, "sqrt", tfi("sqrt"), 0);
+            insert(global, "cos", tfi("cos"), 0);
+            insert(global, "pow", tfi("pow"), 0);
+            insert(global, "sin", tfi("sin"), 0);
         }
     }
 
-    // If the item is a function direct function declarator make a new symbol table and set it to current
-    if (!strcmp(t->symbolname, "direct_function_declarator")){
-        current = mksymtab(current, t->kids[0]->kids[0]->kids[0]->leaf->sval);
-        if (strcmp(current->scopeName, "global")){
-            insert(current, t->kids[0]->kids[0]->kids[0]->leaf->sval, "tmpval");
+    if (t->label == struct_or_union_specifier_st_id_lc_st_rc){
+        char* name = t->kids[1]->kids[0]->leaf->text;
+
+        current = mksymtab(current, name);
+        typeptr typ = alctype(STRUCT_TYPE);
+        typ->u.s.label = name;
+        typ->u.s.st = current;
+        typ->u.s.nfields = structcountfields(t->kids[2]);
+        typ->u.s.f = fieldsprocessing(t->kids[2]);
+
+        struct field *tfv = typ->u.s.f;
+
+        while (tfv != NULL){
+            insert(current, tfv->name, tfv->elemtype, 0);
+            tfv = tfv->next;
         }
+
+        insert(global, name, typ, 0);
 
     }
 
-    if (!strcmp(t->symbolname, "struct_or_union_specifier")){
-        current = mksymtab(current, "struct");
-        end = t->kids[4]->id;
+    if ( t->label == struct_or_union_specifier_st_id){
+        char* name = t->kids[1]->kids[0]->leaf->text;
+        current = mksymtab(current, t->kids[1]->kids[0]->leaf->text);
+        typeptr typ = alctype(STRUCT_TYPE);
+        typ->u.s.label = name;
+        typ->u.s.st = current;
+        typ->u.s.nfields = 0;
+        insert(global, name, typ, 0);
     }
 
     //Generic delcaration for any variable
-    if (!strcmp(t->symbolname, "declaration")){
-        if (!strcmp(t->kids[1]->kids[0]->kids[0]->symbolname, "pointer")){
-            insert(current, t->kids[1]->kids[0]->kids[1]->kids[0]->kids[0]->leaf->sval,
-             strcat(t->kids[0]->kids[0]->kids[0]->leaf->text, "*"));
-        } else {
-            insert(current, t->kids[1]->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval,
-             t->kids[0]->kids[0]->kids[0]->leaf->text);
+    if (!strcmp(t->symbolname, "declaration")&& t->nkids >= 2){
+        struct tree* tmp = findleftleaf(t);
+        char *typename = tmp->leaf->text;
+        //If the type declarator is a pointer do this
+
+        if (t->kids[1]->kids[0]->label == declarator_po_di){
+            char *typenameptr = calloc(1, strlen(typename) + 2);
+            strncpy(typenameptr, typename, strlen(typename));
+            //Is an array
+            if (t->kids[1]->kids[0]->kids[0]->label == direct_declarator_di_lb_rb || t->kids[1]->kids[0]->kids[0]->label == direct_declarator_di_lb_co_rb){
+                typeptr type = alctype(POINTER_TYPE);
+                type->u.p.elemtype = alctype(ARRAY_TYPE);
+                type->u.p.elemtype->u.a.elemtype = findleftleaf(t)->type;
+                type->u.p.elemtype->u.a.size = findrightleaf(t)->leaf->ival;
+                
+                char* name = findleftleaf(findrightlabel(t, 1070))->leaf->text;
+
+                insert(current, name, type, 0);
+            //Is function prototype
+            } else if ((!strcmp(t->kids[1]->kids[0]->kids[1]->kids[0]->symbolname, "direct_declarator" ) && t->kids[1]->kids[0]->kids[0]->nkids != 4)){
+                insert(global, t->kids[1]->kids[0]->kids[1]->kids[0]->kids[0]->kids[0]->leaf->sval,
+                    alcfunctype(t->kids[0], t->kids[1], current), 1);
+
+                btfp(t);
+            } else {
+                insert(current, t->kids[1]->kids[0]->kids[1]->kids[0]->kids[0]->leaf->sval,
+                    typefromstring(strcat(strdup(typenameptr), "*")), 0);
+            }
+
+        } else if (t->kids[1]->kids[0]->label == declarator_di) {
+            //Is an array
+            if (t->kids[1]->kids[0]->kids[0]->label == direct_declarator_di_lb_rb || t->kids[1]->kids[0]->kids[0]->label == direct_declarator_di_lb_co_rb){
+                typeptr type = alctype(ARRAY_TYPE);
+                type->u.a.elemtype = findleftleaf(t)->type;
+                type->u.a.size = findrightleaf(t)->leaf->ival;
+                
+                char* name = findleftleaf(findrightlabel(t, 1070))->leaf->text;
+
+                insert(current, name, type, 0);
+            //Is function prototype
+            } else if ((!strcmp(t->kids[1]->kids[0]->kids[0]->kids[0]->symbolname, "direct_declarator") && t->kids[1]->kids[0]->kids[0]->nkids != 4)) {
+                insert(global, t->kids[1]->kids[0]->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval,
+                        alcfunctype(t->kids[0], t->kids[1], current), 1);
+                btfp(t);
+            } else {
+                insert(current, t->kids[1]->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval,
+                        typefromstring(typename), 0);
+            }
         }
-        
     }
 
-
-
     // If the item is a declarator of some sort add it to the local symbol table
-    if (!strcmp(t->symbolname, "function_declarator")){
-        insert(global, t->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval, "tmpval");
-    } else if (!strcmp(t->symbolname, "parameter_declaration")){
+    if (!strcmp(t->symbolname, "function_definition")){
+        char *typename = (char *)t->kids[0]->kids[0]->kids[0]->leaf->text;
+
         if (!strcmp(t->kids[1]->kids[0]->symbolname, "pointer")){
-            insert(current, t->kids[1]->kids[1]->kids[0]->kids[0]->leaf->sval, "tmpval");
+            char *typenameptr = calloc(1, strlen(typename) + 2);
+            strncpy(typenameptr, typename, strlen(typename));
+
+            current = mksymtab(current, t->kids[1]->kids[1]->kids[0]->kids[0]->kids[0]->leaf->sval);
+            insert(global, t->kids[1]->kids[1]->kids[0]->kids[0]->kids[0]->leaf->sval,
+                    alcfunctype(t->kids[0], t->kids[1], current), 0);
         } else {
-            insert(current, t->kids[1]->kids[0]->kids[0]->kids[0]->leaf->sval, "tmpval");
+            current = mksymtab(current, t->kids[1]->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval);
+            insert(global, t->kids[1]->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval,
+                    alcfunctype(t->kids[0], t->kids[1], current), 0);
         }
-        
+        alcfunctype(t->kids[0], t->kids[1], current);
+
+        if (t->kids[1]->kids[0]->label == 1076){
+            struct param *insertlist = paramProcessing(findrightlabel(t->kids[1], 1085));
+
+            while (insertlist != NULL){
+                insert(current, insertlist->name, insertlist->type, 0);
+                insertlist = insertlist->next;
+            }
+        }
+    }
+
+    /*
+    if (!strcmp(t->symbolname, "parameter_declaration")){
+        char *typename = (char *)t->kids[0]->kids[0]->kids[0]->leaf->text;
+        //Don't put parameter's from function declarations in the global scope.
+        if (strcmp(current->scopeName, "global")){
+            if (!strcmp(t->kids[1]->kids[0]->symbolname, "pointer")){
+                char *typenameptr = calloc(1, strlen(typename) + 2);
+                strncpy(typenameptr, typename, strlen(typename));
+
+                insert(current, t->kids[1]->kids[1]->kids[0]->kids[0]->leaf->sval,
+                    typefromstring(strcat(typenameptr, "*")), 0);
+            } else {
+                insert(current, t->kids[1]->kids[0]->kids[0]->kids[0]->leaf->sval,
+                    typefromstring(typename), 0);
+            }
+        }
+
+    }*/
+
+    // Function call w/ parameters
+    // Find the name and look it up in global symboltable, return type
+    // Find parameters and their types
+    // Compare
+    // ????
+    // Profit
+    if (t->label == 1202){ //Find #define
+        struct tree *nametree = findleftleaf(t);
+        struct tree *paramtree = t->kids[1];
+
+        char *name = nametree->leaf->sval;
+        typeptr type = gettype(global, name);
+
+        if (type->u.f.nparams != countcallparams(paramtree)){
+            fprintf(stderr, "Call %s does not match with definition (Mismatched parameter count)\n", name);
+            exit(SYNERR);
+        } else {
+            paramlist parmlist = buildcallparameters(t->kids[1]);
+            compareParams(type->u.f.parameters, parmlist);
+        }
+    //Function call without parameters
+    // Find the name and look it up in global symboltable, return type
+    // Compare
+    } else if (t->label == 1201){ // Find #define
+
     }
 
     // If the item is a primary expression, but not a constant "123", 'j', "2.2", or "abc"
@@ -337,16 +474,305 @@ void parseTree(struct tree *t)
             t->kids[0]->leaf->category != CCON &&
             t->kids[0]->leaf->category != FCON &&
             t->kids[0]->leaf->category != STRING){
-            
-                fprintf(stderr, "%s used before defined!\n", t->kids[0]->leaf->sval);
+
+                fprintf(stderr, "In scope '%s' '%s' used before defined! \n", current->scopeName, t->kids[0]->leaf->sval);
                 exit(SYNERR);
             }
         }
-        //printf("checked %s\n", t->kids[0]->leaf->sval);
     }
+}
+
+void assignBaseType(struct tree *t)
+{
+    if(t->leaf != NULL){
+        if (t->leaf->category == ICON || t->leaf->category == INT){
+            t->type = alctype(INT_TYPE);
+            return;
+        } else if(t->leaf->category == FCON || t->leaf->category == FLOAT){
+            t->type = alctype(FLOAT_TYPE);
+            return;
+        } else if (t->leaf->category == CCON || t->leaf->category == CHAR){
+            t->type = alctype(CHAR_TYPE);
+            return;
+        } else if (t->leaf->category == VOID){
+            t->type = alctype(NULL_TYPE);
+            return;
+        } else if (t->leaf->category == STRUCT){
+            t->type = alctype(STRUCT_TYPE);
+            return;
+        } else if (t->leaf->category == MUL){
+            t->type = alctype(POINTER_TYPE);
+            return;
+        } else if (t->leaf->category == STRING){
+            t->type = alctype(POINTER_TYPE);
+            t->type->u.p.elemtype = alctype(CHAR_TYPE);
+            return;
+        } else if (t->leaf->category == IDENTIFIER){
+            t->type = gettypeall(t->leaf->text);
+            return;
+        }
+
+    } else {
+        if (t->kids[0]->type != NULL){
+            t->type = t->kids[0]->type;
+            return;
+        }
+    }
+}
+
+void typeCheck(struct tree *t)
+{
+    if (t->label == 1051 || t->label == 1153){
+        t->type = opcheck(ASN, t->kids[0]->type, t->kids[2]->type);
+    } else if (t->label == 1179){
+        t->type = opcheck(PLUS, t->kids[0]->type, t->kids[2]->type);
+    } else if (t->label == 1183){
+        t->type = opcheck(DIV, t->kids[0]->type, t->kids[2]->type);
+    } else if (t->label == 1182){
+        t->type = opcheck(MUL, t->kids[0]->type, t->kids[2]->type);
+    } else if (t->label == 1171){
+        t->type = opcheck(LT, t->kids[0]->type, t->kids[2]->type);
+    } else if (t->label == 1172){
+        t->type = opcheck(GT, t->kids[0]->type, t->kids[2]->type);
+    } else if (t->label == 1158){
+        t->type = opcheck(OROR, t->kids[0]->type, t->kids[2]->type);
+    } else if (t->label == 1160){
+        t->type = opcheck(ANDAND, t->kids[0]->type, t->kids[2]->type);
+    } else if (t->nkids == 1){
+        t->type = t->kids[0]->type;
+    }
+}
 
 
+char* opname(int operator)
+{
+    switch(operator){
+        case ASN:
+            return "=";
+        case PLUS:
+            return "+";
+        case MUL:
+             return "*";
+        case MINUS:
+            return "-";
+        case DIV:
+            return "/";
+        case DOT:
+            return ".";
+        case LB:
+            return "[]";
+        case LT:
+            return "<";
+        case GT:
+            return ">";
+        case ANDAND:
+            return "&&";
+        case OROR:
+            return "||";
+        case NOT:
+            return "!";
+        default:
+            return "INVALID OP";
+    }
+}
 
+void printtypeerror(int operator, typeptr o1, typeptr o2)
+{
+    fprintf(stderr, "types are incompatable '%s' and '%s' for operation '%s'\n", typename(o1), typename(o2), opname(operator));
+    exit(SEMERR);
+}
+
+//returns the type the parent should be (e.g. int / float -> float)
+typeptr opcheck(int operator, typeptr o1, typeptr o2)
+{
+    switch(operator){
+        case ASN:
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+            if(o1->basetype != o2->basetype){
+                printtypeerror(ASN, o1, o2);
+            }
+            break;
+        case PLUS:
+            if (o1->basetype == FUNC_TYPE){
+                o1 = o1->u.f.returntype;
+            }
+
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+            if((o1->basetype == FLOAT_TYPE && o2->basetype == INT_TYPE) || (o1->basetype == INT_TYPE && o2->basetype == FLOAT_TYPE)){
+                return alctype(FLOAT_TYPE);
+            } else if(o1->basetype != o2->basetype){
+                printtypeerror(PLUS, o1, o2);
+            } else {
+                return alctype(o1->basetype);
+            }
+            break;
+        case MUL:
+            if (o1->basetype == FUNC_TYPE){
+                o1 = o1->u.f.returntype;
+            }
+
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+            if((o1->basetype == FLOAT_TYPE && o2->basetype == INT_TYPE) || (o1->basetype == INT_TYPE && o2->basetype == FLOAT_TYPE)){
+                return alctype(FLOAT_TYPE);
+            } else if(o1->basetype != o2->basetype){
+                printtypeerror(MUL, o1, o2);
+            } else {
+                return alctype(o1->basetype);
+            }
+            break;
+        case MINUS:
+            if (o1->basetype == FUNC_TYPE){
+                o1 = o1->u.f.returntype;
+            }
+
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+
+            if((o1->basetype == FLOAT_TYPE && o2->basetype == INT_TYPE) || (o1->basetype == INT_TYPE && o2->basetype == FLOAT_TYPE)){
+                return alctype(FLOAT_TYPE);
+            } else if(o1->basetype != o2->basetype){
+                printtypeerror(MINUS, o1, o2);
+            } else {
+                return alctype(o1->basetype);
+            }
+            break;
+        case DIV:
+            if (o1->basetype == FUNC_TYPE){
+                o1 = o1->u.f.returntype;
+            }
+
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+            if((o1->basetype == FLOAT_TYPE && o2->basetype == INT_TYPE) || (o1->basetype == INT_TYPE && o2->basetype == FLOAT_TYPE)){
+                return alctype(FLOAT_TYPE);
+            } else if(o1->basetype != o2->basetype){
+                printtypeerror(DIV, o1, o2);
+            } else {
+                return alctype(o1->basetype);
+            }
+            break;
+        case DOT:
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+            if(o1->basetype != o2->basetype){
+                printtypeerror(DOT, o1, o2);
+            } else {
+                return alctype(o2->basetype);
+            }
+            break;
+        case LB:
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+            if(o2->basetype != INT_TYPE){
+                fprintf(stderr, "Array index must be an integer");
+                exit(SEMERR);
+            } else {
+                return alctype(ARRAY_TYPE);
+            }
+            break;
+        case LT:
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+            if(o1->basetype != o2->basetype){
+                printtypeerror(LT, o1, o2);
+            } else {
+                return alctype(INT_TYPE);
+            }
+            break;
+        case GT:
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+            if(o1->basetype != o2->basetype){
+                printtypeerror(GT, o1, o2);
+            } else {
+                return alctype(INT_TYPE);
+            }
+            break;
+        case ANDAND:
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+            if(o1->basetype != o2->basetype){
+                printtypeerror(ANDAND, o1, o2);
+            }
+            break;
+        case OROR:
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+            if(o1->basetype != o2->basetype){
+                printtypeerror(OROR, o1, o2);
+            } else {
+                return alctype(INT_TYPE);
+            }
+            break;
+        case NOT:
+            if (o2->basetype == FUNC_TYPE){
+                o2 = o2->u.f.returntype;
+            }
+
+            if(o2->basetype != INT_TYPE){
+                fprintf(stderr, "Not recognized as valid boolean expression");
+                exit(SEMERR);
+            } else {
+                return alctype(INT_TYPE);
+            }
+            break;
+    }
+    return NULL;
+}
+
+typeptr typefromstring(char *str)
+{
+    typeptr tmp = NULL;
+    if(!strcmp(str, "int")){
+        return alctype(INT_TYPE);
+    } else if(!strcmp(str, "char")){
+        return alctype(CHAR_TYPE);
+    } else if(!strcmp(str, "float")){
+        return alctype(FLOAT_TYPE);
+    } else if(!strcmp(str, "void")){
+        return alctype(NULL_TYPE);
+    } else if(!strcmp(str, "char*")){
+        tmp = alctype(POINTER_TYPE);
+        tmp->u.p.elemtype = alctype(CHAR_TYPE);
+        return tmp;
+    } else if(!strcmp(str, "int*")){
+        tmp = alctype(POINTER_TYPE);
+        tmp->u.p.elemtype = alctype(INT_TYPE);
+        return tmp;
+    } else if(!strcmp(str, "float*")){
+        tmp = alctype(POINTER_TYPE);
+        tmp->u.p.elemtype = alctype(FLOAT_TYPE);
+        return tmp;
+    } else if(!strcmp(str, "void*")){
+        tmp = alctype(POINTER_TYPE);
+        tmp->u.p.elemtype = alctype(POINTER_TYPE);
+        return tmp;
+    }
+    return NULL;
 }
 
 void printsyms(struct tree *t)
@@ -401,7 +827,11 @@ char *pretty_print_name(struct tree *t)
 /*supposed to be internal node*/
 void print_branch(struct tree *t, FILE *f)
 {
-   fprintf(f, "N%d [shape=box label=\"%s\"];\n", t->id, pretty_print_name(t));
+    if (t->type != NULL){
+        fprintf(f, "N%d [shape=box label=\"%s\n%s\"];\n", t->id, pretty_print_name(t), typename(t->type));
+    } else {
+        fprintf(f, "N%d [shape=box label=\"%s\"];\n", t->id, pretty_print_name(t));
+    }
 }
 
 /*supposed to be only for leaf nodes*/
@@ -445,7 +875,137 @@ void print_graph(struct tree *t, char *filename)
     fprintf(f,"}\n");
     fclose(f);
 }
+//End Dr. J's code
+struct tree* findleftleaf(struct tree *t)
+{
+    if (t == NULL) {
+        return NULL;
+    }
+    struct tree* ret = NULL;
+    if (t->leaf == NULL){
+        ret = findleftleaf(t->kids[0]);
+    } else {
+        ret = t;
+    }
+    return ret;
+}
 
+struct tree* findrightleaf(struct tree *t)
+{
+    struct tree* ret = NULL;
+    if (t->nkids != 0){
+        ret = findrightleaf(t->kids[t->nkids - 1]);
+    } else {
+        return t;
+    }
+    return ret;
+}
+
+struct tree* findleftlabel(struct tree *t, int label)
+{
+    struct tree* ret = NULL;
+    if (t->label != label){
+        ret = findleftlabel(t->kids[0], label);
+    } else {
+        return t;
+    }
+    return ret;
+}
+
+struct tree* findrightlabel(struct tree *t, int label)
+{
+    struct tree* ret = NULL;
+    if (t == NULL) {
+        return NULL;
+    }
+
+    if (t->label != label){
+        ret = findrightlabel(t->kids[t->nkids - 1], label);
+    } else {
+        return t;
+    }
+    return ret;
+}
+
+int structcountfields(struct tree *t)
+{
+    int ret = 0;
+    if (t == NULL){
+        return 0;
+    }
+
+    while (t != NULL && t->label != 1046){
+        if (t->label == 1047){
+            ret++;
+        }
+        if (t != NULL){
+            t = t->kids[0];
+        } 
+    }
+
+    if (t->label == 1046){
+        ret++;
+    }
+    return ret;
+}
+
+struct field *fieldsprocessing(struct tree *t)
+{
+    if (t->label == 1046){
+        t = t->kids[0];
+    }
+
+    if (t->label == 1053){
+        
+        struct field *tmp = calloc(1, sizeof(struct field));
+        
+        struct tree *tmptree = findleftleaf(t);
+        char *typename = tmptree->leaf->text;
+
+        tmptree = findrightleaf(t);
+        tmp->name = tmptree->leaf->text;
+        if (t->kids[1]->label == declarator_po_di){
+            if (!strcmp(typename, "int")){
+                tmp->elemtype = alctype(POINTER_TYPE);
+                tmp->elemtype->u.p.elemtype = alctype(INT_TYPE);
+            } else if (!strcmp(typename, "char")){
+                tmp->elemtype = alctype(POINTER_TYPE);
+                tmp->elemtype->u.p.elemtype = alctype(CHAR_TYPE);
+            } else if (!strcmp(typename, "float")){
+                tmp->elemtype = alctype(POINTER_TYPE);
+                tmp->elemtype->u.p.elemtype = alctype(FLOAT_TYPE);
+            } else if (!strcmp(typename, "void")){
+                tmp->elemtype = alctype(POINTER_TYPE);
+                tmp->elemtype->u.p.elemtype = alctype(NULL_TYPE);
+            }
+        } else {
+            if (!strcmp(typename, "int")){
+                tmp->elemtype = alctype(INT_TYPE);
+            } else if (!strcmp(typename, "char")){
+                tmp->elemtype = alctype(CHAR_TYPE);
+            } else if (!strcmp(typename, "float")){
+                tmp->elemtype = alctype(FLOAT_TYPE);
+            } else if (!strcmp(typename, "void")){
+                tmp->elemtype = alctype(NULL_TYPE);
+            }
+        }
+
+        return tmp;
+    } else if (t->label == 1047){
+        struct field * lhs = fieldsprocessing(t->kids[0]);
+        struct field * rhs = fieldsprocessing(t->kids[1]);
+
+        struct field * tmp2 = lhs;
+
+        while(tmp2->next != NULL){
+            tmp2 = tmp2->next;
+        }
+        tmp2->next = rhs;
+        return lhs;
+    }
+
+    return NULL;
+}
 
 char * getname(int i)
 {
