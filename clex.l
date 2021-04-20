@@ -159,6 +159,10 @@ void invalidToken(){
 "," {
     return alctoken(CM);
 }
+"#include <stdio.h>" { stdioflg = 1; }
+"#include <string.h>" { stringflg = 1; }
+"#include <stdlib.h>" { stdlibflg = 1; }
+"#include <math.h>" { mathflg = 1; }
 "<" {
     return alctoken(LT);
 }
@@ -168,10 +172,6 @@ void invalidToken(){
 ";" {
     return alctoken(SM);
 }
-"#include <stdio.h>" { stdioflg = 1; }
-"#include <string.h>" { stringflg = 1; }
-"#include <stdlib.h>" { stdlibflg = 1; }
-"#include <math.h>" { mathflg = 1; }
 "<<" {
 	invalidToken();
 }
@@ -292,8 +292,9 @@ void invalidToken(){
 	return alctoken(IDENTIFIER);
 }
 [^ \t] {/*do nothing*/}
-[//].* {/*do nothing*/}
+[/]{2}.* {/*do nothing*/}
 #.* {/*do nothing*/}
+\/\*(.|\n)*?\*\/ {/*do nothing*/}
 . {chars++;}
 
 %%

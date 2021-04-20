@@ -248,45 +248,46 @@ void parseTree(struct tree *t)
         global = mksymtab(current, "global");
         current = global;
         if (stdioflg){
-            current = mksymtab(current, "stdio.h");
-            insert(current, "printf");
-            insert(current, "sprintf");
-            insert(current, "fopen");
-            insert(current, "fclose");
-            insert(current, "fprintf");
-            insert(current, "fscanf");
+            insert(global, "printf", "tmpval");
+            insert(global, "sprintf", "tmpval");
+            insert(global, "fopen", "tmpval");
+            insert(global, "fclose", "tmpval");
+            insert(global, "fprintf", "tmpval");
+            insert(global, "fscanf", "tmpval");
         }
 
         if (stdlibflg){
-            current = mksymtab(current, "stdlib.h");
-            insert(current, "malloc");
-            insert(current, "realloc");
-            insert(current, "free");
-            insert(current, "rand");
+            insert(global, "malloc", "tmpval");
+            insert(global, "realloc", "tmpval");
+            insert(global, "free", "tmpval");
+            insert(global, "rand", "tmpval");
 
         }
 
         if (stringflg){
-            current = mksymtab(current, "string.h");
-            insert(current, "stringlen");
-            insert(current, "strcpy");
-            insert(current, "strcmp");
-            insert(current, "strtok");
+            insert(global, "stringlen", "tmpval");
+            insert(global, "strcpy", "tmpval");
+            insert(global, "strcmp", "tmpval");
+            insert(global, "strtok", "tmpval");
 
         }
 
         if (mathflg){
-            current = mksymtab(current, "math.h");
-            insert(current, "sqrt");
-            insert(current, "cos");
-            insert(current, "pow");
-            insert(current, "sin");
+            insert(global, "sqrt", "tmpval");
+            insert(global, "cos", "tmpval");
+            insert(global, "pow", "tmpval");
+            insert(global, "sin", "tmpval");
 
         }
     }
 
+    // If the item is a function direct function declarator make a new symbol table and set it to current
     if (!strcmp(t->symbolname, "direct_function_declarator")){
         current = mksymtab(current, t->kids[0]->kids[0]->kids[0]->leaf->sval);
+        if (strcmp(current->scopeName, "global")){
+            insert(current, t->kids[0]->kids[0]->kids[0]->leaf->sval, "tmpval");
+        }
+
     }
 
     if (!strcmp(t->symbolname, "struct_or_union_specifier")){
@@ -294,23 +295,43 @@ void parseTree(struct tree *t)
         end = t->kids[4]->id;
     }
 
-    if (!strcmp(t->symbolname, "function_declarator")){
-        insert(current, t->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval);
-    } else if (!strcmp(t->symbolname, "init_declarator")){
-        insert(current, t->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval);
-    }  else if (!strcmp(t->symbolname, "float_declarator")){
-        insert(current, t->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval);
-    } else if (!strcmp(t->symbolname, "char_declarator")){
-        insert(current, t->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval);
+    //Generic delcaration for any variable
+    if (!strcmp(t->symbolname, "declaration")){
+        if (!strcmp(t->kids[1]->kids[0]->kids[0]->symbolname, "pointer")){
+            insert(current, t->kids[1]->kids[0]->kids[1]->kids[0]->kids[0]->leaf->sval,
+             strcat(t->kids[0]->kids[0]->kids[0]->leaf->text, "*"));
+        } else {
+            insert(current, t->kids[1]->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval,
+             t->kids[0]->kids[0]->kids[0]->leaf->text);
+        }
+        
     }
 
+
+
+    // If the item is a declarator of some sort add it to the local symbol table
+    if (!strcmp(t->symbolname, "function_declarator")){
+        insert(global, t->kids[0]->kids[0]->kids[0]->kids[0]->leaf->sval, "tmpval");
+    } else if (!strcmp(t->symbolname, "parameter_declaration")){
+        if (!strcmp(t->kids[1]->kids[0]->symbolname, "pointer")){
+            insert(current, t->kids[1]->kids[1]->kids[0]->kids[0]->leaf->sval, "tmpval");
+        } else {
+            insert(current, t->kids[1]->kids[0]->kids[0]->kids[0]->leaf->sval, "tmpval");
+        }
+        
+    }
+
+    // If the item is a primary expression, but not a constant "123", 'j', "2.2", or "abc"
+    // Check the local and global symbol table for it. If it is not in either throw an error.
     if (!strcmp(t->symbolname, "primary_expression")){
-        if (t->kids[0] != NULL &&
+        if (
+        t->kids[0] != NULL &&
+        !checktable(current, t->kids[0]->leaf->sval) &&
         t->kids[0]->leaf->category != ICON &&
         t->kids[0]->leaf->category != CCON &&
         t->kids[0]->leaf->category != FCON &&
-        t->kids[0]->leaf->category != STRING && 
-        !checktable(current, t->kids[0]->leaf->sval)){
+        t->kids[0]->leaf->category != STRING
+        ){
             if (!checktable(global, t->kids[0]->leaf->sval) &&
             t->kids[0]->leaf->category != ICON &&
             t->kids[0]->leaf->category != CCON &&
@@ -323,9 +344,7 @@ void parseTree(struct tree *t)
         }
         //printf("checked %s\n", t->kids[0]->leaf->sval);
     }
-    //if (t->id == end){
-    //    current = current->parent;
-    //}
+
 
 
 }

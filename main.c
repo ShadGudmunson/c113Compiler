@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <getopt.h>
 #include "ytab.h"
 #include "tree.h"
 #include "errdef.h"
@@ -32,33 +33,52 @@ Good idea to use system() command to automatically make the diagram
 */
 int main(int argc, char **argv)
 {
+    for(int q = 0; q < argc; q++){
+        if (!(strcmp("-symtab", argv[q]))){
+            fprintf(stderr, "Incorrect option please use --symtab or -s\n");
+            exit(-1);
+        }
+    }
+
     char * new_str = NULL;
     int dotflag = 0, treeflag = 0, symflag = 0;
-    int c;
     int i = 1;
     char *dotcommand = malloc(SIZE);
     char *dotfile = malloc(SIZE);
+    int c;
 
+    while (1){
+        int option_index = 0;
+        static struct option long_options[] = {
+            {"symtab",  no_argument,       0,  's' },
+            {"dot",  no_argument,          0,  'd' },
+            {"help",  no_argument,         0,  'h' }
 
-    while ((c = getopt (argc, argv, "dhst")) != -1){
+        };
+    
+        c = getopt_long(argc, argv, "dsth",
+                    long_options, &option_index);
+        if (c == -1)
+            break;
+    
         switch (c) {
-        case 'd':
-            dotflag = 1;
-            i++;
-            break;
-        case 's':
-            symflag = 1;
-            i++;
-            break;
-        case 't':
-            treeflag = 1;
-            i++;
-            break;
-        case 'h':
-            printHelp(argv[0]);
-            exit(0);
-            break;  
-        }
+            case 'd':
+                dotflag = 1;
+                i++;
+                break;
+            case 's':
+                symflag = 1;
+                i++;
+                break;
+            case 't':
+                treeflag = 1;
+                i++;
+                break;
+            case 'h':
+                printHelp(argv[0]);
+                exit(0);
+                break;  
+            }
     }
 
     if(argc < 2){
@@ -111,8 +131,8 @@ int main(int argc, char **argv)
                 sprintf(dotcommand, "dot -q -Tpng %s -o %s.png", dotfile, filename);
                 system(dotcommand);
                 
-                sprintf(dotcommand, "xdg-open %s.png", filename);
-                system(dotcommand);
+//                sprintf(dotcommand, "xdg-open %s.png", filename);
+//                system(dotcommand);
                 
                 sprintf(dotcommand, "rm %s", dotfile);
                 system(dotcommand);
@@ -133,8 +153,8 @@ int main(int argc, char **argv)
 void printHelp(char* progname)
 {
         printf("Usage: %s [-d -t -s -h] <filename>(.c)\n", progname);
-        printf("-d runs dot debug option creating a graphical representation of the syntax tree\n");
-        printf("-s prints out symboltables\n");
-        printf("-t prints out the text of the syntax tree\n");
-        printf("-h prints this help message and exits\n");
+        printf("-d, --dot: runs dot debug option creating a graphical representation of the syntax tree\n");
+        printf("-s, --symtab: prints out symboltables\n");
+        printf("-t: prints out the text of the syntax tree\n");
+        printf("-h, --help: prints this help message and exits\n");
 }

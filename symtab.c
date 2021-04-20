@@ -45,7 +45,7 @@ int hash(SymbolTable st, char *s)
 /*credit to https://www.tutorialspoint.com/data_structures_algorithms/hash_table_program_in_c.htm
 * for the original code
 */
-void insert(SymbolTable st, char *key) 
+void insert(SymbolTable st, char *key, char *type) 
 {
     SymbolTableEntry item = calloc(1, sizeof(SymbolTableEntry) + MAXNAMELEN);
     if (item == NULL){
@@ -54,6 +54,7 @@ void insert(SymbolTable st, char *key)
     }
     SymbolTableEntry tmp = NULL;
     item->s = key;
+    item->type = type;
     item->table = current;
 
     //get the hash 
@@ -61,8 +62,11 @@ void insert(SymbolTable st, char *key)
 
     //if there is already an item in the index 
     if (st->tbl[hashIndex] != NULL){
-        if (!strcmp(st->tbl[hashIndex]->s, key)){
+        if (!strcmp(st->tbl[hashIndex]->s, key) && !strcmp(st->tbl[hashIndex]->type, type)){
             fprintf(stderr, "Symbol '%s' double defined!\n", key);
+            exit(SYNERR);
+        } else if (!strcmp(st->tbl[hashIndex]->s, key) && strcmp(st->tbl[hashIndex]->type, type)){
+            fprintf(stderr, "Conflicting declarations for '%s'\n", key);
             exit(SYNERR);
         }
         tmp = st->tbl[hashIndex];
@@ -104,7 +108,7 @@ void printTable(SymbolTable st)
 
     for (int i = 0; i < NBUCKETS; i++){
         if (st->tbl[i] != NULL){
-            printf("\t%s\n", st->tbl[i]->s);
+            printf("\t%s\t%s\n", st->tbl[i]->type, st->tbl[i]->s);
         }
     }
 }
@@ -114,7 +118,7 @@ void printCurrentTable()
     printf("---- symbol table for: %s ----\n", current->scopeName);
     for (int i = 0; i < NBUCKETS; i++){
         if (current->tbl[i] != NULL){
-            printf("\t%s\n",current->tbl[i]->s);
+            printf("\t%s\t%s\n", current->tbl[i]->type, current->tbl[i]->s);
         }
     }
     SymbolTable tmp = current;

@@ -15,13 +15,14 @@ typedef struct sym_table {
 typedef struct sym_entry {
     SymbolTable table;		/* what symbol table do we belong to*/
     char *s;			    /* string */
+    char *type;             /* string of type*/
     /* more symbol attributes go here for code generation */
     struct sym_entry *next;
 } *SymbolTableEntry;
 
 SymbolTable mksymtab(SymbolTable parent, char* s);
 int hash(SymbolTable st, char *s);
-void insert(SymbolTable st, char *key);
+void insert(SymbolTable st, char *key, char *type);
 int checktable(SymbolTable st, char* string);
 void printTable(SymbolTable st);
 void printCurrentTable();

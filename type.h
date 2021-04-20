@@ -56,7 +56,7 @@ typedef struct typeinfo {
 extern struct sym_table *global_table;
 
 typeptr alctype(int);
-typeptr alcarray(typeptr, struct tree *);
+typeptr alcarray(typeptr etype, struct tree *sz);
 typeptr alcstructtype();
 typeptr alcfunctype(struct tree * r, struct tree * p, struct sym_table * st);
 char *typename(typeptr t);
