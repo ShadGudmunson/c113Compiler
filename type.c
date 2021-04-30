@@ -29,7 +29,7 @@ void printdebug(typeptr r);
 void printparam(struct param *p);
 
 char *typenam[] =
-   {"void", "int", "struct", "array", "float", "func", "pointer", "char"};
+   {"void", "int", "struct", "array", "float", "func", "pointer", "char", "any"};
 
 typeptr alctype(int base)
 {
@@ -120,15 +120,19 @@ typeptr alcfunctype(struct tree *retu, struct tree *par, SymbolTable st)
     ret->u.f.name = nametree->leaf->text;
 
     
-    if(!strcmp(retu->kids[0]->kids[0]->leaf->text, "int")){
+    if(!strcmp(findleftleaf(retu)->leaf->text, "int")){
         ret->u.f.returntype = alctype(INT_TYPE);
-    } else if(!strcmp(retu->kids[0]->kids[0]->leaf->text, "char")){
+    } else if(!strcmp(findleftleaf(retu)->leaf->text, "char")){
         ret->u.f.returntype = alctype(CHAR_TYPE);            
-    } else if(!strcmp(retu->kids[0]->kids[0]->leaf->text, "float")){
+    } else if(!strcmp(findleftleaf(retu)->leaf->text, "float")){
         ret->u.f.returntype = alctype(FLOAT_TYPE);
-    } else if(!strcmp(retu->kids[0]->kids[0]->leaf->text, "void")){
+    } else if(!strcmp(findleftleaf(retu)->leaf->text, "double")){
+        ret->u.f.returntype = alctype(FLOAT_TYPE);    
+    } else if(!strcmp(findleftleaf(retu)->leaf->text, "void")){
         ret->u.f.returntype = alctype(NULL_TYPE);
-    } 
+    } else if(!strcmp(findleftleaf(retu)->leaf->text, "struct")){
+        ret->u.f.returntype = alctype(STRUCT_TYPE);
+    }
 
     struct tree *pointerchecker = findleftleaf(par);
     if (pointerchecker->leaf->category == 294){
@@ -205,9 +209,15 @@ struct param *paramProcessing(struct tree* t)
             } else if (!strcmp(typename, "float")){
                 tmp->type = alctype(POINTER_TYPE);
                 tmp->type->u.p.elemtype = alctype(FLOAT_TYPE);
+            } else if (!strcmp(typename, "double")){
+                tmp->type = alctype(POINTER_TYPE);
+                tmp->type->u.p.elemtype = alctype(FLOAT_TYPE);
             } else if (!strcmp(typename, "void")){
                 tmp->type = alctype(POINTER_TYPE);
                 tmp->type->u.p.elemtype = alctype(NULL_TYPE);
+            } else if (!strcmp(typename, "struct")){
+                tmp->type = alctype(POINTER_TYPE);
+                tmp->type->u.p.elemtype = alctype(STRUCT_TYPE);
             }
         } else {
             if (!strcmp(typename, "int")){
@@ -216,8 +226,12 @@ struct param *paramProcessing(struct tree* t)
                 tmp->type = alctype(CHAR_TYPE);
             } else if (!strcmp(typename, "float")){
                 tmp->type = alctype(FLOAT_TYPE);
+            } else if (!strcmp(typename, "double")){
+                tmp->type = alctype(FLOAT_TYPE);
             } else if (!strcmp(typename, "void")){
                 tmp->type = alctype(NULL_TYPE);
+            } else if (!strcmp(typename, "struct")){
+                tmp->type = alctype(STRUCT_TYPE);
             }
         }
 
@@ -252,11 +266,46 @@ paramlist buildcallparameters(struct tree *t)
         struct tree *nametree = findleftleaf(t->kids[2]);
         ret->next->name = strdup(nametree->leaf->text);
         ret->next->type = gettype(current, ret->next->name);
+        if (ret->next->type == NULL){
+            switch(findleftleaf(t->kids[2])->label){
+                case constant_ic:
+                    ret->next->type = alctype(INT_TYPE);
+                    break;
+                case constant_fc:
+                    ret->next->type = alctype(FLOAT_TYPE);
+                    break;
+                case constant_cc:
+                    ret->next->type = alctype(CHAR_TYPE);
+                    break;
+                case primary_expression_st:
+                    ret->next->type = alctype(POINTER_TYPE);
+                    ret->next->type->u.p.elemtype = alctype(CHAR_TYPE);
+                    break;
+
+            }
+        }
 
     } else if (t->label == 1211){
         struct tree *nametree = findleftleaf(t->kids[0]);
         ret->name = strdup(nametree->leaf->text);
         ret->type = gettype(current, ret->name);
+        if (ret->type == NULL){
+            switch(findleftleaf(t)->label){
+                case constant_ic:
+                    ret->type = alctype(INT_TYPE);
+                    break;
+                case constant_fc:
+                    ret->type = alctype(FLOAT_TYPE);
+                    break;
+                case constant_cc:
+                    ret->type = alctype(CHAR_TYPE);
+                    break;
+                case primary_expression_st:
+                    ret->type = alctype(POINTER_TYPE);
+                    ret->type->u.p.elemtype = alctype(CHAR_TYPE);
+                    break;
+            }
+        }
     }
 
     return ret;
@@ -287,8 +336,8 @@ int countParams(struct tree* t)
     }
 
     while (t != NULL && t->nkids != 0){
-            //              1088                                    1089
-        if (t->label == parameter_list_pa_cm_pa || t->label == parameter_declaration_de_de){ 
+            //              1088                                    1089                                1090
+        if (t->label == parameter_list_pa_cm_pa || t->label == parameter_declaration_de_de || t->label == parameter_declaration_de){ 
             ret++;
         }
         if (t != NULL){
@@ -329,6 +378,13 @@ char *typename(typeptr t)
    else return typenam[t->basetype-1000000];
 }
 
+char *typenameworkaround(typeptr t)
+{
+   if (!t) return "(NULL)";
+   else if (t->basetype < FIRST_TYPE || t->basetype > LAST_TYPE)
+      return "(INVALID TYPE)";
+   else return typenam[t->basetype-1000000];
+}
 
 /*placeholders for get type*/
 #define DONT_KNOW_YET 1
@@ -411,16 +467,29 @@ int comparetype(struct tree *t1, struct tree *t2)
 void compareParams(struct param *p1, struct param *p2)
 {
     while (p1 != NULL && p2 != NULL){
-        if (p1->type->basetype == p2->type->basetype){
-            if(p1->type->basetype == POINTER_TYPE){
-                if(p1->type->u.p.elemtype->basetype != p2->type->u.p.elemtype->basetype){
-                    fprintf(stderr, "Mismatching parameters on call (mismatching types)\n");
-                    exit(SEMERR);            
+        if (p1->type->basetype == ANY_TYPE || p2->type->basetype == ANY_TYPE){
+            p1 = p1->next;
+            p2 = p2->next;
+            continue;
+        } else {
+            if (p1->type->basetype != p2->type->basetype){
+                if(p1->type->basetype == POINTER_TYPE && p2->type->basetype != POINTER_TYPE){
+                    if(p1->type->u.p.elemtype->basetype != p2->type->basetype){
+                        fprintf(stderr, "Mismatching parameters on call (mismatching types) %s:%s %s:%s \n", p1->name, typename(p1->type), p2->name, typename(p2->type) );
+                        exit(SEMERR);            
+                    }
+                } else if (p2->type->basetype == POINTER_TYPE && p1->type->basetype != POINTER_TYPE ){
+                    if(p1->type->basetype != p2->type->u.p.elemtype->basetype){
+                        fprintf(stderr, "Mismatching parameters on call (mismatching types) %s:%s %s:%s \n", p1->name, typename(p1->type), p2->name, typename(p2->type) );
+                        exit(SEMERR);            
+                    }
+                } else if (p2->type->basetype == POINTER_TYPE && p1->type->basetype == POINTER_TYPE ){
+                    if(p1->type->u.p.elemtype->basetype != p2->type->u.p.elemtype->basetype){
+                        fprintf(stderr, "Mismatching parameters on call (mismatching types) %s:%s %s:%s \n", p1->name, typename(p1->type), p2->name, typename(p2->type) );
+                        exit(SEMERR);            
+                    }
                 }
             }
-        } else {
-            fprintf(stderr, "Mismatching parameters on call (mismatching types)\n");
-            exit(SEMERR);            
         }
         p1 = p1->next;
         p2 = p2->next;
@@ -430,14 +499,14 @@ void compareParams(struct param *p1, struct param *p2)
 //Type for includes
 typeptr tfi(char *str)
 {
-    int hashindex = hash(global, str); //Just using the has for easy switch statement;
+    int hashindex = hash(global, str); //Just using the hash for easy switch statement;
     typeptr tmp = NULL;
     typeptr string = typefromstring("char*");
     typeptr voidptr = typefromstring("void*");
 
     switch(hashindex){
         case 597: ; // printf:
-            struct param * p2 = makeparam("var", alctype(INT_TYPE), NULL);
+            struct param * p2 = makeparam("var", alctype(ANY_TYPE), NULL);
             struct param * p1 = makeparam("format", string, p2);
             tmp = alctype(FUNC_TYPE);
             tmp->u.f.name = "printf";

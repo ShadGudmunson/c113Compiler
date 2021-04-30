@@ -7,6 +7,7 @@
 struct tree {
    int id;
    int label; /*aka prodrule*/
+   int lineno;
    typeptr type;
    char *symbolname;
    int nkids;
@@ -29,7 +30,9 @@ void treeprint(struct tree *t, int depth);
 void parseTree(struct tree *t);
 void assignBaseType(struct tree *t);
 void typeCheck(struct tree *t);
+void typeerrCheck(struct tree *t);
 typeptr opcheck(int operator, typeptr o1, typeptr o2);
+typeptr operrcheck(int operator, struct tree* o1, struct tree* o2);
 typeptr typefromstring(char *str);
 void printsyms(struct tree *t);
 void printsymbol(char *s);

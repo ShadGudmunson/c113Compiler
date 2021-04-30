@@ -25,6 +25,8 @@ typedef struct sym_entry {
     /* more symbol attributes go here for code generation */
     struct sym_entry *next;
     int isPrototype; /*Is the table entry a function prototype 1 for yes 0 for no*/
+    
+    int offset;
 
 } *SymbolTableEntry;
 
@@ -35,6 +37,7 @@ void insert(SymbolTable st, char *key, typeptr type, int isProto);
 int checktable(SymbolTable st, char* string);
 typeptr gettype(SymbolTable st, char* symbolname);
 typeptr gettypeall(char* symbolname);
+typeptr gettypeallfunc(char* symbolname);
 void comparefunc(char* name, typeptr t1, typeptr t2);
 void printTable(SymbolTable st);
 void printCurrentTable();

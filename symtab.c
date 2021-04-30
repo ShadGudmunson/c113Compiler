@@ -65,6 +65,8 @@ void insert(SymbolTable st, char *key, typeptr type, int isProto)
     item->table = current;
     item->isPrototype = isProto;
 
+    st->nEntries++;
+
     //get the hash 
     int hashIndex = hash(st, key);
 
@@ -75,7 +77,7 @@ void insert(SymbolTable st, char *key, typeptr type, int isProto)
         int inRettype = type->basetype;
         int rettype = type->basetype;
         do{
-            rettype = tmp->type->basetype;
+            //rettype = tmp->type->basetype;
             if (issamename && tmp->type->basetype == FUNC_TYPE){
                 comparefunc(key, tmp->type, type);
             }
@@ -173,8 +175,13 @@ typeptr gettypeall(char* symbolname)
 
             } while (tmp->next != NULL);
 
-        } 
-        if (tmpst->parent != NULL){
+        } else {
+            if (tmpst != NULL){
+                tmpst = tmpst->parent;
+            }
+            continue;
+        }
+        if (tmpst != NULL){
             tmpst = tmpst->parent;
         }
     }while (tmpst->parent != NULL);
@@ -205,6 +212,57 @@ typeptr gettypeall(char* symbolname)
     return NULL;
 }
 
+
+typeptr gettypeallfunc(char* symbolname)
+{
+    SymbolTable tmpst = current;
+    SymbolTableEntry tmp;
+    int hashIndex = hash(tmpst, symbolname);
+    
+    do{
+        tmp = tmpst->tbl[hashIndex];
+        if(checktable(tmpst, symbolname)){
+            do{
+                if(!strcmp(tmp->s, symbolname)){
+                    return tmp->type;
+                }
+
+                if (tmp->next != NULL){
+                    tmp = tmp->next;
+                }
+
+            } while (tmp->next != NULL);
+
+        } else {
+            break;
+        }
+        if (tmpst->parent != NULL){
+            tmpst = tmpst->parent;
+        }
+    }while (tmpst->parent != NULL);
+
+    tmp = global->tbl[hashIndex];
+
+    if(checktable(global, symbolname)){
+        do{
+            if(!strcmp(tmp->s, symbolname)){
+                return tmp->type;
+            }
+
+            if (tmp->next != NULL){
+                tmp = tmp->next;
+            } else {
+                return 0;
+            }
+
+        } while (tmp->next != NULL);
+
+    } else {
+        return NULL;
+    }
+
+    return NULL;
+}
 
 void comparefunc(char* name, typeptr t1, typeptr t2)
 {
@@ -245,10 +303,12 @@ void printTable(SymbolTable st)
 
     for (int i = 0; i < NBUCKETS; i++){
         if (st->tbl[i] != NULL){
-            if (st->tbl[i]->type->basetype != FUNC_TYPE){
+            if (st->tbl[i]->type->basetype != FUNC_TYPE && st->tbl[i]->type->basetype != POINTER_TYPE){
                 printf("\t%s\t%s\n", typename(st->tbl[i]->type), st->tbl[i]->s);
-            } else {
-                printf("\t%s\t%s\n", typename(st->tbl[i]->type->u.f.returntype), st->tbl[i]->s);
+            } else if (st->tbl[i]->type->basetype == FUNC_TYPE) {
+                printf("\tfunc %s\t%s\n", typename(st->tbl[i]->type->u.f.returntype), st->tbl[i]->s);
+            } else if (st->tbl[i]->type->basetype == POINTER_TYPE) {
+                printf("\t%s*\t%s\n", typename(st->tbl[i]->type->u.p.elemtype), st->tbl[i]->s);
             }
         }
     }
@@ -259,10 +319,12 @@ void printCurrentTable()
     printf("---- symbol table for: %s ----\n", current->scopeName);
     for (int i = 0; i < NBUCKETS; i++){
         if (current->tbl[i] != NULL){
-            if (current->tbl[i]->type->basetype != FUNC_TYPE){
+            if (current->tbl[i]->type->basetype != FUNC_TYPE && current->tbl[i]->type->basetype != POINTER_TYPE){
                 printf("\t%s\t%s\n", typename(current->tbl[i]->type), current->tbl[i]->s);
-            } else {
+            } else if (current->tbl[i]->type->basetype == FUNC_TYPE) {
                 printf("\t%s\t%s\n", typename(current->tbl[i]->type->u.f.returntype), current->tbl[i]->s);
+            } else if (current->tbl[i]->type->basetype == POINTER_TYPE) {
+                printf("\t%s*\t%s\n", typename(current->tbl[i]->type->u.p.elemtype), current->tbl[i]->s);
             }
         }
     }

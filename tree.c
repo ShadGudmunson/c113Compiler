@@ -49,6 +49,7 @@ struct tree *alcTree(int label, char *symbolname, int nkids, ...)
     ptr->type = calloc(1, sizeof(typeptr));
     ptr->symbolname = symbolname;
     ptr->nkids = nkids;
+    ptr->lineno = rows;
 
     va_start(ap, nkids);
     for(int i = 0; i < nkids; i++){
@@ -324,12 +325,12 @@ void parseTree(struct tree *t)
 
     if ( t->label == struct_or_union_specifier_st_id){
         char* name = t->kids[1]->kids[0]->leaf->text;
-        current = mksymtab(current, t->kids[1]->kids[0]->leaf->text);
+        //current = mksymtab(current, t->kids[1]->kids[0]->leaf->text);
         typeptr typ = alctype(STRUCT_TYPE);
         typ->u.s.label = name;
         typ->u.s.st = current;
         typ->u.s.nfields = 0;
-        insert(global, name, typ, 0);
+        //insert(global, name, typ, 0);
     }
 
     //Generic delcaration for any variable
@@ -337,22 +338,19 @@ void parseTree(struct tree *t)
         struct tree* tmp = findleftleaf(t);
         char *typename = tmp->leaf->text;
         //If the type declarator is a pointer do this
-
         if (t->kids[1]->kids[0]->label == declarator_po_di){
             char *typenameptr = calloc(1, strlen(typename) + 2);
             strncpy(typenameptr, typename, strlen(typename));
             //Is an array
-            if (t->kids[1]->kids[0]->kids[0]->label == direct_declarator_di_lb_rb || t->kids[1]->kids[0]->kids[0]->label == direct_declarator_di_lb_co_rb){
+            if (t->kids[1]->kids[0]->kids[1]->label == direct_declarator_di_lb_rb || t->kids[1]->kids[0]->kids[1]->label == direct_declarator_di_lb_co_rb){
                 typeptr type = alctype(POINTER_TYPE);
-                type->u.p.elemtype = alctype(ARRAY_TYPE);
-                type->u.p.elemtype->u.a.elemtype = findleftleaf(t)->type;
-                type->u.p.elemtype->u.a.size = findrightleaf(t)->leaf->ival;
+                type->u.p.elemtype = alcarray(typefromstring(findleftleaf(t)->leaf->text), findrightleaf(t));
                 
                 char* name = findleftleaf(findrightlabel(t, 1070))->leaf->text;
 
                 insert(current, name, type, 0);
             //Is function prototype
-            } else if ((!strcmp(t->kids[1]->kids[0]->kids[1]->kids[0]->symbolname, "direct_declarator" ) && t->kids[1]->kids[0]->kids[0]->nkids != 4)){
+            } else if ((!strcmp(t->kids[1]->kids[0]->kids[1]->kids[0]->symbolname, "direct_declarator" ) && t->kids[1]->kids[0]->kids[1]->kids[1]->label != 1156)){
                 insert(global, t->kids[1]->kids[0]->kids[1]->kids[0]->kids[0]->kids[0]->leaf->sval,
                     alcfunctype(t->kids[0], t->kids[1], current), 1);
 
@@ -365,10 +363,8 @@ void parseTree(struct tree *t)
         } else if (t->kids[1]->kids[0]->label == declarator_di) {
             //Is an array
             if (t->kids[1]->kids[0]->kids[0]->label == direct_declarator_di_lb_rb || t->kids[1]->kids[0]->kids[0]->label == direct_declarator_di_lb_co_rb){
-                typeptr type = alctype(ARRAY_TYPE);
-                type->u.a.elemtype = findleftleaf(t)->type;
-                type->u.a.size = findrightleaf(t)->leaf->ival;
-                
+                typeptr type = alcarray(typefromstring(findleftleaf(t)->leaf->text), findrightleaf(t));
+
                 char* name = findleftleaf(findrightlabel(t, 1070))->leaf->text;
 
                 insert(current, name, type, 0);
@@ -386,9 +382,10 @@ void parseTree(struct tree *t)
 
     // If the item is a declarator of some sort add it to the local symbol table
     if (!strcmp(t->symbolname, "function_definition")){
-        char *typename = (char *)t->kids[0]->kids[0]->kids[0]->leaf->text;
 
         if (!strcmp(t->kids[1]->kids[0]->symbolname, "pointer")){
+            char *typename = t->kids[1]->kids[1]->kids[0]->kids[0]->kids[0]->leaf->text;
+
             char *typenameptr = calloc(1, strlen(typename) + 2);
             strncpy(typenameptr, typename, strlen(typename));
 
@@ -412,25 +409,6 @@ void parseTree(struct tree *t)
         }
     }
 
-    /*
-    if (!strcmp(t->symbolname, "parameter_declaration")){
-        char *typename = (char *)t->kids[0]->kids[0]->kids[0]->leaf->text;
-        //Don't put parameter's from function declarations in the global scope.
-        if (strcmp(current->scopeName, "global")){
-            if (!strcmp(t->kids[1]->kids[0]->symbolname, "pointer")){
-                char *typenameptr = calloc(1, strlen(typename) + 2);
-                strncpy(typenameptr, typename, strlen(typename));
-
-                insert(current, t->kids[1]->kids[1]->kids[0]->kids[0]->leaf->sval,
-                    typefromstring(strcat(typenameptr, "*")), 0);
-            } else {
-                insert(current, t->kids[1]->kids[0]->kids[0]->kids[0]->leaf->sval,
-                    typefromstring(typename), 0);
-            }
-        }
-
-    }*/
-
     // Function call w/ parameters
     // Find the name and look it up in global symboltable, return type
     // Find parameters and their types
@@ -445,7 +423,7 @@ void parseTree(struct tree *t)
         typeptr type = gettype(global, name);
 
         if (type->u.f.nparams != countcallparams(paramtree)){
-            fprintf(stderr, "Call %s does not match with definition (Mismatched parameter count)\n", name);
+            fprintf(stderr, "Call %s does not match with definition (Mismatched parameter count) on line %d\n", name, t->lineno);
             exit(SYNERR);
         } else {
             paramlist parmlist = buildcallparameters(t->kids[1]);
@@ -455,7 +433,32 @@ void parseTree(struct tree *t)
     // Find the name and look it up in global symboltable, return type
     // Compare
     } else if (t->label == 1201){ // Find #define
+        struct tree *nametree = findleftleaf(t);
 
+        char *name = nametree->leaf->sval;
+        typeptr type = gettype(global, name);
+
+        if (type->u.f.nparams != 0){
+            fprintf(stderr, "Call %s does not match with definition (Mismatched parameter count) on line %d\n", name, t->lineno);
+            exit(SYNERR);
+        }
+    } 
+
+    
+    if (t->label == 1181){
+        struct tree *nametree = findleftleaf(t);
+        char *name = nametree->leaf->text;
+        typeptr type = gettypeallfunc(name);
+
+        if (findleftlabel(t, 1201) == NULL &&  findleftlabel(t, 1202) == NULL){
+            if(type != NULL){
+                if (type->basetype == FUNC_TYPE){
+                    fprintf(stderr, "%s Function calls require parentheses\n", name);
+                    exit(SYNERR);
+                }
+
+            }
+        }
     }
 
     // If the item is a primary expression, but not a constant "123", 'j', "2.2", or "abc"
@@ -474,7 +477,6 @@ void parseTree(struct tree *t)
             t->kids[0]->leaf->category != CCON &&
             t->kids[0]->leaf->category != FCON &&
             t->kids[0]->leaf->category != STRING){
-
                 fprintf(stderr, "In scope '%s' '%s' used before defined! \n", current->scopeName, t->kids[0]->leaf->sval);
                 exit(SYNERR);
             }
@@ -488,7 +490,7 @@ void assignBaseType(struct tree *t)
         if (t->leaf->category == ICON || t->leaf->category == INT){
             t->type = alctype(INT_TYPE);
             return;
-        } else if(t->leaf->category == FCON || t->leaf->category == FLOAT){
+        } else if(t->leaf->category == FCON || t->leaf->category == FLOAT){ //t->leaf->category == 263 ||
             t->type = alctype(FLOAT_TYPE);
             return;
         } else if (t->leaf->category == CCON || t->leaf->category == CHAR){
@@ -538,11 +540,35 @@ void typeCheck(struct tree *t)
         t->type = opcheck(OROR, t->kids[0]->type, t->kids[2]->type);
     } else if (t->label == 1160){
         t->type = opcheck(ANDAND, t->kids[0]->type, t->kids[2]->type);
+    } else if (t->label == 1200){
+        t->type = opcheck(LB, t->kids[0]->type, t->kids[2]->type);
     } else if (t->nkids == 1){
         t->type = t->kids[0]->type;
     }
 }
 
+void typeerrCheck(struct tree *t)
+{
+    if (t->label == 1051 || t->label == 1153){
+        t->type = operrcheck(ASN, t->kids[0], t->kids[2]);
+    } else if (t->label == 1179){
+        t->type = operrcheck(PLUS, t->kids[0], t->kids[2]);
+    } else if (t->label == 1183){
+        t->type = operrcheck(DIV, t->kids[0], t->kids[2]);
+    } else if (t->label == 1182){
+        t->type = operrcheck(MUL, t->kids[0], t->kids[2]);
+    } else if (t->label == 1171){
+        t->type = operrcheck(LT, t->kids[0], t->kids[2]);
+    } else if (t->label == 1172){
+        t->type = operrcheck(GT, t->kids[0], t->kids[2]);
+    } else if (t->label == 1158){
+        t->type = operrcheck(OROR, t->kids[0], t->kids[2]);
+    } else if (t->label == 1160){
+        t->type = operrcheck(ANDAND, t->kids[0], t->kids[2]);
+    } else if (t->nkids == 1){
+        t->type = t->kids[0]->type;
+    }
+}
 
 char* opname(int operator)
 {
@@ -576,9 +602,17 @@ char* opname(int operator)
     }
 }
 
-void printtypeerror(int operator, typeptr o1, typeptr o2)
+void printtypeerror(int operator, struct tree* o1, struct tree* o2)
 {
-    fprintf(stderr, "types are incompatable '%s' and '%s' for operation '%s'\n", typename(o1), typename(o2), opname(operator));
+    fprintf(stderr, "types are incompatable '%s' and '%s' for operation '%s' on line %d\n", typename(o1->type), typename(o2->type), opname(operator), o1->lineno);
+    if (o1->type->basetype == POINTER_TYPE){
+        fprintf(stderr, "o1 pointer type is %s\n", typename(o1->type->u.p.elemtype));
+    }
+    if (o2->type->basetype == POINTER_TYPE){
+        fprintf(stderr, "o2 pointer type is %s\n", typename(o2->type->u.p.elemtype));
+    }
+
+    fprintf(stderr, "Possible left operand %s\n", findleftleaf(o1)->leaf->text);
     exit(SEMERR);
 }
 
@@ -591,9 +625,13 @@ typeptr opcheck(int operator, typeptr o1, typeptr o2)
                 o2 = o2->u.f.returntype;
             }
 
-            if(o1->basetype != o2->basetype){
-                printtypeerror(ASN, o1, o2);
+            if (o1->basetype == POINTER_TYPE && o1->u.p.elemtype->basetype == o2->basetype){
+                return (alctype(o2->basetype));
+            } else if (o2->basetype == POINTER_TYPE && o2->u.p.elemtype->basetype == o1->basetype){
+                return (alctype(o1->basetype));
             }
+
+            return alctype(o1->basetype);
             break;
         case PLUS:
             if (o1->basetype == FUNC_TYPE){
@@ -606,8 +644,6 @@ typeptr opcheck(int operator, typeptr o1, typeptr o2)
 
             if((o1->basetype == FLOAT_TYPE && o2->basetype == INT_TYPE) || (o1->basetype == INT_TYPE && o2->basetype == FLOAT_TYPE)){
                 return alctype(FLOAT_TYPE);
-            } else if(o1->basetype != o2->basetype){
-                printtypeerror(PLUS, o1, o2);
             } else {
                 return alctype(o1->basetype);
             }
@@ -622,8 +658,6 @@ typeptr opcheck(int operator, typeptr o1, typeptr o2)
             }
             if((o1->basetype == FLOAT_TYPE && o2->basetype == INT_TYPE) || (o1->basetype == INT_TYPE && o2->basetype == FLOAT_TYPE)){
                 return alctype(FLOAT_TYPE);
-            } else if(o1->basetype != o2->basetype){
-                printtypeerror(MUL, o1, o2);
             } else {
                 return alctype(o1->basetype);
             }
@@ -640,9 +674,7 @@ typeptr opcheck(int operator, typeptr o1, typeptr o2)
 
             if((o1->basetype == FLOAT_TYPE && o2->basetype == INT_TYPE) || (o1->basetype == INT_TYPE && o2->basetype == FLOAT_TYPE)){
                 return alctype(FLOAT_TYPE);
-            } else if(o1->basetype != o2->basetype){
-                printtypeerror(MINUS, o1, o2);
-            } else {
+            } else{
                 return alctype(o1->basetype);
             }
             break;
@@ -657,8 +689,6 @@ typeptr opcheck(int operator, typeptr o1, typeptr o2)
 
             if((o1->basetype == FLOAT_TYPE && o2->basetype == INT_TYPE) || (o1->basetype == INT_TYPE && o2->basetype == FLOAT_TYPE)){
                 return alctype(FLOAT_TYPE);
-            } else if(o1->basetype != o2->basetype){
-                printtypeerror(DIV, o1, o2);
             } else {
                 return alctype(o1->basetype);
             }
@@ -668,20 +698,17 @@ typeptr opcheck(int operator, typeptr o1, typeptr o2)
                 o2 = o2->u.f.returntype;
             }
 
-            if(o1->basetype != o2->basetype){
-                printtypeerror(DOT, o1, o2);
-            } else {
-                return alctype(o2->basetype);
-            }
+            return alctype(o2->basetype);
             break;
         case LB:
             if (o2->basetype == FUNC_TYPE){
                 o2 = o2->u.f.returntype;
             }
-
-            if(o2->basetype != INT_TYPE){
-                fprintf(stderr, "Array index must be an integer");
-                exit(SEMERR);
+            
+            if(o1->basetype == POINTER_TYPE){
+                return o1->u.p.elemtype;
+            } else if(o1->basetype == ARRAY_TYPE){
+                return o1->u.a.elemtype;
             } else {
                 return alctype(ARRAY_TYPE);
             }
@@ -691,42 +718,29 @@ typeptr opcheck(int operator, typeptr o1, typeptr o2)
                 o2 = o2->u.f.returntype;
             }
 
-            if(o1->basetype != o2->basetype){
-                printtypeerror(LT, o1, o2);
-            } else {
-                return alctype(INT_TYPE);
-            }
+            return alctype(INT_TYPE);
             break;
         case GT:
             if (o2->basetype == FUNC_TYPE){
                 o2 = o2->u.f.returntype;
             }
 
-            if(o1->basetype != o2->basetype){
-                printtypeerror(GT, o1, o2);
-            } else {
-                return alctype(INT_TYPE);
-            }
+            return alctype(INT_TYPE);
+
             break;
         case ANDAND:
             if (o2->basetype == FUNC_TYPE){
                 o2 = o2->u.f.returntype;
             }
 
-            if(o1->basetype != o2->basetype){
-                printtypeerror(ANDAND, o1, o2);
-            }
+            return alctype(INT_TYPE);
             break;
         case OROR:
             if (o2->basetype == FUNC_TYPE){
                 o2 = o2->u.f.returntype;
             }
 
-            if(o1->basetype != o2->basetype){
-                printtypeerror(OROR, o1, o2);
-            } else {
-                return alctype(INT_TYPE);
-            }
+            return alctype(INT_TYPE);
             break;
         case NOT:
             if (o2->basetype == FUNC_TYPE){
@@ -734,6 +748,191 @@ typeptr opcheck(int operator, typeptr o1, typeptr o2)
             }
 
             if(o2->basetype != INT_TYPE){
+
+            } else {
+                return alctype(INT_TYPE);
+            }
+            break;
+            
+    }
+    return NULL;
+}
+
+//returns the type the parent should be (e.g. int / float -> float)
+typeptr operrcheck(int operator, struct tree* o1, struct tree* o2)
+{
+    switch(operator){
+        case ASN:
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+            if(o1->type->basetype == POINTER_TYPE && o2->type->basetype == POINTER_TYPE && o1->type->u.p.elemtype->basetype != o2->type->u.p.elemtype->basetype){
+                if (o1->type->u.p.elemtype->basetype == NULL_TYPE){
+                    return o2->type;
+                } else if (o2->type->u.p.elemtype->basetype == NULL_TYPE){
+                    return o1->type;
+                } else {
+                    printtypeerror(ASN, o1, o2);
+                }
+            }
+            if (o1->type->basetype == POINTER_TYPE && o1->type->u.p.elemtype->basetype != o2->type->basetype && o1->type->u.p.elemtype->basetype != NULL_TYPE){
+                printtypeerror(ASN, o1, o2);
+            } else if (o2->type->basetype == POINTER_TYPE && o2->type->u.p.elemtype->basetype != o1->type->basetype && o2->type->u.p.elemtype->basetype != NULL_TYPE){
+                printtypeerror(ASN, o1, o2);
+            }
+
+            if(o1->type->basetype == FLOAT_TYPE && o2->type->basetype == INT_TYPE){
+                return alctype(FLOAT_TYPE);
+            }
+
+            if(o1->type->basetype != o2->type->basetype){
+                printtypeerror(ASN, o1, o2);
+            }
+            break;
+        case PLUS:
+            if (o1->type->basetype == FUNC_TYPE){
+                o1->type = o1->type->u.f.returntype;
+            }
+
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+            if((o1->type->basetype == FLOAT_TYPE && o2->type->basetype == INT_TYPE) || (o1->type->basetype == INT_TYPE && o2->type->basetype == FLOAT_TYPE)){
+                return alctype(FLOAT_TYPE);
+            } else if(o1->type->basetype != o2->type->basetype){
+                printtypeerror(PLUS, o1, o2);
+            } else {
+                return alctype(o1->type->basetype);
+            }
+            break;
+        case MUL:
+            if (o1->type->basetype == FUNC_TYPE){
+                o1->type = o1->type->u.f.returntype;
+            }
+
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+            if((o1->type->basetype == FLOAT_TYPE && o2->type->basetype == INT_TYPE) || (o1->type->basetype == INT_TYPE && o2->type->basetype == FLOAT_TYPE)){
+                return alctype(FLOAT_TYPE);
+            } else if(o1->type->basetype != o2->type->basetype){
+                printtypeerror(MUL, o1, o2);
+            } else {
+                return alctype(o1->type->basetype);
+            }
+            break;
+        case MINUS:
+            if (o1->type->basetype == FUNC_TYPE){
+                o1->type = o1->type->u.f.returntype;
+            }
+
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+
+            if((o1->type->basetype == FLOAT_TYPE && o2->type->basetype == INT_TYPE) || (o1->type->basetype == INT_TYPE && o2->type->basetype == FLOAT_TYPE)){
+                return alctype(FLOAT_TYPE);
+            } else if(o1->type->basetype != o2->type->basetype){
+                printtypeerror(MINUS, o1, o2);
+            } else {
+                return alctype(o1->type->basetype);
+            }
+            break;
+        case DIV:
+            if (o1->type->basetype == FUNC_TYPE){
+                o1->type = o1->type->u.f.returntype;
+            }
+
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+            if((o1->type->basetype == FLOAT_TYPE && o2->type->basetype == INT_TYPE) || (o1->type->basetype == INT_TYPE && o2->type->basetype == FLOAT_TYPE)){
+                return alctype(FLOAT_TYPE);
+            } else if(o1->type->basetype != o2->type->basetype){
+                printtypeerror(DIV, o1, o2);
+            } else {
+                return alctype(o1->type->basetype);
+            }
+            break;
+        case DOT:
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+            if(o1->type->basetype != STRUCT_TYPE){
+                printtypeerror(DOT, o1, o2);
+            } else {
+                return alctype(o2->type->basetype);
+            }
+            break;
+        case LB:
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+            if(o2->type->basetype != INT_TYPE){
+                fprintf(stderr, "Array index must be an integer");
+                exit(SEMERR);
+            }
+            
+            if(o1->type->basetype == POINTER_TYPE){
+                return o1->type->u.p.elemtype;
+            } else {
+                return alctype(ARRAY_TYPE);
+            }
+            break;
+        case LT:
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+            if(o1->type->basetype != o2->type->basetype){
+                printtypeerror(LT, o1, o2);
+            } else {
+                return alctype(INT_TYPE);
+            }
+            break;
+        case GT:
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+            if(o1->type->basetype != o2->type->basetype){
+                printtypeerror(GT, o1, o2);
+            } else {
+                return alctype(INT_TYPE);
+            }
+            break;
+        case ANDAND:
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+            if(o1->type->basetype != o2->type->basetype){
+                printtypeerror(ANDAND, o1, o2);
+            }
+            break;
+        case OROR:
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+            if(o1->type->basetype != o2->type->basetype){
+                printtypeerror(OROR, o1, o2);
+            } else {
+                return alctype(INT_TYPE);
+            }
+            break;
+        case NOT:
+            if (o2->type->basetype == FUNC_TYPE){
+                o2->type = o2->type->u.f.returntype;
+            }
+
+            if(o2->type->basetype != INT_TYPE){
                 fprintf(stderr, "Not recognized as valid boolean expression");
                 exit(SEMERR);
             } else {
@@ -753,8 +952,12 @@ typeptr typefromstring(char *str)
         return alctype(CHAR_TYPE);
     } else if(!strcmp(str, "float")){
         return alctype(FLOAT_TYPE);
+    } else if(!strcmp(str, "double")){
+        return alctype(FLOAT_TYPE);
     } else if(!strcmp(str, "void")){
-        return alctype(NULL_TYPE);
+        return alctype(ANY_TYPE);
+    } else if (!strcmp(str, "struct")){
+        return alctype(STRUCT_TYPE);
     } else if(!strcmp(str, "char*")){
         tmp = alctype(POINTER_TYPE);
         tmp->u.p.elemtype = alctype(CHAR_TYPE);
@@ -769,7 +972,7 @@ typeptr typefromstring(char *str)
         return tmp;
     } else if(!strcmp(str, "void*")){
         tmp = alctype(POINTER_TYPE);
-        tmp->u.p.elemtype = alctype(POINTER_TYPE);
+        tmp->u.p.elemtype = alctype(ANY_TYPE);
         return tmp;
     }
     return NULL;
@@ -904,6 +1107,10 @@ struct tree* findrightleaf(struct tree *t)
 struct tree* findleftlabel(struct tree *t, int label)
 {
     struct tree* ret = NULL;
+    if (t == NULL) {
+        return NULL;
+    }
+    
     if (t->label != label){
         ret = findleftlabel(t->kids[0], label);
     } else {
@@ -974,6 +1181,9 @@ struct field *fieldsprocessing(struct tree *t)
             } else if (!strcmp(typename, "float")){
                 tmp->elemtype = alctype(POINTER_TYPE);
                 tmp->elemtype->u.p.elemtype = alctype(FLOAT_TYPE);
+            }  else if (!strcmp(typename, "double")){
+                tmp->elemtype = alctype(POINTER_TYPE);
+                tmp->elemtype->u.p.elemtype = alctype(FLOAT_TYPE);
             } else if (!strcmp(typename, "void")){
                 tmp->elemtype = alctype(POINTER_TYPE);
                 tmp->elemtype->u.p.elemtype = alctype(NULL_TYPE);
@@ -984,6 +1194,8 @@ struct field *fieldsprocessing(struct tree *t)
             } else if (!strcmp(typename, "char")){
                 tmp->elemtype = alctype(CHAR_TYPE);
             } else if (!strcmp(typename, "float")){
+                tmp->elemtype = alctype(FLOAT_TYPE);
+            } else if (!strcmp(typename, "double")){
                 tmp->elemtype = alctype(FLOAT_TYPE);
             } else if (!strcmp(typename, "void")){
                 tmp->elemtype = alctype(NULL_TYPE);

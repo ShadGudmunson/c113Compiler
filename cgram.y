@@ -146,7 +146,8 @@ identifier:
 file: translation_unit { root = $1;
     preTrav(root, parseTree);
     postTrav(root, assignBaseType);
-    postrevTrav(root, typeCheck);
+    postTrav(root, typeCheck);
+    //postTrav(root, typeerrCheck);
 
  };
 
@@ -319,7 +320,7 @@ struct_declaration:
 	;
 
 specifier_qualifier_list:
- type_specifier /* ctype build */
+    type_specifier /* ctype build */
 	| type_specifier specifier_qualifier_list  /* ctype build */
 		{ $$ = alcTree(struct_declaration__sp_st_sm, "specifier_qualifier_list", 2, $1, $2); }
 	| type_qualifier /* ctype build */

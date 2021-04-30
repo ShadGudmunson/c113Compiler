@@ -40,7 +40,7 @@ void invalidToken(){
     return alctoken(ELSE);
 }
 "long" {
-    return alctoken(LONG);
+    return alctoken(INT);
 }
 "switch" {
     return alctoken(SWITCH);
@@ -85,7 +85,7 @@ void invalidToken(){
     return alctoken(STRUCT);
 }
 "double" {
-    return alctoken(DOUBLE);
+    return alctoken(FLOAT);
 }
 "=" {
     return alctoken(ASN);
@@ -260,7 +260,7 @@ void invalidToken(){
 	invalidToken();
 }
 "short" {
-	invalidToken();
+    return alctoken(INT);
 }
 "unsigned" {
 	invalidToken();
@@ -283,7 +283,7 @@ void invalidToken(){
 [0-9]*"."[0-9]+|[0-9]+"."[0-9]* {
 	return alctoken(FCON);
 }
-'.{1}' {
+'.{1,2}' {
 	return alctoken(CCON);
 }
 <<EOF>> {

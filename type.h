@@ -27,8 +27,9 @@ struct field {			/* members (fields) of structs */
 #define FUNC_TYPE    1000005
 #define POINTER_TYPE 1000006
 #define CHAR_TYPE    1000007
+#define ANY_TYPE     1000008 //to be used for printf
 
-#define LAST_TYPE    1000007
+#define LAST_TYPE    1000008
 
 typedef struct typeinfo {
    int basetype;
@@ -70,6 +71,7 @@ int countParams(struct tree* t);
 int countcallparams(struct tree *t);
 paramlist buildcallparameters(struct tree *t);
 char *typename(typeptr t);
+char *typenameworkaround(typeptr t);
 void btfp(struct tree *t);
 int comparetype(struct tree *t1, struct tree *t2);
 void compareParams(struct param *p1, struct param *p2);

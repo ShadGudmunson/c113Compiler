@@ -1,1 +1,7 @@
-int i[2];
+struct Foo {
+  double dd;
+  };
+
+int main(){
+  struct Foo stap;
+}
